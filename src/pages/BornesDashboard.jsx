@@ -21,19 +21,19 @@ const PARCS = [
 ];
 
 const RECENT_ALERTS = [
-  { id: 1, borne: "S332", location: "Plérin",   msg: "Hors-ligne depuis 2h",       severity: "critical" },
-  { id: 2, borne: "S401", location: "Lyon",     msg: "Batterie faible (12%)",       severity: "warning" },
-  { id: 3, borne: "S289", location: "Nantes",   msg: "Erreur sync firmware v3.2",   severity: "warning" },
-  { id: 4, borne: "S150", location: "Paris 11", msg: "Température élevée (68°C)",   severity: "critical" },
-  { id: 5, borne: "S478", location: "Rennes",   msg: "Écran non détecté",           severity: "warning" },
+  { id: 1, borne: "S332", location: "Plérin",   msg: "Hors-ligne depuis 2h",       severity: "critical", category: "Connectivité" },
+  { id: 2, borne: "S401", location: "Lyon",     msg: "Batterie faible (12%)",       severity: "warning",  category: "Énergie" },
+  { id: 3, borne: "S289", location: "Nantes",   msg: "Erreur sync firmware v3.2",   severity: "warning",  category: "Firmware" },
+  { id: 4, borne: "S150", location: "Paris 11", msg: "Température élevée (68°C)",   severity: "critical", category: "Hardware" },
+  { id: 5, borne: "S478", location: "Rennes",   msg: "Écran non détecté",           severity: "warning",  category: "Hardware" },
 ];
 
 const RECENT_ACTIVITY = [
-  { id: 1, action: "Firmware v3.2.1 déployé", target: "12 bornes IDF",       time: "il y a 15 min" },
-  { id: 2, action: "Export CSV terminé",       target: "bornes_export_02.csv", time: "il y a 1h" },
-  { id: 3, action: "Borne S401 redémarrée",   target: "Lyon — Centre",         time: "il y a 2h" },
-  { id: 4, action: "Ticket #1842 créé",        target: "Problème affichage",    time: "il y a 3h" },
-  { id: 5, action: "Maintenance planifiée",    target: "8 bornes Bretagne",     time: "hier" },
+  { id: 1, action: "Firmware v3.2.1 déployé", target: "12 bornes IDF",       time: "il y a 15 min", tag: "Déploiement", tagColor: "bg-blue-50 text-blue-600" },
+  { id: 2, action: "Export CSV terminé",       target: "bornes_export_02.csv", time: "il y a 1h",    tag: "Export",      tagColor: "bg-emerald-50 text-emerald-600" },
+  { id: 3, action: "Borne S401 redémarrée",   target: "Lyon — Centre",         time: "il y a 2h",   tag: "Action",      tagColor: "bg-violet-50 text-violet-600" },
+  { id: 4, action: "Ticket #1842 créé",        target: "Problème affichage",    time: "il y a 3h",   tag: "Support",     tagColor: "bg-orange-50 text-orange-600" },
+  { id: 5, action: "Maintenance planifiée",    target: "8 bornes Bretagne",     time: "hier",        tag: "Maintenance", tagColor: "bg-amber-50 text-amber-600" },
 ];
 
 /* ── Page ──────────────────────────────────────────── */
@@ -102,16 +102,19 @@ export default function BornesDashboard() {
           <div className="divide-y divide-[--k-border]">
             {RECENT_ALERTS.map((a) => (
               <div key={a.id} className="flex items-start gap-2.5 px-4 py-2.5">
-                <span className={cn(
-                  "mt-1 h-2 w-2 shrink-0 rounded-full",
-                  a.severity === "critical" ? "bg-red-500" : "bg-amber-400"
-                )} />
                 <div className="min-w-0 flex-1">
-                  <div className="text-[12px] font-medium text-[--k-text]">
-                    <span className="font-semibold">{a.borne}</span>
-                    <span className="text-[--k-muted]"> — {a.location}</span>
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <span className="text-[12px] font-semibold text-[--k-text]">{a.borne}</span>
+                    <span className="text-[11px] text-[--k-muted]">{a.location}</span>
+                    <span className={cn(
+                      "rounded-full px-1.5 py-0.5 text-[10px] font-medium",
+                      a.severity === "critical" ? "bg-red-50 text-red-600" : "bg-amber-50 text-amber-600"
+                    )}>{a.severity === "critical" ? "Critique" : "Attention"}</span>
                   </div>
-                  <div className="text-[11px] text-[--k-muted]">{a.msg}</div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] text-[--k-muted]">{a.msg}</span>
+                    <span className="rounded px-1.5 py-0.5 text-[10px] font-medium bg-[--k-surface-2] text-[--k-muted]">{a.category}</span>
+                  </div>
                 </div>
               </div>
             ))}
@@ -129,12 +132,13 @@ export default function BornesDashboard() {
         </div>
         <div className="divide-y divide-[--k-border]">
           {RECENT_ACTIVITY.map((a) => (
-            <div key={a.id} className="flex items-center gap-3 px-4 py-2">
+            <div key={a.id} className="flex items-center gap-3 px-4 py-2.5">
               <div className="min-w-0 flex-1">
                 <span className="text-[12px] font-medium text-[--k-text]">{a.action}</span>
                 <span className="text-[12px] text-[--k-muted]"> — {a.target}</span>
               </div>
-              <span className="text-[11px] text-[--k-muted] shrink-0">{a.time}</span>
+              <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium", a.tagColor)}>{a.tag}</span>
+              <span className="text-[11px] text-[--k-muted] shrink-0 w-[80px] text-right">{a.time}</span>
             </div>
           ))}
         </div>
@@ -146,20 +150,21 @@ export default function BornesDashboard() {
 /* ── Sub-component ────────────────────────────────── */
 
 function MiniStat({ icon: Icon, label, value, trend }) {
-  const trendColor = trend === "up" ? "text-emerald-500" : trend === "down" ? "text-red-500" : "";
+  const trendColor = trend === "up" ? "text-emerald-600" : trend === "down" ? "text-red-600" : "text-[--k-primary]";
   const trendBg = trend === "up" ? "bg-emerald-50" : trend === "down" ? "bg-red-50" : "bg-[--k-primary-2]";
+  const valuePill = trend === "up" ? "bg-emerald-50 text-emerald-700" : trend === "down" ? "bg-red-50 text-red-700" : "bg-indigo-50 text-indigo-700";
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03] px-4 py-3">
-      <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl", trendBg)}>
-        <Icon className={cn("h-[18px] w-[18px]", trendColor || "text-[--k-primary]")} />
+    <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03] px-4 py-3">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-[11px] font-medium text-[--k-muted]">{label}</span>
+        <Icon className={cn("h-[14px] w-[14px]", trendColor)} />
       </div>
-      <div>
-        <div className="text-[11px] text-[--k-muted]">{label}</div>
-        <div className="flex items-center gap-1">
-          <span className="text-[18px] font-bold tabular-nums text-[--k-text]">{value}</span>
-          {trend === "up" && <ArrowUpRight className="h-3.5 w-3.5 text-emerald-500" />}
-          {trend === "down" && <ArrowDownRight className="h-3.5 w-3.5 text-red-500" />}
-        </div>
+      <div className="flex items-center gap-2">
+        <span className={cn("inline-flex items-center rounded-lg px-2 py-0.5 text-[16px] font-bold tabular-nums", valuePill)}>
+          {value}
+        </span>
+        {trend === "up" && <ArrowUpRight className="h-3.5 w-3.5 text-emerald-500" />}
+        {trend === "down" && <ArrowDownRight className="h-3.5 w-3.5 text-red-500" />}
       </div>
     </div>
   );
