@@ -4,30 +4,30 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Konitys tokens (light — high contrast lavender) */
+/* Konitys tokens — warm modern */
 :root{
-  --k-bg:#EEEDF5;
+  --k-bg:#F5F3EF;
   --k-surface:#FFFFFF;
-  --k-surface-2:#F3F2F8;
-  --k-border:#DDD9EC;
+  --k-surface-2:#F0EDE8;
+  --k-border:#E3DED6;
 
-  --k-text:#1A1D26;
-  --k-muted:#6B7080;
+  --k-text:#1C1917;
+  --k-muted:#78716C;
 
-  --k-primary:#6C5CE7;
-  --k-primary-2:#F0EEFF;
-  --k-primary-border:#C8C0F4;
+  --k-primary:#4F46E5;
+  --k-primary-2:#EEF2FF;
+  --k-primary-border:#C7D2FE;
 
   --k-success:#16A34A;
-  --k-warning:#F59E0B;
+  --k-warning:#EA580C;
   --k-danger:#DC2626;
 
   --k-sidebar-bg:#FFFFFF;
-  --k-sidebar-text:#6B7080;
-  --k-sidebar-text-active:#1A1D26;
-  --k-sidebar-hover:#F3F2F8;
-  --k-sidebar-border:#EEEDF5;
-  --k-sidebar-section:#9B9DB0;
+  --k-sidebar-text:#78716C;
+  --k-sidebar-text-active:#1C1917;
+  --k-sidebar-hover:#F5F3EF;
+  --k-sidebar-border:#EBE8E2;
+  --k-sidebar-section:#A8A29E;
 
   --k-sidebar-w: 224px;
   --k-sidebar-rail: 52px;
