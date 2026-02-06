@@ -59,11 +59,11 @@ export default function StockDashboard() {
 
       {/* KPIs */}
       <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-5">
-        <KpiCard title="Produits" value="121" colorIndex={0} />
-        <KpiCard title="Stock total" value="8 814" colorIndex={2} />
-        <KpiCard title="Unités possibles" value="4 435" colorIndex={3} />
-        <KpiCard title="Valeur stock" value="101 935 €" colorIndex={5} />
-        <KpiCard title="Alertes" value="12" colorIndex={1} />
+        <KpiCard title="Produits" value="121" icon={Package} colorIndex={0} />
+        <KpiCard title="Stock total" value="8 814" icon={Building2} colorIndex={2} />
+        <KpiCard title="Unités possibles" value="4 435" icon={TrendingUp} colorIndex={3} />
+        <KpiCard title="Valeur stock" value="101 935 €" icon={ShoppingCart} colorIndex={5} />
+        <KpiCard title="Alertes" value="12" icon={AlertTriangle} colorIndex={1} />
       </div>
 
       {/* Content */}

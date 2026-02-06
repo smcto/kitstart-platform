@@ -6,6 +6,7 @@ import { FilterBar } from "../components/FilterBar";
 import { Badge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { cn } from "../components/ui/cn";
+import { Package, Layers, LayoutGrid, AlertTriangle } from "lucide-react";
 
 /* ── Mock data ────────────────────────────────────── */
 
@@ -60,10 +61,10 @@ export default function StockList() {
       />
 
       <div className="mb-3 grid grid-cols-2 gap-3 xl:grid-cols-4">
-        <KpiCard title="Produits" value="121" colorIndex={0} />
-        <KpiCard title="Stock total" value="8 814" colorIndex={2} />
-        <KpiCard title="Catégories" value="8" colorIndex={3} />
-        <KpiCard title="Alertes stock" value="12" colorIndex={1} />
+        <KpiCard title="Produits" value="121" icon={Package} colorIndex={0} />
+        <KpiCard title="Stock total" value="8 814" icon={Layers} colorIndex={2} />
+        <KpiCard title="Catégories" value="8" icon={LayoutGrid} colorIndex={3} />
+        <KpiCard title="Alertes stock" value="12" icon={AlertTriangle} colorIndex={1} />
       </div>
 
       <FilterBar
