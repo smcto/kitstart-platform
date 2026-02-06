@@ -140,24 +140,21 @@ export function Sidebar({ appName, collapsed, onToggle, activeKey, sections }) {
       <a
         href={item.to}
         className={cn(
-          "group/nav relative flex items-center gap-3 rounded-xl px-3 py-2 text-[13px] font-medium transition-all duration-150",
+          "relative flex items-center gap-2.5 rounded-lg px-2.5 py-[6px] text-[13px] transition-all duration-150",
           collapsed ? "justify-center px-0" : "justify-start",
           active
-            ? "bg-[--k-primary] text-white shadow-sm shadow-[--k-primary]/25"
-            : "text-[--k-sidebar-text] hover:bg-white hover:text-[--k-sidebar-text-active] hover:shadow-sm"
+            ? "font-semibold text-[--k-primary]"
+            : "font-medium text-[--k-muted] hover:text-[--k-text]"
         )}
       >
-        <span className={cn(
-          "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition",
-          active
-            ? "bg-white/20"
-            : "bg-[--k-surface-2] group-hover/nav:bg-[--k-primary-2]"
-        )}>
-          <Icon className={cn(
-            "h-[16px] w-[16px]",
-            active ? "text-white" : "text-[--k-muted] group-hover/nav:text-[--k-primary]"
-          )} />
-        </span>
+        {/* Tiny left indicator */}
+        {active && !collapsed && (
+          <span className="absolute left-0 top-[7px] bottom-[7px] w-[2px] rounded-full bg-[--k-primary]" />
+        )}
+        <Icon className={cn(
+          "h-[16px] w-[16px] shrink-0 transition",
+          active ? "text-[--k-primary]" : "text-[--k-muted]/60"
+        )} />
         {!collapsed && <span>{item.label}</span>}
       </a>
     );
@@ -172,13 +169,11 @@ export function Sidebar({ appName, collapsed, onToggle, activeKey, sections }) {
     const props = onClick ? { onClick } : { href };
     const inner = (
       <span className={cn(
-        "flex items-center gap-3 rounded-xl px-3 py-2 text-[13px] font-medium text-[--k-sidebar-text] hover:bg-white hover:text-[--k-sidebar-text-active] hover:shadow-sm transition",
+        "flex items-center gap-2.5 rounded-lg px-2.5 py-[6px] text-[13px] font-medium text-[--k-muted]/70 hover:text-[--k-muted] transition",
         collapsed && "justify-center px-0",
         onClick && "w-full"
       )}>
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[--k-surface-2]">
-          <Icon className="h-[16px] w-[16px] text-[--k-muted]" />
-        </span>
+        <Icon className="h-[16px] w-[16px] shrink-0" />
         {!collapsed && <span>{label}</span>}
       </span>
     );
@@ -197,27 +192,22 @@ export function Sidebar({ appName, collapsed, onToggle, activeKey, sections }) {
     <aside
       className={cn(
         "sticky top-12 h-[calc(100vh-48px)] shrink-0 transition-all duration-200",
-        collapsed ? "w-[64px]" : "w-[232px]"
+        collapsed ? "w-[48px]" : "w-[200px]"
       )}
     >
-      <div className="flex h-full flex-col justify-between p-2">
-        {/* Floating nav card */}
-        <div className="flex-1 overflow-y-auto rounded-2xl bg-white/60 backdrop-blur-sm border border-[--k-border]/50 shadow-sm p-2">
+      <div className="flex h-full flex-col justify-between">
+        <div className="flex-1 overflow-y-auto pt-4 pb-2">
           {resolvedSections.map((section, si) => (
-            <div key={section.label} className={cn(si > 0 && "mt-3")}>
+            <div key={section.label} className={cn(si > 0 && "mt-4")}>
               {!collapsed && (
-                <div className="mb-1.5 flex items-center gap-2 px-2">
-                  <span className="h-px flex-1 bg-[--k-border]/60" />
-                  <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-[--k-sidebar-section]">
-                    {section.label}
-                  </span>
-                  <span className="h-px flex-1 bg-[--k-border]/60" />
+                <div className="mb-1 px-4 text-[10px] font-semibold uppercase tracking-widest text-[--k-muted]/40">
+                  {section.label}
                 </div>
               )}
               {collapsed && si > 0 && (
-                <div className="mx-2 mb-2 border-t border-[--k-border]/50" />
+                <div className="mx-2.5 mb-2 border-t border-[--k-border]/50" />
               )}
-              <nav className="space-y-1">
+              <nav className="space-y-0.5 px-2">
                 {section.items.map((it) => (
                   <NavItem key={it.key} item={it} />
                 ))}
@@ -226,8 +216,7 @@ export function Sidebar({ appName, collapsed, onToggle, activeKey, sections }) {
           ))}
         </div>
 
-        {/* Bottom actions — outside the card */}
-        <div className="mt-2 rounded-2xl bg-white/60 backdrop-blur-sm border border-[--k-border]/50 shadow-sm p-2 space-y-1">
+        <div className="px-2 pb-3 space-y-0.5">
           <BottomLink icon={HelpCircle} label="Aide" href="#" />
           <BottomLink
             icon={collapsed ? ChevronsRight : ChevronsLeft}
