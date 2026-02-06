@@ -63,7 +63,7 @@ export default function AntennesDashboard() {
 
         {/* Map placeholder */}
         <div className="lg:col-span-2 rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03] overflow-hidden">
-          <div className="flex items-center justify-between border-b border-[--k-border] px-4 py-2.5">
+          <div className="flex items-center justify-between border-b border-[--k-border] bg-gradient-to-r from-blue-50/50 to-indigo-50/30 px-4 py-2.5">
             <div className="flex items-center gap-2">
               <MapPin className="h-4 w-4 text-[--k-primary]" />
               <span className="text-[13px] font-semibold text-[--k-text]">Carte des antennes</span>
@@ -108,7 +108,7 @@ export default function AntennesDashboard() {
 
         {/* Répartition par région */}
         <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03]">
-          <div className="flex items-center justify-between border-b border-[--k-border] px-4 py-2.5">
+          <div className="flex items-center justify-between border-b border-[--k-border] bg-gradient-to-r from-violet-50/50 to-indigo-50/30 px-4 py-2.5 rounded-t-2xl">
             <div className="flex items-center gap-2">
               <Layers className="h-4 w-4 text-[--k-primary]" />
               <span className="text-[13px] font-semibold text-[--k-text]">Par région</span>
@@ -136,7 +136,7 @@ export default function AntennesDashboard() {
 
       {/* Contacts récents */}
       <div className="mt-4 rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03] overflow-hidden">
-        <div className="flex items-center justify-between border-b border-[--k-border] px-4 py-2.5">
+        <div className="flex items-center justify-between border-b border-[--k-border] bg-gradient-to-r from-blue-50/50 to-sky-50/30 px-4 py-2.5">
           <div className="flex items-center gap-2">
             <Building className="h-4 w-4 text-[--k-primary]" />
             <span className="text-[13px] font-semibold text-[--k-text]">Contacts récents</span>
@@ -145,7 +145,7 @@ export default function AntennesDashboard() {
         </div>
         <table className="w-full text-[13px]">
           <thead>
-            <tr className="border-b border-[--k-border] bg-[--k-surface-2]/50 text-[--k-muted]">
+            <tr className="border-b border-[--k-border] bg-blue-50/30 text-[--k-muted]">
               <th className="px-4 py-2 text-left text-xs font-medium">Nom</th>
               <th className="px-4 py-2 text-left text-xs font-medium">Type</th>
               <th className="px-4 py-2 text-left text-xs font-medium">Antennes</th>
