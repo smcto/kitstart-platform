@@ -2,35 +2,65 @@ import React from "react";
 import { cn } from "./ui/cn";
 import {
   LayoutDashboard, Monitor, CalendarDays, Download, ReceiptText, Settings,
-  ChevronsLeft, ChevronsRight, HelpCircle, BarChart3, Activity, Users
+  ChevronsLeft, ChevronsRight, HelpCircle, BarChart3, AlertTriangle,
+  Wifi, WifiOff, Map, RefreshCw, FileText, Bug
 } from "lucide-react";
+
+const APP_SIDEBARS = {
+  "Bornes Manager": [
+    {
+      label: "Général",
+      items: [
+        { key: "dashboard", label: "Vue d'ensemble", icon: LayoutDashboard, to: "/bornes" },
+        { key: "devices", label: "Bornes", icon: Monitor, to: "/bornes" },
+        { key: "map", label: "Carte", icon: Map, to: "/bornes" },
+      ],
+    },
+    {
+      label: "Suivi",
+      items: [
+        { key: "events", label: "Événements", icon: CalendarDays, to: "/events" },
+        { key: "alerts", label: "Alertes", icon: AlertTriangle, to: "/events" },
+        { key: "logs", label: "Logs", icon: ReceiptText, to: "/logs" },
+        { key: "diagnostics", label: "Diagnostics", icon: Bug, to: "/logs" },
+      ],
+    },
+    {
+      label: "Actions",
+      items: [
+        { key: "downloads", label: "Téléchargements", icon: Download, to: "/downloads" },
+        { key: "sync", label: "Synchronisation", icon: RefreshCw, to: "/downloads" },
+        { key: "reports", label: "Rapports", icon: FileText, to: "/stats" },
+      ],
+    },
+    {
+      label: "Configuration",
+      items: [
+        { key: "settings", label: "Paramètres", icon: Settings, to: "/settings" },
+      ],
+    },
+  ],
+};
 
 const DEFAULT_SECTIONS = [
   {
-    label: "Principal",
+    label: "Navigation",
     items: [
-      { key: "dashboard", label: "Dashboard", icon: LayoutDashboard, to: "/" },
-      { key: "devices", label: "Bornes", icon: Monitor, to: "/bornes" },
-      { key: "events", label: "Événements", icon: CalendarDays, to: "/events" },
-    ],
-  },
-  {
-    label: "Données",
-    items: [
-      { key: "downloads", label: "Téléchargements", icon: Download, to: "/downloads" },
-      { key: "logs", label: "Logs", icon: ReceiptText, to: "/logs" },
+      { key: "dashboard", label: "Vue d'ensemble", icon: LayoutDashboard, to: "/" },
       { key: "stats", label: "Statistiques", icon: BarChart3, to: "/stats" },
     ],
   },
   {
-    label: "Système",
+    label: "Configuration",
     items: [
       { key: "settings", label: "Paramètres", icon: Settings, to: "/settings" },
     ],
   },
 ];
 
-export function Sidebar({ appName, collapsed, onToggle, activeKey, sections = DEFAULT_SECTIONS }) {
+export function Sidebar({ appName, collapsed, onToggle, activeKey, sections }) {
+  const resolvedSections = sections || APP_SIDEBARS[appName] || DEFAULT_SECTIONS;
+
   return (
     <aside
       className={cn(
@@ -40,7 +70,7 @@ export function Sidebar({ appName, collapsed, onToggle, activeKey, sections = DE
     >
       <div className="flex h-full flex-col justify-between">
         <div className="flex-1 overflow-y-auto py-3">
-          {sections.map((section, si) => (
+          {resolvedSections.map((section, si) => (
             <div key={section.label} className={cn(si > 0 && "mt-4")}>
               {!collapsed && (
                 <div className="mb-1 px-4 text-[10px] font-semibold uppercase tracking-widest text-[--k-muted]/70">
