@@ -27,35 +27,35 @@ export default function BornesList() {
     <AppShell currentApp="Bornes Manager" activeKey="devices">
       <PageHeader
         title="Bornes"
-        subtitle="Gestion du parc • filtres et actions standard"
+        subtitle="Gestion du parc"
         primaryLabel="+ Nouvelle borne"
         secondaryLabel="Exporter"
         onPrimary={() => alert("Créer")}
         onSecondary={() => alert("Exporter")}
       />
 
-      <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <KpiCard title="Bornes" subtitle="Derniers 7 jours" value="650" />
-        <KpiCard title="En alerte" subtitle="Derniers 7 jours" value="12" />
-        <KpiCard title="Événements (7j)" subtitle="Derniers 7 jours" value="184" />
-        <KpiCard title="Téléchargements" subtitle="Derniers 7 jours" value="2 410" />
+      <div className="mb-3 grid grid-cols-2 gap-3 xl:grid-cols-4">
+        <KpiCard title="Bornes" subtitle="7 derniers jours" value="650" />
+        <KpiCard title="En alerte" subtitle="7 derniers jours" value="12" />
+        <KpiCard title="Événements" subtitle="7 derniers jours" value="184" />
+        <KpiCard title="Téléchargements" subtitle="7 derniers jours" value="2 410" />
       </div>
 
       <FilterBar
         search={search}
         onSearch={setSearch}
         right={
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <Badge>Statut ▾</Badge>
             <Badge>Antenne ▾</Badge>
-            <Button variant="secondary">Importer</Button>
+            <Button variant="secondary" size="sm">Importer</Button>
           </div>
         }
       />
 
       <DataTable
         title="Bornes"
-        subtitle="Table standard : actions à droite"
+        subtitle={`${rows.length} éléments`}
         rows={rows}
       />
     </AppShell>

@@ -5,7 +5,7 @@ export function Badge({ className, ...props }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full border border-[--k-border] bg-white px-2.5 py-1 text-xs text-[--k-text]",
+        "inline-flex items-center rounded-md border border-[--k-border] bg-white px-2 py-0.5 text-xs font-medium text-[--k-text]",
         className
       )}
       {...props}
@@ -15,17 +15,15 @@ export function Badge({ className, ...props }) {
 
 export function StatusPill({ status }) {
   const map = {
-    ONLINE: { c: "var(--k-success)", t: "Online" },
-    WARNING: { c: "var(--k-warning)", t: "Warning" },
-    OFFLINE: { c: "var(--k-danger)", t: "Offline" },
+    ONLINE: { bg: "bg-emerald-50", dot: "bg-emerald-500", t: "Online" },
+    WARNING: { bg: "bg-amber-50", dot: "bg-amber-500", t: "Warning" },
+    OFFLINE: { bg: "bg-red-50", dot: "bg-red-500", t: "Offline" },
   };
-  const s = map[status] ?? { c: "var(--k-border)", t: status ?? "—" };
+  const s = map[status] ?? { bg: "bg-gray-50", dot: "bg-gray-400", t: status ?? "—" };
   return (
-    <span
-      className="inline-flex items-center justify-center rounded-full border bg-white px-3 py-1 text-xs font-semibold"
-      style={{ borderColor: s.c, color: s.c }}
-    >
-      {s.t.toUpperCase()}
+    <span className={cn("inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-xs font-medium", s.bg)}>
+      <span className={cn("h-1.5 w-1.5 rounded-full", s.dot)} />
+      {s.t}
     </span>
   );
 }

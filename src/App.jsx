@@ -5,9 +5,9 @@ import BornesList from "./pages/BornesList.jsx";
 
 function Placeholder({ name }) {
   return (
-    <div className="rounded-2xl border border-[--k-border] bg-white p-6 shadow-soft">
-      <div className="text-sm font-semibold">{name}</div>
-      <div className="mt-1 text-sm text-[--k-muted]">Page placeholder (à brancher)</div>
+    <div className="rounded-xl border border-[--k-border] bg-white px-4 py-3">
+      <div className="text-[13px] font-semibold">{name}</div>
+      <div className="text-xs text-[--k-muted]">Page placeholder</div>
     </div>
   );
 }
