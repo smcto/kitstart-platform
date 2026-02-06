@@ -16,7 +16,7 @@ const APP_SIDEBARS = {
       items: [
         { key: "dashboard", label: "Vue d'ensemble", icon: LayoutDashboard, to: "/bornes" },
         { key: "devices", label: "Bornes", icon: Monitor, to: "/bornes/list" },
-        { key: "map", label: "Carte", icon: Map, to: "/bornes" },
+        { key: "map", label: "Carte", icon: Map, to: "/bornes/carte" },
       ],
     },
     {

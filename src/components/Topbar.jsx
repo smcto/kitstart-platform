@@ -1,9 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Button } from "./ui/Button";
-import { Bell, HelpCircle, Search, User, LogOut, Settings, CreditCard, ChevronDown, Check, Inbox } from "lucide-react";
+import { Bell, HelpCircle, Search, User, LogOut, Settings, CreditCard, ChevronDown, Check, Inbox, X, ArrowRight } from "lucide-react";
 import { KonitysSwitcher } from "./KonitysSwitcher";
 import { cn } from "./ui/cn";
 import { getAppIdentity } from "./appIdentity";
+
+const SEARCH_SUGGESTIONS = [
+  { label: "Borne S332", desc: "Plérin — Bornes Manager", to: "/bornes/list" },
+  { label: "Antenne Rennes Centre", desc: "ANT-001 — Antennes Selfizee", to: "/antennes/list" },
+  { label: "Câble USB-C 2m", desc: "PRD-001 — Stock Manager", to: "/stocks/produits" },
+  { label: "Paramètres", desc: "Configuration", to: "/settings" },
+  { label: "Export CSV", desc: "Bornes Manager", to: "/bornes/list" },
+];
 
 export function Topbar({
   currentApp,
@@ -14,16 +22,24 @@ export function Topbar({
 }) {
   const [notifOpen, setNotifOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQ, setSearchQ] = useState("");
+  const searchRef = useRef(null);
 
-  const identity = !hubMode ? getAppIdentity(currentApp) : null;
-  const AppIcon = identity?.icon;
+  useEffect(() => {
+    if (searchOpen && searchRef.current) searchRef.current.focus();
+  }, [searchOpen]);
+
+  const filteredResults = searchQ.trim()
+    ? SEARCH_SUGGESTIONS.filter(s => s.label.toLowerCase().includes(searchQ.toLowerCase()) || s.desc.toLowerCase().includes(searchQ.toLowerCase()))
+    : SEARCH_SUGGESTIONS;
 
   return (
     <header className="sticky top-0 z-20 border-b border-[--k-border] bg-white/95 backdrop-blur-sm">
       <div className="flex h-12 items-center gap-3 px-4">
         {hubMode ? (
           <div className="flex items-center gap-2">
-            <span className="text-[15px] font-bold tracking-tight text-[--k-primary]">KONITYS</span>
+            <span className="text-[15px] font-bold tracking-tight text-[--k-text]">KONITYS</span>
             <span className="text-[13px] text-[--k-muted]">Platform Hub</span>
           </div>
         ) : (
@@ -37,9 +53,55 @@ export function Topbar({
 
         <div className="flex-1" />
 
-        <button className="flex h-9 w-9 items-center justify-center rounded-lg text-[--k-muted] hover:bg-[--k-surface-2] hover:text-[--k-text] transition">
+        {/* Search */}
+        <button
+          className="flex h-9 w-9 items-center justify-center rounded-lg text-[--k-muted] hover:bg-[--k-surface-2] hover:text-[--k-text] transition"
+          onClick={() => { setSearchOpen(true); setNotifOpen(false); setAccountOpen(false); }}
+        >
           <Search className="h-[18px] w-[18px]" />
         </button>
+
+        {searchOpen && (
+          <>
+            <div className="fixed inset-0 z-40 bg-black/20 backdrop-blur-[2px]" onClick={() => { setSearchOpen(false); setSearchQ(""); }} />
+            <div className="fixed left-1/2 top-[60px] z-50 w-[480px] -translate-x-1/2 rounded-xl border border-[--k-border] bg-white shadow-xl shadow-black/10">
+              <div className="flex items-center gap-2.5 border-b border-[--k-border] px-4 py-3">
+                <Search className="h-4 w-4 text-[--k-muted] shrink-0" />
+                <input
+                  ref={searchRef}
+                  value={searchQ}
+                  onChange={e => setSearchQ(e.target.value)}
+                  placeholder="Rechercher partout..."
+                  className="flex-1 bg-transparent text-[14px] outline-none placeholder:text-[--k-muted]/50"
+                />
+                <button onClick={() => { setSearchOpen(false); setSearchQ(""); }} className="text-[--k-muted] hover:text-[--k-text]">
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+              <div className="max-h-[300px] overflow-auto py-1">
+                {filteredResults.length > 0 ? filteredResults.map((s, i) => (
+                  <a
+                    key={i}
+                    href={s.to}
+                    className="flex items-center gap-3 px-4 py-2.5 hover:bg-[--k-surface-2] transition"
+                    onClick={() => { setSearchOpen(false); setSearchQ(""); }}
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="text-[13px] font-medium text-[--k-text]">{s.label}</div>
+                      <div className="text-[11px] text-[--k-muted]">{s.desc}</div>
+                    </div>
+                    <ArrowRight className="h-3.5 w-3.5 text-[--k-muted]/40 shrink-0" />
+                  </a>
+                )) : (
+                  <div className="px-4 py-6 text-center text-[13px] text-[--k-muted]">Aucun résultat pour "{searchQ}"</div>
+                )}
+              </div>
+              <div className="border-t border-[--k-border] px-4 py-2 text-[11px] text-[--k-muted]">
+                <kbd className="rounded bg-[--k-surface-2] px-1.5 py-0.5 text-[10px] font-medium">Esc</kbd> pour fermer
+              </div>
+            </div>
+          </>
+        )}
 
         {/* Notifications */}
         <div className="relative">
