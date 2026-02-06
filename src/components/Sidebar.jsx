@@ -140,18 +140,14 @@ export function Sidebar({ appName, collapsed, onToggle, activeKey, sections }) {
       <a
         href={item.to}
         className={cn(
-          "relative flex items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] font-medium transition-all duration-150",
+          "relative flex items-center gap-2.5 rounded-xl px-2.5 py-[7px] text-[13px] font-medium transition-all duration-150",
           collapsed ? "justify-center px-0" : "justify-start",
           active
-            ? "bg-[--k-sidebar-hover] text-[--k-sidebar-text-active]"
+            ? "bg-[--k-primary-2] text-[--k-primary]"
             : "text-[--k-sidebar-text] hover:bg-[--k-sidebar-hover] hover:text-[--k-sidebar-text-active]"
         )}
       >
-        {/* Left accent bar */}
-        {active && !collapsed && (
-          <span className={cn("absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r-full", identity.dot)} />
-        )}
-        <Icon className={cn("h-[18px] w-[18px] shrink-0", active ? "text-white" : "")} />
+        <Icon className={cn("h-[18px] w-[18px] shrink-0", active && "text-[--k-primary]")} />
         {!collapsed && <span>{item.label}</span>}
       </a>
     );
@@ -166,7 +162,7 @@ export function Sidebar({ appName, collapsed, onToggle, activeKey, sections }) {
     const props = onClick ? { onClick } : { href };
     const inner = (
       <span className={cn(
-        "flex items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] font-medium text-[--k-sidebar-text] hover:bg-[--k-sidebar-hover] hover:text-[--k-sidebar-text-active] transition",
+        "flex items-center gap-2.5 rounded-xl px-2.5 py-[7px] text-[13px] font-medium text-[--k-sidebar-text] hover:bg-[--k-sidebar-hover] hover:text-[--k-sidebar-text-active] transition",
         collapsed && "justify-center px-0",
         onClick && "w-full"
       )}>
@@ -188,7 +184,7 @@ export function Sidebar({ appName, collapsed, onToggle, activeKey, sections }) {
   return (
     <aside
       className={cn(
-        "sticky top-12 h-[calc(100vh-48px)] shrink-0 bg-[--k-sidebar-bg] transition-all duration-200",
+        "sticky top-12 h-[calc(100vh-48px)] shrink-0 bg-[--k-sidebar-bg] border-r border-[--k-sidebar-border] transition-all duration-200",
         collapsed ? "w-[52px]" : "w-[220px]"
       )}
     >
@@ -197,7 +193,7 @@ export function Sidebar({ appName, collapsed, onToggle, activeKey, sections }) {
           {resolvedSections.map((section, si) => (
             <div key={section.label} className={cn(si > 0 && "mt-4")}>
               {!collapsed && (
-                <div className="mb-1 px-4 text-[10px] font-semibold uppercase tracking-widest text-[--k-sidebar-section]/50">
+                <div className="mb-1 px-4 text-[10px] font-semibold uppercase tracking-widest text-[--k-sidebar-section]">
                   {section.label}
                 </div>
               )}

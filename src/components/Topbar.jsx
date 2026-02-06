@@ -36,7 +36,7 @@ export function Topbar({
     : SEARCH_SUGGESTIONS;
 
   return (
-    <header className="sticky top-0 z-20 border-b border-[--k-border]/60 bg-white/80 backdrop-blur-md shadow-sm shadow-black/[0.03]">
+    <header className="sticky top-0 z-20 border-b border-[--k-border] bg-white shadow-sm shadow-black/[0.04]">
       <div className="flex h-12 items-center gap-2 px-3 md:gap-3 md:px-4">
         {/* Mobile hamburger */}
         {!hubMode && onToggleMobileMenu && (
