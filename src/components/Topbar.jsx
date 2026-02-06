@@ -8,11 +8,8 @@ import { getAppIdentity } from "./appIdentity";
 export function Topbar({
   currentApp,
   apps,
-  favorites,
-  recents,
   onSelectApp,
   onGoHub,
-  onPrimaryAction,
   hubMode,
 }) {
   const [notifOpen, setNotifOpen] = useState(false);
@@ -42,8 +39,6 @@ export function Topbar({
             <KonitysSwitcher
               currentApp={currentApp}
               apps={apps}
-              favorites={favorites}
-              recents={recents}
               onSelectApp={onSelectApp}
               onGoHub={onGoHub}
             />
