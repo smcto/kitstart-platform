@@ -4,6 +4,14 @@ import { Input } from "./ui/Input";
 import { cn } from "./ui/cn";
 import { Home, Star, Clock, ChevronDown } from "lucide-react";
 
+const APP_COLORS = {
+  "Bornes Manager": "bg-indigo-50 text-indigo-500",
+  "Antennes":       "bg-pink-50 text-pink-500",
+  "Stocks":         "bg-emerald-50 text-emerald-500",
+  "Support":        "bg-amber-50 text-amber-500",
+  "Catalog IA":     "bg-violet-50 text-violet-500",
+};
+
 export function KonitysSwitcher({
   currentApp,
   apps,
@@ -32,9 +40,7 @@ export function KonitysSwitcher({
         aria-haspopup="menu"
         aria-expanded={open}
       >
-        <span className="text-[13px] font-semibold text-[--k-text]">
-          Konitys
-        </span>
+        <span className="text-[13px] font-bold text-[--k-primary]">KONITYS</span>
         <span className="text-[--k-muted]">/</span>
         <span className="text-[13px] font-medium text-[--k-text]">
           {currentApp}
@@ -49,7 +55,7 @@ export function KonitysSwitcher({
             onClick={() => setOpen(false)}
             aria-hidden="true"
           />
-          <div className="absolute z-40 mt-1 w-[320px] rounded-xl border border-[--k-border] bg-white shadow-lg shadow-black/5">
+          <div className="absolute z-40 mt-1 w-[340px] rounded-xl border border-[--k-border] bg-white shadow-lg shadow-black/5">
             <div className="p-2">
               <Button
                 className="w-full justify-start"
@@ -90,40 +96,38 @@ export function KonitysSwitcher({
                 onSelectApp?.(name);
                 setOpen(false);
               }}
-              prefix="★ "
             />
 
-            <div className="px-3 py-1.5 text-[11px] font-medium uppercase tracking-wider text-[--k-muted]">
+            <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-[--k-muted]/70">
               Toutes les apps
             </div>
-            <div className="max-h-[220px] overflow-auto px-2 pb-2">
-              {filtered.map((a) => (
-                <button
-                  key={a.name}
-                  className={cn(
-                    "w-full rounded-lg px-2.5 py-1.5 text-left text-[13px] hover:bg-[--k-surface-2] transition",
-                    a.name === currentApp && "bg-[--k-primary-2]"
-                  )}
-                  onClick={() => {
-                    onSelectApp?.(a.name);
-                    setOpen(false);
-                  }}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="font-medium">{a.name}</div>
-                    {a.badge ? (
-                      <span className="rounded-md bg-[--k-surface-2] px-1.5 py-0.5 text-[11px] text-[--k-muted]">
-                        {a.badge}
-                      </span>
-                    ) : null}
-                  </div>
-                  {a.description ? (
-                    <div className="text-xs text-[--k-muted]">
-                      {a.description}
+            <div className="max-h-[240px] overflow-auto px-2 pb-2">
+              {filtered.map((a) => {
+                const dotColor = APP_COLORS[a.name] || "bg-gray-50 text-gray-400";
+                return (
+                  <button
+                    key={a.name}
+                    className={cn(
+                      "flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-left text-[13px] hover:bg-[--k-surface-2] transition",
+                      a.name === currentApp && "bg-[--k-primary-2]"
+                    )}
+                    onClick={() => {
+                      onSelectApp?.(a.name);
+                      setOpen(false);
+                    }}
+                  >
+                    <span className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[11px] font-bold", dotColor)}>
+                      {a.name.slice(0, 2).toUpperCase()}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="font-medium truncate">{a.name}</div>
+                      {a.description && (
+                        <div className="text-xs text-[--k-muted] truncate">{a.description}</div>
+                      )}
                     </div>
-                  ) : null}
-                </button>
-              ))}
+                  </button>
+                );
+              })}
             </div>
 
             <div className="flex items-center justify-between border-t border-[--k-border] px-3 py-1.5 text-[11px] text-[--k-muted]">
@@ -139,24 +143,29 @@ export function KonitysSwitcher({
   );
 }
 
-function Section({ title, icon, items, onPick, prefix = "" }) {
+function Section({ title, icon, items, onPick }) {
   if (!items?.length) return null;
   return (
     <div className="px-2 pb-1">
-      <div className="flex items-center gap-1.5 px-1 py-1.5 text-[11px] font-medium uppercase tracking-wider text-[--k-muted]">
+      <div className="flex items-center gap-1.5 px-1 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-[--k-muted]/70">
         {icon} {title}
       </div>
       <div className="space-y-0.5">
-        {items.map((name) => (
-          <button
-            key={name}
-            className="w-full rounded-lg px-2.5 py-1.5 text-left text-[13px] hover:bg-[--k-surface-2] transition"
-            onClick={() => onPick?.(name)}
-          >
-            {prefix}
-            {name}
-          </button>
-        ))}
+        {items.map((name) => {
+          const dotColor = APP_COLORS[name];
+          return (
+            <button
+              key={name}
+              className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-left text-[13px] hover:bg-[--k-surface-2] transition"
+              onClick={() => onPick?.(name)}
+            >
+              {dotColor && (
+                <span className={cn("h-2 w-2 rounded-full", dotColor.split(" ")[0].replace("50", "400"))} />
+              )}
+              {name}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

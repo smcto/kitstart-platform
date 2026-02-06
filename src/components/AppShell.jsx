@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Topbar } from "./Topbar";
 import { Sidebar } from "./Sidebar";
 
-export function AppShell({ currentApp, children, activeKey }) {
+export function AppShell({ currentApp, children, activeKey, hubMode = false }) {
   const [collapsed, setCollapsed] = useState(() => {
     try { return localStorage.getItem("k_sidebar_collapsed") === "1"; } catch { return false; }
   });
@@ -39,16 +39,21 @@ export function AppShell({ currentApp, children, activeKey }) {
           window.location.href = map[name] || "/";
         }}
         onPrimaryAction={() => alert("Primary action")}
+        hubMode={hubMode}
       />
-      <div className="flex">
-        <Sidebar
-          appName={currentApp}
-          collapsed={collapsed}
-          onToggle={() => setCollapsed((v) => !v)}
-          activeKey={activeKey}
-        />
-        <main className="flex-1 min-w-0 p-5">{children}</main>
-      </div>
+      {hubMode ? (
+        <main className="min-h-[calc(100vh-48px)]">{children}</main>
+      ) : (
+        <div className="flex">
+          <Sidebar
+            appName={currentApp}
+            collapsed={collapsed}
+            onToggle={() => setCollapsed((v) => !v)}
+            activeKey={activeKey}
+          />
+          <main className="flex-1 min-w-0 p-5">{children}</main>
+        </div>
+      )}
     </div>
   );
 }

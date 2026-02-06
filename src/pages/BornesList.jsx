@@ -35,10 +35,10 @@ export default function BornesList() {
       />
 
       <div className="mb-3 grid grid-cols-2 gap-3 xl:grid-cols-4">
-        <KpiCard title="Bornes" subtitle="7 derniers jours" value="650" />
-        <KpiCard title="En alerte" subtitle="7 derniers jours" value="12" />
-        <KpiCard title="Événements" subtitle="7 derniers jours" value="184" />
-        <KpiCard title="Téléchargements" subtitle="7 derniers jours" value="2 410" />
+        <KpiCard title="Bornes" subtitle="7 derniers jours" value="650" colorIndex={0} />
+        <KpiCard title="En alerte" subtitle="7 derniers jours" value="12" colorIndex={1} />
+        <KpiCard title="Événements" subtitle="7 derniers jours" value="184" colorIndex={2} />
+        <KpiCard title="Téléchargements" subtitle="7 derniers jours" value="2 410" colorIndex={3} />
       </div>
 
       <FilterBar
