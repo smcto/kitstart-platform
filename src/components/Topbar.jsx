@@ -3,6 +3,7 @@ import { Button } from "./ui/Button";
 import { Bell, HelpCircle, Search, User, LogOut, Settings, CreditCard, ChevronDown, Check, Inbox } from "lucide-react";
 import { KonitysSwitcher } from "./KonitysSwitcher";
 import { cn } from "./ui/cn";
+import { getAppIdentity } from "./appIdentity";
 
 export function Topbar({
   currentApp,
@@ -17,23 +18,36 @@ export function Topbar({
   const [notifOpen, setNotifOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
 
+  const identity = !hubMode ? getAppIdentity(currentApp) : null;
+  const AppIcon = identity?.icon;
+
   return (
     <header className="sticky top-0 z-20 border-b border-[--k-border] bg-white/95 backdrop-blur-sm">
-      <div className="flex h-12 items-center gap-3 px-4">
+      {/* Colored top stripe per app */}
+      {identity && <div className={cn("h-[3px] w-full", identity.topStripe)} />}
+      <div className={cn("flex items-center gap-3 px-4", identity ? "h-[45px]" : "h-12")}>
         {hubMode ? (
           <div className="flex items-center gap-2">
             <span className="text-[15px] font-bold tracking-tight text-[--k-primary]">KONITYS</span>
             <span className="text-[13px] text-[--k-muted]">Platform Hub</span>
           </div>
         ) : (
-          <KonitysSwitcher
-            currentApp={currentApp}
-            apps={apps}
-            favorites={favorites}
-            recents={recents}
-            onSelectApp={onSelectApp}
-            onGoHub={onGoHub}
-          />
+          <div className="flex items-center gap-2.5">
+            {/* App icon badge */}
+            {AppIcon && (
+              <div className={cn("flex h-7 w-7 items-center justify-center rounded-lg", identity.bg)}>
+                <AppIcon className={cn("h-4 w-4", identity.text)} />
+              </div>
+            )}
+            <KonitysSwitcher
+              currentApp={currentApp}
+              apps={apps}
+              favorites={favorites}
+              recents={recents}
+              onSelectApp={onSelectApp}
+              onGoHub={onGoHub}
+            />
+          </div>
         )}
 
         <div className="flex-1" />

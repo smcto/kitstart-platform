@@ -3,14 +3,7 @@ import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
 import { cn } from "./ui/cn";
 import { Home, Star, Clock, ChevronDown } from "lucide-react";
-
-const APP_COLORS = {
-  "Bornes Manager": "bg-indigo-50 text-indigo-500",
-  "Antennes":       "bg-pink-50 text-pink-500",
-  "Stocks":         "bg-emerald-50 text-emerald-500",
-  "Support":        "bg-amber-50 text-amber-500",
-  "Catalog IA":     "bg-violet-50 text-violet-500",
-};
+import { getAppIdentity } from "./appIdentity";
 
 export function KonitysSwitcher({
   currentApp,
@@ -103,7 +96,8 @@ export function KonitysSwitcher({
             </div>
             <div className="max-h-[240px] overflow-auto px-2 pb-2">
               {filtered.map((a) => {
-                const dotColor = APP_COLORS[a.name] || "bg-gray-50 text-gray-400";
+                const ident = getAppIdentity(a.name);
+                const AppIcon = ident.icon;
                 return (
                   <button
                     key={a.name}
@@ -116,8 +110,8 @@ export function KonitysSwitcher({
                       setOpen(false);
                     }}
                   >
-                    <span className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[11px] font-bold", dotColor)}>
-                      {a.name.slice(0, 2).toUpperCase()}
+                    <span className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-lg", ident.bg)}>
+                      {AppIcon ? <AppIcon className={cn("h-4 w-4", ident.text)} /> : <span className={cn("text-[11px] font-bold", ident.text)}>{a.name.slice(0, 2).toUpperCase()}</span>}
                     </span>
                     <div className="min-w-0 flex-1">
                       <div className="font-medium truncate">{a.name}</div>
@@ -152,16 +146,14 @@ function Section({ title, icon, items, onPick }) {
       </div>
       <div className="space-y-0.5">
         {items.map((name) => {
-          const dotColor = APP_COLORS[name];
+          const ident = getAppIdentity(name);
           return (
             <button
               key={name}
               className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-left text-[13px] hover:bg-[--k-surface-2] transition"
               onClick={() => onPick?.(name)}
             >
-              {dotColor && (
-                <span className={cn("h-2 w-2 rounded-full", dotColor.split(" ")[0].replace("50", "400"))} />
-              )}
+              <span className={cn("h-2 w-2 rounded-full", ident.dot)} />
               {name}
             </button>
           );
