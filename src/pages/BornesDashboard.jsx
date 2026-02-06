@@ -150,21 +150,33 @@ export default function BornesDashboard() {
 /* ── Sub-component ────────────────────────────────── */
 
 function MiniStat({ icon: Icon, label, value, trend }) {
-  const trendColor = trend === "up" ? "text-emerald-600" : trend === "down" ? "text-red-600" : "text-[--k-primary]";
-  const trendBg = trend === "up" ? "bg-emerald-50" : trend === "down" ? "bg-red-50" : "bg-[--k-primary-2]";
-  const valuePill = trend === "up" ? "bg-emerald-50 text-emerald-700" : trend === "down" ? "bg-red-50 text-red-700" : "bg-indigo-50 text-indigo-700";
+  const gradients = {
+    up: "from-emerald-50 to-teal-50/50 border-emerald-200/60",
+    down: "from-red-50 to-rose-50/50 border-red-200/60",
+    neutral: "from-indigo-50 to-blue-50/50 border-indigo-200/60",
+  };
+  const colors = {
+    up: { icon: "bg-emerald-100 text-emerald-600", value: "text-emerald-700" },
+    down: { icon: "bg-red-100 text-red-600", value: "text-red-700" },
+    neutral: { icon: "bg-indigo-100 text-indigo-600", value: "text-indigo-700" },
+  };
+  const key = trend || "neutral";
+  const g = gradients[key];
+  const c = colors[key];
   return (
-    <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03] px-4 py-3">
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-[11px] font-medium text-[--k-muted]">{label}</span>
-        <Icon className={cn("h-[14px] w-[14px]", trendColor)} />
-      </div>
-      <div className="flex items-center gap-2">
-        <span className={cn("inline-flex items-center rounded-lg px-2 py-0.5 text-[16px] font-bold tabular-nums", valuePill)}>
-          {value}
+    <div className={cn("rounded-2xl border bg-gradient-to-br shadow-sm px-4 py-3", g)}>
+      <div className="flex items-center gap-2.5">
+        <span className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-xl", c.icon)}>
+          <Icon className="h-[16px] w-[16px]" />
         </span>
-        {trend === "up" && <ArrowUpRight className="h-3.5 w-3.5 text-emerald-500" />}
-        {trend === "down" && <ArrowDownRight className="h-3.5 w-3.5 text-red-500" />}
+        <div>
+          <div className="text-[11px] font-medium text-[--k-muted]">{label}</div>
+          <div className="flex items-center gap-1.5">
+            <span className={cn("text-[18px] font-bold tabular-nums", c.value)}>{value}</span>
+            {trend === "up" && <ArrowUpRight className="h-3.5 w-3.5 text-emerald-500" />}
+            {trend === "down" && <ArrowDownRight className="h-3.5 w-3.5 text-red-500" />}
+          </div>
+        </div>
       </div>
     </div>
   );
