@@ -58,8 +58,74 @@ const DEFAULT_SECTIONS = [
   },
 ];
 
+function Tooltip({ label, children }) {
+  return (
+    <div className="group/tip relative">
+      {children}
+      <div className="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 opacity-0 transition-opacity group-hover/tip:opacity-100">
+        <div className="whitespace-nowrap rounded-lg bg-[--k-text] px-2.5 py-1.5 text-[12px] font-medium text-white shadow-lg">
+          {label}
+        </div>
+        <div className="absolute right-full top-1/2 -translate-y-1/2 border-[5px] border-transparent border-r-[--k-text]" />
+      </div>
+    </div>
+  );
+}
+
 export function Sidebar({ appName, collapsed, onToggle, activeKey, sections }) {
   const resolvedSections = sections || APP_SIDEBARS[appName] || DEFAULT_SECTIONS;
+
+  function NavItem({ item }) {
+    const Icon = item.icon;
+    const active = item.key === activeKey;
+    const link = (
+      <a
+        href={item.to}
+        className={cn(
+          "flex items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] font-medium transition",
+          collapsed ? "justify-center px-0" : "justify-start",
+          active
+            ? "bg-[--k-primary]/[0.08] text-[--k-primary]"
+            : "text-[--k-muted] hover:bg-[--k-surface-2] hover:text-[--k-text]"
+        )}
+      >
+        <Icon className={cn("h-[18px] w-[18px] shrink-0", active ? "text-[--k-primary]" : "")} />
+        {!collapsed && <span>{item.label}</span>}
+        {active && !collapsed && (
+          <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[--k-primary]" />
+        )}
+      </a>
+    );
+
+    if (collapsed) {
+      return <Tooltip label={item.label}>{link}</Tooltip>;
+    }
+    return link;
+  }
+
+  function BottomLink({ icon: Icon, label, href, onClick }) {
+    const el = onClick ? "button" : "a";
+    const props = onClick ? { onClick } : { href };
+    const inner = (
+      <span className={cn(
+        "flex items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] font-medium text-[--k-muted] hover:bg-[--k-surface-2] hover:text-[--k-text] transition",
+        collapsed && "justify-center px-0",
+        onClick && "w-full"
+      )}>
+        <Icon className="h-[18px] w-[18px] shrink-0" />
+        {!collapsed && <span>{label}</span>}
+      </span>
+    );
+
+    const element = onClick
+      ? <button {...props} className="w-full">{inner}</button>
+      : <a {...props}>{inner}</a>;
+
+    if (collapsed) {
+      return <Tooltip label={label}>{element}</Tooltip>;
+    }
+    return element;
+  }
 
   return (
     <aside
@@ -81,58 +147,21 @@ export function Sidebar({ appName, collapsed, onToggle, activeKey, sections }) {
                 <div className="mx-3 mb-2 border-t border-[--k-border]" />
               )}
               <nav className="space-y-0.5 px-2">
-                {section.items.map((it) => {
-                  const Icon = it.icon;
-                  const active = it.key === activeKey;
-                  return (
-                    <a
-                      key={it.key}
-                      href={it.to}
-                      title={collapsed ? it.label : undefined}
-                      className={cn(
-                        "flex items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] font-medium transition",
-                        collapsed ? "justify-center px-0" : "justify-start",
-                        active
-                          ? "bg-[--k-primary]/[0.08] text-[--k-primary]"
-                          : "text-[--k-muted] hover:bg-[--k-surface-2] hover:text-[--k-text]"
-                      )}
-                    >
-                      <Icon className={cn("h-[18px] w-[18px] shrink-0", active ? "text-[--k-primary]" : "")} />
-                      {!collapsed && <span>{it.label}</span>}
-                      {active && !collapsed && (
-                        <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[--k-primary]" />
-                      )}
-                    </a>
-                  );
-                })}
+                {section.items.map((it) => (
+                  <NavItem key={it.key} item={it} />
+                ))}
               </nav>
             </div>
           ))}
         </div>
 
         <div className="border-t border-[--k-border] px-2 py-2 space-y-0.5">
-          <a
-            href="#"
-            className={cn(
-              "flex items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] font-medium text-[--k-muted] hover:bg-[--k-surface-2] hover:text-[--k-text] transition",
-              collapsed && "justify-center px-0"
-            )}
-          >
-            <HelpCircle className="h-[18px] w-[18px] shrink-0" />
-            {!collapsed && <span>Aide</span>}
-          </a>
-          <button
-            className={cn(
-              "flex w-full items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] font-medium text-[--k-muted] hover:bg-[--k-surface-2] hover:text-[--k-text] transition",
-              collapsed && "justify-center px-0"
-            )}
+          <BottomLink icon={HelpCircle} label="Aide" href="#" />
+          <BottomLink
+            icon={collapsed ? ChevronsRight : ChevronsLeft}
+            label={collapsed ? "Déplier" : "Réduire"}
             onClick={onToggle}
-          >
-            {collapsed
-              ? <ChevronsRight className="h-[18px] w-[18px] shrink-0" />
-              : <><ChevronsLeft className="h-[18px] w-[18px] shrink-0" /><span>Réduire</span></>
-            }
-          </button>
+          />
         </div>
       </div>
     </aside>
