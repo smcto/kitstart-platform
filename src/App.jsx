@@ -1,7 +1,12 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Hub from "./pages/Hub.jsx";
+import BornesDashboard from "./pages/BornesDashboard.jsx";
 import BornesList from "./pages/BornesList.jsx";
+import AntennesDashboard from "./pages/AntennesDashboard.jsx";
+import AntennesList from "./pages/AntennesList.jsx";
+import StockDashboard from "./pages/StockDashboard.jsx";
+import StockList from "./pages/StockList.jsx";
 
 function Placeholder({ name }) {
   return (
@@ -16,9 +21,20 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Hub />} />
-      <Route path="/bornes" element={<BornesList />} />
-      <Route path="/antennes" element={<BornesList />} />
-      <Route path="/stocks" element={<BornesList />} />
+
+      {/* Bornes Manager */}
+      <Route path="/bornes" element={<BornesDashboard />} />
+      <Route path="/bornes/list" element={<BornesList />} />
+
+      {/* Antennes Selfizee */}
+      <Route path="/antennes" element={<AntennesDashboard />} />
+      <Route path="/antennes/list" element={<AntennesList />} />
+
+      {/* Stock Manager */}
+      <Route path="/stocks" element={<StockDashboard />} />
+      <Route path="/stocks/produits" element={<StockList />} />
+
+      {/* Shared */}
       <Route path="/support" element={<BornesList />} />
       <Route path="/catalog" element={<BornesList />} />
       <Route path="/events" element={<Placeholder name="Événements" />} />
