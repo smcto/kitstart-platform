@@ -106,7 +106,7 @@ export default function BornesCarte() {
         subtitle="Localisation des bornes par parc"
       />
 
-      <div className="flex h-[calc(100vh-48px-110px)] gap-0 -mx-5 -mb-5 border-t border-[--k-border]">
+      <div className="flex h-[calc(100vh-48px-130px)] gap-0 rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03] overflow-hidden">
 
         {/* Left filter panel */}
         <div className="w-[260px] shrink-0 border-r border-[--k-border] bg-white overflow-y-auto">
