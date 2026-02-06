@@ -1,5 +1,6 @@
 import React from "react";
 import { cn } from "./ui/cn";
+import { getAppIdentity } from "./appIdentity";
 import {
   LayoutDashboard, Monitor, CalendarDays, Download, ReceiptText, Settings,
   ChevronsLeft, ChevronsRight, HelpCircle, BarChart3, AlertTriangle,
@@ -130,6 +131,7 @@ function Tooltip({ label, children }) {
 
 export function Sidebar({ appName, collapsed, onToggle, activeKey, sections }) {
   const resolvedSections = sections || APP_SIDEBARS[appName] || DEFAULT_SECTIONS;
+  const identity = getAppIdentity(appName);
 
   function NavItem({ item }) {
     const Icon = item.icon;
@@ -141,14 +143,14 @@ export function Sidebar({ appName, collapsed, onToggle, activeKey, sections }) {
           "flex items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] font-medium transition",
           collapsed ? "justify-center px-0" : "justify-start",
           active
-            ? "bg-[--k-primary]/[0.08] text-[--k-primary]"
+            ? cn(identity.activeBg, identity.activeText)
             : "text-[--k-muted] hover:bg-[--k-surface-2] hover:text-[--k-text]"
         )}
       >
-        <Icon className={cn("h-[18px] w-[18px] shrink-0", active ? "text-[--k-primary]" : "")} />
+        <Icon className={cn("h-[18px] w-[18px] shrink-0", active ? identity.activeText : "")} />
         {!collapsed && <span>{item.label}</span>}
         {active && !collapsed && (
-          <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[--k-primary]" />
+          <span className={cn("ml-auto h-1.5 w-1.5 rounded-full", identity.dot)} />
         )}
       </a>
     );
