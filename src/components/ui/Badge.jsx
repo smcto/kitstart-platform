@@ -15,13 +15,13 @@ export function Badge({ className, ...props }) {
 
 export function StatusPill({ status }) {
   const map = {
-    ONLINE: { bg: "bg-emerald-50", dot: "bg-emerald-500", t: "Online" },
-    WARNING: { bg: "bg-amber-50", dot: "bg-amber-500", t: "Warning" },
-    OFFLINE: { bg: "bg-red-50", dot: "bg-red-500", t: "Offline" },
+    ONLINE: { bg: "bg-emerald-50", dot: "bg-emerald-500", text: "text-emerald-700", t: "Online" },
+    WARNING: { bg: "bg-amber-50", dot: "bg-amber-500", text: "text-amber-700", t: "Warning" },
+    OFFLINE: { bg: "bg-red-50", dot: "bg-red-500", text: "text-red-700", t: "Offline" },
   };
-  const s = map[status] ?? { bg: "bg-gray-50", dot: "bg-gray-400", t: status ?? "—" };
+  const s = map[status] ?? { bg: "bg-gray-50", dot: "bg-gray-400", text: "text-gray-600", t: status ?? "—" };
   return (
-    <span className={cn("inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium", s.bg)}>
+    <span className={cn("inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold", s.bg, s.text)}>
       <span className={cn("h-1.5 w-1.5 rounded-full", s.dot)} />
       {s.t}
     </span>

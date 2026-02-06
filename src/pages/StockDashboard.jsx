@@ -26,12 +26,12 @@ const ALERTES_STOCK = [
 ];
 
 const TOP_PRODUITS = [
-  { name: "Câble USB-C 2m",         stock: 1240, mouvement: "+320",  tendance: "up" },
-  { name: "Écran tactile 10\"",      stock: 342,  mouvement: "-45",   tendance: "down" },
-  { name: "Batterie Li-ion 5000mAh", stock: 890,  mouvement: "+120",  tendance: "up" },
-  { name: "Carte mère v4.1",        stock: 215,  mouvement: "-30",   tendance: "down" },
-  { name: "Module WiFi 6E",         stock: 678,  mouvement: "+85",   tendance: "up" },
-  { name: "Support mural acier",    stock: 456,  mouvement: "+60",   tendance: "up" },
+  { name: "Câble USB-C 2m",         stock: 1240, mouvement: "+320",  tendance: "up",   categorie: "Connectique" },
+  { name: "Écran tactile 10\"",      stock: 342,  mouvement: "-45",   tendance: "down", categorie: "Écran" },
+  { name: "Batterie Li-ion 5000mAh", stock: 890,  mouvement: "+120",  tendance: "up",  categorie: "Énergie" },
+  { name: "Carte mère v4.1",        stock: 215,  mouvement: "-30",   tendance: "down", categorie: "Composant" },
+  { name: "Module WiFi 6E",         stock: 678,  mouvement: "+85",   tendance: "up",   categorie: "Réseau" },
+  { name: "Support mural acier",    stock: 456,  mouvement: "+60",   tendance: "up",   categorie: "Accessoire" },
 ];
 
 const STATUT_COLORS = {
@@ -97,7 +97,7 @@ export default function StockDashboard() {
                   <td className="px-4 py-2 tabular-nums">{c.produits}</td>
                   <td className="px-4 py-2 font-medium tabular-nums">{c.total}</td>
                   <td className="px-4 py-2">
-                    <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-medium", STATUT_COLORS[c.statut])}>
+                    <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-semibold", STATUT_COLORS[c.statut])}>
                       {c.statut}
                     </span>
                   </td>
@@ -118,23 +118,30 @@ export default function StockDashboard() {
             <span className="text-[11px] font-medium text-amber-600 bg-amber-50 rounded-full px-2 py-0.5">{ALERTES_STOCK.length}</span>
           </div>
           <div className="divide-y divide-[--k-border]">
-            {ALERTES_STOCK.map((a) => (
-              <div key={a.id} className="px-4 py-2.5">
-                <div className="flex items-center justify-between mb-0.5">
-                  <span className="text-[12px] font-medium text-[--k-text] truncate">{a.produit}</span>
-                  <span className="text-[12px] font-semibold tabular-nums text-red-600">{a.stock}/{a.seuil}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] text-[--k-muted]">{a.site}</span>
-                  <div className="h-1.5 w-16 rounded-full bg-[--k-surface-2] overflow-hidden">
-                    <div
-                      className="h-full rounded-full bg-red-400"
-                      style={{ width: `${(a.stock / a.seuil) * 100}%` }}
-                    />
+            {ALERTES_STOCK.map((a) => {
+              const pct = Math.round((a.stock / a.seuil) * 100);
+              const level = pct < 30 ? "critical" : "low";
+              return (
+                <div key={a.id} className="px-4 py-2.5">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[12px] font-medium text-[--k-text] truncate">{a.produit}</span>
+                    <span className={cn(
+                      "rounded-full px-1.5 py-0.5 text-[10px] font-semibold tabular-nums",
+                      level === "critical" ? "bg-red-50 text-red-600" : "bg-amber-50 text-amber-600"
+                    )}>{a.stock}/{a.seuil}</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-[11px] text-[--k-muted]">{a.site}</span>
+                    <div className="h-1.5 w-20 rounded-full bg-[--k-surface-2] overflow-hidden">
+                      <div
+                        className={cn("h-full rounded-full", level === "critical" ? "bg-red-400" : "bg-amber-400")}
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
@@ -153,15 +160,18 @@ export default function StockDashboard() {
           </div>
           <div className="divide-y divide-[--k-border]">
             {TOP_PRODUITS.map((p, i) => (
-              <div key={p.name} className="flex items-center gap-3 px-4 py-2">
+              <div key={p.name} className="flex items-center gap-3 px-4 py-2.5">
                 <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-[--k-surface-2] text-[11px] font-semibold text-[--k-muted]">{i + 1}</span>
                 <div className="min-w-0 flex-1">
-                  <div className="text-[12px] font-medium text-[--k-text] truncate">{p.name}</div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[12px] font-medium text-[--k-text] truncate">{p.name}</span>
+                    <span className="rounded px-1.5 py-0.5 text-[10px] font-medium bg-[--k-surface-2] text-[--k-muted]">{p.categorie}</span>
+                  </div>
                 </div>
                 <span className="text-[12px] font-semibold tabular-nums text-[--k-text]">{p.stock}</span>
                 <span className={cn(
-                  "flex items-center gap-0.5 text-[11px] font-medium tabular-nums",
-                  p.tendance === "up" ? "text-emerald-600" : "text-red-500"
+                  "inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[10px] font-medium tabular-nums",
+                  p.tendance === "up" ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"
                 )}>
                   {p.tendance === "up" ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
                   {p.mouvement}
@@ -197,8 +207,8 @@ export default function StockDashboard() {
                   <td className="px-4 py-2 tabular-nums">{f.commandes}</td>
                   <td className="px-4 py-2">
                     <span className={cn(
-                      "text-[11px] font-semibold tabular-nums",
-                      f.fiabilite >= 95 ? "text-emerald-600" : "text-amber-600"
+                      "rounded-full px-2 py-0.5 text-[11px] font-semibold tabular-nums",
+                      f.fiabilite >= 95 ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"
                     )}>
                       {f.fiabilite}%
                     </span>

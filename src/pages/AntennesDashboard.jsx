@@ -20,17 +20,23 @@ const ANTENNES_BY_REGION = [
 ];
 
 const RECENT_CONTACTS = [
-  { id: 1, name: "Mairie de Rennes",     type: "Collectivité", antennes: 4, status: "actif" },
-  { id: 2, name: "CC Pays de Vannes",    type: "Collectivité", antennes: 3, status: "actif" },
-  { id: 3, name: "Salle Olympe, Lyon",   type: "Événement",    antennes: 2, status: "actif" },
-  { id: 4, name: "Palais des Congrès",   type: "Lieu",         antennes: 5, status: "actif" },
-  { id: 5, name: "Festival Interceltique", type: "Événement",  antennes: 6, status: "en pause" },
+  { id: 1, name: "Mairie de Rennes",     type: "Collectivité", antennes: 4, status: "actif",    region: "Bretagne" },
+  { id: 2, name: "CC Pays de Vannes",    type: "Collectivité", antennes: 3, status: "actif",    region: "Bretagne" },
+  { id: 3, name: "Salle Olympe, Lyon",   type: "Événement",    antennes: 2, status: "actif",    region: "Rhône-Alpes" },
+  { id: 4, name: "Palais des Congrès",   type: "Lieu",         antennes: 5, status: "actif",    region: "IDF" },
+  { id: 5, name: "Festival Interceltique", type: "Événement",  antennes: 6, status: "en pause", region: "Bretagne" },
 ];
 
 const TYPE_COLORS = {
-  classik:  "bg-blue-100 text-blue-700",
-  spherik:  "bg-violet-100 text-violet-700",
-  prestige: "bg-amber-100 text-amber-700",
+  classik:  "bg-blue-50 text-blue-600",
+  spherik:  "bg-violet-50 text-violet-600",
+  prestige: "bg-amber-50 text-amber-600",
+};
+
+const CONTACT_TYPE_COLORS = {
+  "Collectivité": "bg-blue-50 text-blue-600",
+  "Événement":    "bg-violet-50 text-violet-600",
+  "Lieu":         "bg-emerald-50 text-emerald-600",
 };
 
 /* ── Page ──────────────────────────────────────────── */
@@ -149,14 +155,20 @@ export default function AntennesDashboard() {
           <tbody>
             {RECENT_CONTACTS.map((c) => (
               <tr key={c.id} className="border-t border-[--k-border] hover:bg-[--k-surface-2]/30 transition-colors">
-                <td className="px-4 py-2 font-medium text-[--k-text]">{c.name}</td>
-                <td className="px-4 py-2 text-[--k-muted]">{c.type}</td>
-                <td className="px-4 py-2 tabular-nums">{c.antennes}</td>
+                <td className="px-4 py-2">
+                  <div className="font-medium text-[--k-text]">{c.name}</div>
+                  <div className="text-[11px] text-[--k-muted]">{c.region}</div>
+                </td>
+                <td className="px-4 py-2">
+                  <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-medium", CONTACT_TYPE_COLORS[c.type] || "bg-gray-50 text-gray-600")}>{c.type}</span>
+                </td>
+                <td className="px-4 py-2 tabular-nums font-medium">{c.antennes}</td>
                 <td className="px-4 py-2">
                   <span className={cn(
-                    "inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium",
+                    "inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-semibold",
                     c.status === "actif" ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"
                   )}>
+                    <span className={cn("h-1.5 w-1.5 rounded-full", c.status === "actif" ? "bg-emerald-500" : "bg-amber-500")} />
                     {c.status}
                   </span>
                 </td>

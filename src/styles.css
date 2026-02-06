@@ -6,13 +6,13 @@
 
 /* Konitys tokens — clean modern */
 :root{
-  --k-bg:#F4F4F5;
+  --k-bg:#F0F1F6;
   --k-surface:#FFFFFF;
-  --k-surface-2:#F0F0F1;
-  --k-border:#E4E4E7;
+  --k-surface-2:#EAEBF0;
+  --k-border:#E0E1E9;
 
-  --k-text:#18181B;
-  --k-muted:#71717A;
+  --k-text:#1A1D26;
+  --k-muted:#6B7084;
 
   --k-primary:#4F46E5;
   --k-primary-2:#EEF2FF;
