@@ -12,8 +12,8 @@ import { cn } from "../components/ui/cn";
 const APPS = [
   { name: "Bornes Manager", desc: "Bornes, downloads, retry",       to: "/bornes",   icon: Monitor,      color: "bg-indigo-50 text-indigo-500" },
   { name: "Events",         desc: "Gestion des événements",         to: "/events",   icon: CalendarDays, color: "bg-rose-50 text-rose-500" },
-  { name: "Antennes",       desc: "Réseau & supervision",           to: "/antennes", icon: Radio,        color: "bg-pink-50 text-pink-500" },
-  { name: "Stocks",         desc: "Consommables & alertes",         to: "/stocks",   icon: Package,      color: "bg-emerald-50 text-emerald-500" },
+  { name: "Antennes Selfizee", desc: "Réseau & supervision",         to: "/antennes", icon: Radio,        color: "bg-pink-50 text-pink-500" },
+  { name: "Stock Manager",    desc: "Consommables & alertes",       to: "/stocks",   icon: Package,      color: "bg-emerald-50 text-emerald-500" },
   { name: "Abonnements",    desc: "Gestion des abonnements",        to: "/support",  icon: Users,        color: "bg-sky-50 text-sky-500" },
   { name: "Support",        desc: "Support & Knowledge base",       to: "/support",  icon: Headphones,   color: "bg-amber-50 text-amber-500" },
   { name: "Catalog IA",     desc: "Contenus & visuels",             to: "/catalog",  icon: Sparkles,     color: "bg-violet-50 text-violet-500" },

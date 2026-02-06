@@ -3,7 +3,9 @@ import { cn } from "./ui/cn";
 import {
   LayoutDashboard, Monitor, CalendarDays, Download, ReceiptText, Settings,
   ChevronsLeft, ChevronsRight, HelpCircle, BarChart3, AlertTriangle,
-  Wifi, WifiOff, Map, RefreshCw, FileText, Bug
+  Wifi, WifiOff, Map, RefreshCw, FileText, Bug,
+  Radio, Users, Building, Package, ShoppingCart, ArrowLeftRight,
+  Upload, Layers, Truck, Warehouse
 } from "lucide-react";
 
 const APP_SIDEBARS = {
@@ -12,7 +14,7 @@ const APP_SIDEBARS = {
       label: "Général",
       items: [
         { key: "dashboard", label: "Vue d'ensemble", icon: LayoutDashboard, to: "/bornes" },
-        { key: "devices", label: "Bornes", icon: Monitor, to: "/bornes" },
+        { key: "devices", label: "Bornes", icon: Monitor, to: "/bornes/list" },
         { key: "map", label: "Carte", icon: Map, to: "/bornes" },
       ],
     },
@@ -31,6 +33,60 @@ const APP_SIDEBARS = {
         { key: "downloads", label: "Téléchargements", icon: Download, to: "/downloads" },
         { key: "sync", label: "Synchronisation", icon: RefreshCw, to: "/downloads" },
         { key: "reports", label: "Rapports", icon: FileText, to: "/stats" },
+      ],
+    },
+    {
+      label: "Configuration",
+      items: [
+        { key: "settings", label: "Paramètres", icon: Settings, to: "/settings" },
+      ],
+    },
+  ],
+  "Antennes Selfizee": [
+    {
+      label: "Général",
+      items: [
+        { key: "dashboard", label: "Tableau de bord", icon: LayoutDashboard, to: "/antennes" },
+        { key: "antennes", label: "Antennes", icon: Radio, to: "/antennes/list" },
+        { key: "map", label: "Carte", icon: Map, to: "/antennes" },
+      ],
+    },
+    {
+      label: "Relations",
+      items: [
+        { key: "contacts", label: "Contacts", icon: Users, to: "/antennes/list" },
+        { key: "sites", label: "Sites", icon: Building, to: "/antennes/list" },
+      ],
+    },
+    {
+      label: "Configuration",
+      items: [
+        { key: "settings", label: "Paramètres", icon: Settings, to: "/settings" },
+      ],
+    },
+  ],
+  "Stock Manager": [
+    {
+      label: "Catalogue",
+      items: [
+        { key: "dashboard", label: "Tableau de bord", icon: LayoutDashboard, to: "/stocks" },
+        { key: "produits", label: "Produits", icon: Package, to: "/stocks/produits" },
+        { key: "fournisseurs", label: "Fournisseurs", icon: Truck, to: "/stocks/produits" },
+        { key: "sites", label: "Sites", icon: Warehouse, to: "/stocks/produits" },
+      ],
+    },
+    {
+      label: "Inventaire",
+      items: [
+        { key: "stocks", label: "Stocks", icon: Layers, to: "/stocks/produits" },
+        { key: "mouvements", label: "Mouvements", icon: ArrowLeftRight, to: "/stocks/produits" },
+      ],
+    },
+    {
+      label: "Commandes",
+      items: [
+        { key: "commandes", label: "Commandes", icon: ShoppingCart, to: "/stocks" },
+        { key: "import", label: "Import / Export", icon: Upload, to: "/stocks" },
       ],
     },
     {

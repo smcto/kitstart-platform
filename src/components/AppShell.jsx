@@ -14,8 +14,8 @@ export function AppShell({ currentApp, children, activeKey, hubMode = false }) {
   const apps = useMemo(() => ([
     { name: "Konitys Hub", badge: "Home", description: "Catalogue des apps" },
     { name: "Bornes Manager", description: "Parc, events, logs, diagnostics" },
-    { name: "Antennes", description: "Réseau & supervision" },
-    { name: "Stocks", description: "Consommables & alertes" },
+    { name: "Antennes Selfizee", description: "Réseau & supervision" },
+    { name: "Stock Manager", description: "Consommables & alertes" },
     { name: "Support", description: "Tickets & suivi" },
     { name: "Catalog IA", description: "Génération de contenus / visuels" },
   ]), []);
@@ -25,14 +25,14 @@ export function AppShell({ currentApp, children, activeKey, hubMode = false }) {
       <Topbar
         currentApp={currentApp}
         apps={apps.filter(a => a.name !== "Konitys Hub")}
-        favorites={["Bornes Manager", "Stocks"]}
-        recents={["Antennes", "Support"]}
+        favorites={["Bornes Manager", "Stock Manager"]}
+        recents={["Antennes Selfizee", "Support"]}
         onGoHub={() => (window.location.href = "/")}
         onSelectApp={(name) => {
           const map = {
             "Bornes Manager": "/bornes",
-            "Antennes": "/antennes",
-            "Stocks": "/stocks",
+            "Antennes Selfizee": "/antennes",
+            "Stock Manager": "/stocks",
             "Support": "/support",
             "Catalog IA": "/catalog",
           };
