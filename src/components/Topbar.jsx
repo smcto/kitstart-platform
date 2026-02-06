@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "./ui/Button";
-import { Bell, HelpCircle, Search, User, LogOut, Settings, CreditCard, ChevronDown, Check, Inbox, X, ArrowRight, Menu } from "lucide-react";
+import { Bell, HelpCircle, Search, User, LogOut, Settings, CreditCard, ChevronDown, Check, Inbox, X, ArrowRight, Menu, Plus, ListTodo, FileText, ShoppingCart, Package, Radio, Monitor, Truck } from "lucide-react";
 import { KonitysSwitcher } from "./KonitysSwitcher";
 import { cn } from "./ui/cn";
 import { getAppIdentity } from "./appIdentity";
@@ -24,6 +24,7 @@ export function Topbar({
   const [notifOpen, setNotifOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [addOpen, setAddOpen] = useState(false);
   const [searchQ, setSearchQ] = useState("");
   const searchRef = useRef(null);
 
@@ -113,11 +114,50 @@ export function Topbar({
           </>
         )}
 
+        {/* Quick add */}
+        <div className="relative">
+          <button
+            className="flex h-8 items-center gap-1.5 rounded-lg bg-[--k-primary] px-2.5 text-white hover:brightness-110 transition shadow-sm shadow-[--k-primary]/20"
+            onClick={() => { setAddOpen(v => !v); setNotifOpen(false); setAccountOpen(false); }}
+          >
+            <Plus className="h-4 w-4" />
+            <span className="hidden sm:inline text-[12px] font-medium">Créer</span>
+          </button>
+          {addOpen && (
+            <>
+              <div className="fixed inset-0 z-30" onClick={() => setAddOpen(false)} />
+              <div className="absolute right-0 z-40 mt-2 w-[260px] rounded-2xl border border-[--k-border] bg-white shadow-xl shadow-black/8 py-1">
+                <div className="px-3 py-2 border-b border-[--k-border]">
+                  <span className="text-[11px] font-semibold uppercase tracking-wide text-[--k-muted]">Création rapide</span>
+                </div>
+                <div className="py-1">
+                  <QuickAddItem icon={FileText} label="Nouveau devis" app="Bornes Manager" />
+                  <QuickAddItem icon={Monitor} label="Enregistrer une borne" app="Bornes Manager" />
+                  <QuickAddItem icon={Radio} label="Ajouter une antenne" app="Antennes Selfizee" />
+                  <QuickAddItem icon={ShoppingCart} label="Nouvelle commande" app="Stock Manager" />
+                  <QuickAddItem icon={Truck} label="Ajouter un fournisseur" app="Stock Manager" />
+                  <QuickAddItem icon={Package} label="Créer un produit" app="Stock Manager" />
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Tasks */}
+        <button
+          className="relative flex h-9 w-9 items-center justify-center rounded-lg text-[--k-muted] hover:bg-[--k-surface-2] hover:text-[--k-text] transition"
+          title="Mes tâches"
+          onClick={() => window.location.href = '/'}
+        >
+          <ListTodo className="h-[18px] w-[18px]" />
+          <span className="absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[--k-primary] text-[9px] font-bold text-white ring-2 ring-white">3</span>
+        </button>
+
         {/* Notifications */}
         <div className="relative">
           <button
             className="relative flex h-9 w-9 items-center justify-center rounded-lg text-[--k-muted] hover:bg-[--k-surface-2] hover:text-[--k-text] transition"
-            onClick={() => { setNotifOpen(v => !v); setAccountOpen(false); }}
+            onClick={() => { setNotifOpen(v => !v); setAccountOpen(false); setAddOpen(false); }}
           >
             <Bell className="h-[18px] w-[18px]" />
             <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-white" />
@@ -219,6 +259,18 @@ function NotifItem({ title, desc, time, unread }) {
         <div className="text-[13px] font-medium text-[--k-text]">{title}</div>
         <div className="text-xs text-[--k-muted] truncate">{desc}</div>
         <div className="mt-1 text-[11px] text-[--k-muted]/60">{time}</div>
+      </div>
+    </button>
+  );
+}
+
+function QuickAddItem({ icon: Icon, label, app }) {
+  return (
+    <button className="flex w-full items-center gap-2.5 px-3 py-2 text-left hover:bg-[--k-surface-2] transition">
+      <Icon className="h-4 w-4 text-[--k-primary] shrink-0" />
+      <div className="min-w-0 flex-1">
+        <div className="text-[13px] font-medium text-[--k-text]">{label}</div>
+        <div className="text-[10px] text-[--k-muted]">{app}</div>
       </div>
     </button>
   );
