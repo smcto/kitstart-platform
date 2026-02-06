@@ -10,18 +10,25 @@ export function KonitysSwitcher({
   onGoHub,
 }) {
   const [open, setOpen] = useState(false);
+  const identity = getAppIdentity(currentApp);
+  const AppIcon = identity.icon;
 
   return (
     <div className="relative">
       <button
-        className="flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-left transition hover:bg-[--k-surface-2]"
+        className="flex h-8 items-center gap-2 rounded-lg px-2.5 text-left transition hover:bg-[--k-surface-2]"
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="menu"
         aria-expanded={open}
       >
         <span className="text-[13px] font-bold text-[--k-primary]">KONITYS</span>
-        <span className="text-[--k-muted]">/</span>
-        <span className="text-[13px] font-medium text-[--k-text]">{currentApp}</span>
+        <span className="text-[--k-muted]/40">/</span>
+        {AppIcon && (
+          <span className={cn("flex h-5 w-5 items-center justify-center rounded", identity.bg)}>
+            <AppIcon className={cn("h-3.5 w-3.5", identity.text)} />
+          </span>
+        )}
+        <span className={cn("text-[13px] font-semibold", identity.text)}>{currentApp}</span>
         <ChevronDown className="h-3 w-3 text-[--k-muted]" />
       </button>
 

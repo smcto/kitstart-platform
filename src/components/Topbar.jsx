@@ -20,29 +20,19 @@ export function Topbar({
 
   return (
     <header className="sticky top-0 z-20 border-b border-[--k-border] bg-white/95 backdrop-blur-sm">
-      {/* Colored top stripe per app */}
-      {identity && <div className={cn("h-[3px] w-full", identity.topStripe)} />}
-      <div className={cn("flex items-center gap-3 px-4", identity ? "h-[45px]" : "h-12")}>
+      <div className="flex h-12 items-center gap-3 px-4">
         {hubMode ? (
           <div className="flex items-center gap-2">
             <span className="text-[15px] font-bold tracking-tight text-[--k-primary]">KONITYS</span>
             <span className="text-[13px] text-[--k-muted]">Platform Hub</span>
           </div>
         ) : (
-          <div className="flex items-center gap-2.5">
-            {/* App icon badge */}
-            {AppIcon && (
-              <div className={cn("flex h-7 w-7 items-center justify-center rounded-lg", identity.bg)}>
-                <AppIcon className={cn("h-4 w-4", identity.text)} />
-              </div>
-            )}
-            <KonitysSwitcher
-              currentApp={currentApp}
-              apps={apps}
-              onSelectApp={onSelectApp}
-              onGoHub={onGoHub}
-            />
-          </div>
+          <KonitysSwitcher
+            currentApp={currentApp}
+            apps={apps}
+            onSelectApp={onSelectApp}
+            onGoHub={onGoHub}
+          />
         )}
 
         <div className="flex-1" />
