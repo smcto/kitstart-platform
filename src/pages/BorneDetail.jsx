@@ -125,10 +125,12 @@ export default function BorneDetail() {
             </span>
           </div>
         </div>
-        <Button variant="primary">
-          <Edit3 className="h-4 w-4 mr-1.5" />
-          Modifier
-        </Button>
+        <a href={`/bornes/${BORNE.id}/edit`}>
+          <Button type="button" variant="primary">
+            <Edit3 className="h-4 w-4 mr-1.5" />
+            Modifier
+          </Button>
+        </a>
       </div>
 
       {/* ── Main grid ── */}
