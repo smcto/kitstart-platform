@@ -19,9 +19,9 @@ export function Button({
   ...props
 }) {
   const sizes = {
-    sm: "h-7 px-2.5 text-xs",
-    md: "h-8 px-3 text-[13px]",
-    lg: "h-9 px-4 text-sm",
+    sm: "h-8 px-3 text-[13px]",
+    md: "h-9 px-4 text-sm",
+    lg: "h-10 px-5 text-sm",
   };
   return (
     <button
