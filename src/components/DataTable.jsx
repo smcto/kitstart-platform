@@ -26,7 +26,9 @@ export function DataTable({ title, subtitle, rows }) {
           <tbody>
             {rows.map((r) => (
               <tr key={r.id} className="border-t border-[--k-border] hover:bg-[--k-surface-2]/30 transition-colors">
-                <td className="px-4 py-1.5 font-medium">{r.name}</td>
+                <td className="px-4 py-1.5 font-medium">
+                  <a href={`/bornes/${r.name}`} className="text-[--k-primary] hover:underline">{r.name}</a>
+                </td>
                 <td className="px-4 py-1.5 text-[--k-muted] tabular-nums">{r.id}</td>
                 <td className="px-4 py-1.5">{r.location}</td>
                 <td className="px-4 py-1.5"><StatusPill status={r.status} /></td>
