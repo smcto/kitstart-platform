@@ -22,12 +22,12 @@
   --k-warning:#EA580C;
   --k-danger:#DC2626;
 
-  --k-sidebar-bg:#FFFFFF;
-  --k-sidebar-text:#71717A;
-  --k-sidebar-text-active:#18181B;
-  --k-sidebar-hover:#F4F4F5;
-  --k-sidebar-border:#E4E4E7;
-  --k-sidebar-section:#A1A1AA;
+  --k-sidebar-bg:#1E293B;
+  --k-sidebar-text:#94A3B8;
+  --k-sidebar-text-active:#F1F5F9;
+  --k-sidebar-hover:#273548;
+  --k-sidebar-border:#334155;
+  --k-sidebar-section:#64748B;
 
   --k-sidebar-w: 224px;
   --k-sidebar-rail: 52px;

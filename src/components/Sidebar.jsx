@@ -120,10 +120,10 @@ function Tooltip({ label, children }) {
     <div className="group/tip relative">
       {children}
       <div className="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 opacity-0 transition-opacity group-hover/tip:opacity-100">
-        <div className="whitespace-nowrap rounded-lg bg-[--k-text] px-2.5 py-1.5 text-[12px] font-medium text-white shadow-lg">
+        <div className="whitespace-nowrap rounded-lg bg-slate-900 px-2.5 py-1.5 text-[12px] font-medium text-white shadow-lg">
           {label}
         </div>
-        <div className="absolute right-full top-1/2 -translate-y-1/2 border-[5px] border-transparent border-r-[--k-text]" />
+        <div className="absolute right-full top-1/2 -translate-y-1/2 border-[5px] border-transparent border-r-slate-900" />
       </div>
     </div>
   );
@@ -140,20 +140,19 @@ export function Sidebar({ appName, collapsed, onToggle, activeKey, sections }) {
       <a
         href={item.to}
         className={cn(
-          "relative flex items-center gap-2.5 rounded-lg px-2.5 py-[6px] text-[13px] transition-all duration-150",
+          "relative flex items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] font-medium transition-all duration-150",
           collapsed ? "justify-center px-0" : "justify-start",
           active
-            ? "font-semibold text-[--k-primary]"
-            : "font-medium text-[--k-muted] hover:text-[--k-text]"
+            ? "bg-white/10 text-white"
+            : "text-[--k-sidebar-text] hover:bg-white/[0.06] hover:text-[--k-sidebar-text-active]"
         )}
       >
-        {/* Tiny left indicator */}
         {active && !collapsed && (
-          <span className="absolute left-0 top-[7px] bottom-[7px] w-[2px] rounded-full bg-[--k-primary]" />
+          <span className="absolute left-0 top-[6px] bottom-[6px] w-[2px] rounded-full bg-white" />
         )}
         <Icon className={cn(
-          "h-[16px] w-[16px] shrink-0 transition",
-          active ? "text-[--k-primary]" : "text-[--k-muted]/60"
+          "h-[16px] w-[16px] shrink-0",
+          active ? "text-white" : ""
         )} />
         {!collapsed && <span>{item.label}</span>}
       </a>
@@ -169,7 +168,7 @@ export function Sidebar({ appName, collapsed, onToggle, activeKey, sections }) {
     const props = onClick ? { onClick } : { href };
     const inner = (
       <span className={cn(
-        "flex items-center gap-2.5 rounded-lg px-2.5 py-[6px] text-[13px] font-medium text-[--k-muted]/70 hover:text-[--k-muted] transition",
+        "flex items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] font-medium text-[--k-sidebar-text] hover:bg-white/[0.06] hover:text-[--k-sidebar-text-active] transition",
         collapsed && "justify-center px-0",
         onClick && "w-full"
       )}>
@@ -191,21 +190,21 @@ export function Sidebar({ appName, collapsed, onToggle, activeKey, sections }) {
   return (
     <aside
       className={cn(
-        "sticky top-12 h-[calc(100vh-48px)] shrink-0 transition-all duration-200",
-        collapsed ? "w-[48px]" : "w-[200px]"
+        "sticky top-12 h-[calc(100vh-48px)] shrink-0 bg-[--k-sidebar-bg] transition-all duration-200",
+        collapsed ? "w-[52px]" : "w-[210px]"
       )}
     >
       <div className="flex h-full flex-col justify-between">
-        <div className="flex-1 overflow-y-auto pt-4 pb-2">
+        <div className="flex-1 overflow-y-auto pt-3 pb-2">
           {resolvedSections.map((section, si) => (
             <div key={section.label} className={cn(si > 0 && "mt-4")}>
               {!collapsed && (
-                <div className="mb-1 px-4 text-[10px] font-semibold uppercase tracking-widest text-[--k-muted]/40">
+                <div className="mb-1 px-4 text-[10px] font-semibold uppercase tracking-widest text-[--k-sidebar-section]">
                   {section.label}
                 </div>
               )}
               {collapsed && si > 0 && (
-                <div className="mx-2.5 mb-2 border-t border-[--k-border]/50" />
+                <div className="mx-3 mb-2 border-t border-[--k-sidebar-border]" />
               )}
               <nav className="space-y-0.5 px-2">
                 {section.items.map((it) => (
@@ -216,7 +215,7 @@ export function Sidebar({ appName, collapsed, onToggle, activeKey, sections }) {
           ))}
         </div>
 
-        <div className="px-2 pb-3 space-y-0.5">
+        <div className="border-t border-[--k-sidebar-border] px-2 py-2 space-y-0.5">
           <BottomLink icon={HelpCircle} label="Aide" href="#" />
           <BottomLink
             icon={collapsed ? ChevronsRight : ChevronsLeft}
