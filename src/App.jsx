@@ -4,6 +4,7 @@ import Hub from "./pages/Hub.jsx";
 import BornesDashboard from "./pages/BornesDashboard.jsx";
 import BornesList from "./pages/BornesList.jsx";
 import BornesCarte from "./pages/BornesCarte.jsx";
+import BorneDetail from "./pages/BorneDetail.jsx";
 import AntennesDashboard from "./pages/AntennesDashboard.jsx";
 import AntennesList from "./pages/AntennesList.jsx";
 import StockDashboard from "./pages/StockDashboard.jsx";
@@ -27,6 +28,7 @@ export default function App() {
       <Route path="/bornes" element={<BornesDashboard />} />
       <Route path="/bornes/list" element={<BornesList />} />
       <Route path="/bornes/carte" element={<BornesCarte />} />
+      <Route path="/bornes/:id" element={<BorneDetail />} />
 
       {/* Antennes Selfizee */}
       <Route path="/antennes" element={<AntennesDashboard />} />

@@ -101,7 +101,12 @@ export default function BornesCarte() {
 
   return (
     <AppShell currentApp="Bornes Manager" activeKey="map">
-      <div className="flex h-[calc(100vh-48px-40px)] gap-0 -m-5">
+      <PageHeader
+        title="Carte"
+        subtitle="Localisation des bornes par parc"
+      />
+
+      <div className="flex h-[calc(100vh-48px-110px)] gap-0 -mx-5 -mb-5 border-t border-[--k-border]">
 
         {/* Left filter panel */}
         <div className="w-[260px] shrink-0 border-r border-[--k-border] bg-white overflow-y-auto">

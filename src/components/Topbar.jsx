@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "./ui/Button";
-import { Bell, HelpCircle, Search, User, LogOut, Settings, CreditCard, ChevronDown, Check, Inbox, X, ArrowRight } from "lucide-react";
+import { Bell, HelpCircle, Search, User, LogOut, Settings, CreditCard, ChevronDown, Check, Inbox, X, ArrowRight, Menu } from "lucide-react";
 import { KonitysSwitcher } from "./KonitysSwitcher";
 import { cn } from "./ui/cn";
 import { getAppIdentity } from "./appIdentity";
@@ -18,6 +18,7 @@ export function Topbar({
   apps,
   onSelectApp,
   onGoHub,
+  onToggleMobileMenu,
   hubMode,
 }) {
   const [notifOpen, setNotifOpen] = useState(false);
@@ -36,11 +37,20 @@ export function Topbar({
 
   return (
     <header className="sticky top-0 z-20 border-b border-[--k-border] bg-white/95 backdrop-blur-sm">
-      <div className="flex h-12 items-center gap-3 px-4">
+      <div className="flex h-12 items-center gap-2 px-3 md:gap-3 md:px-4">
+        {/* Mobile hamburger */}
+        {!hubMode && onToggleMobileMenu && (
+          <button
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-[--k-muted] hover:bg-[--k-surface-2] md:hidden"
+            onClick={onToggleMobileMenu}
+          >
+            <Menu className="h-[18px] w-[18px]" />
+          </button>
+        )}
         {hubMode ? (
           <div className="flex items-center gap-2">
             <span className="text-[15px] font-bold tracking-tight text-[--k-text]">KONITYS</span>
-            <span className="text-[13px] text-[--k-muted]">Platform Hub</span>
+            <span className="hidden sm:inline text-[13px] text-[--k-muted]">Platform Hub</span>
           </div>
         ) : (
           <KonitysSwitcher
@@ -64,7 +74,7 @@ export function Topbar({
         {searchOpen && (
           <>
             <div className="fixed inset-0 z-40 bg-black/20 backdrop-blur-[2px]" onClick={() => { setSearchOpen(false); setSearchQ(""); }} />
-            <div className="fixed left-1/2 top-[60px] z-50 w-[480px] -translate-x-1/2 rounded-xl border border-[--k-border] bg-white shadow-xl shadow-black/10">
+            <div className="fixed left-3 right-3 top-[60px] z-50 mx-auto max-w-[480px] rounded-xl border border-[--k-border] bg-white shadow-xl shadow-black/10">
               <div className="flex items-center gap-2.5 border-b border-[--k-border] px-4 py-3">
                 <Search className="h-4 w-4 text-[--k-muted] shrink-0" />
                 <input
@@ -115,7 +125,7 @@ export function Topbar({
           {notifOpen && (
             <>
               <div className="fixed inset-0 z-30" onClick={() => setNotifOpen(false)} />
-              <div className="absolute right-0 z-40 mt-2 w-[340px] rounded-xl border border-[--k-border] bg-white shadow-lg shadow-black/5">
+              <div className="absolute right-0 z-40 mt-2 w-[calc(100vw-24px)] sm:w-[340px] max-w-[340px] rounded-xl border border-[--k-border] bg-white shadow-lg shadow-black/5">
                 <div className="flex items-center justify-between border-b border-[--k-border] px-4 py-3">
                   <span className="text-[14px] font-semibold">Notifications</span>
                   <button className="text-xs text-[--k-primary] hover:underline">Tout marquer lu</button>
@@ -152,11 +162,11 @@ export function Topbar({
           )}
         </div>
 
-        <button className="flex h-9 w-9 items-center justify-center rounded-lg text-[--k-muted] hover:bg-[--k-surface-2] hover:text-[--k-text] transition">
+        <button className="hidden sm:flex h-9 w-9 items-center justify-center rounded-lg text-[--k-muted] hover:bg-[--k-surface-2] hover:text-[--k-text] transition">
           <HelpCircle className="h-[18px] w-[18px]" />
         </button>
 
-        <div className="mx-0.5 h-6 w-px bg-[--k-border]" />
+        <div className="hidden sm:block mx-0.5 h-6 w-px bg-[--k-border]" />
 
         {/* Account */}
         <div className="relative">
@@ -165,7 +175,7 @@ export function Topbar({
             onClick={() => { setAccountOpen(v => !v); setNotifOpen(false); }}
           >
             <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-blue-600 text-[11px] font-semibold text-white">SM</span>
-            <span className="text-[13px] font-medium text-[--k-text]">Seb</span>
+            <span className="hidden sm:inline text-[13px] font-medium text-[--k-text]">Seb</span>
             <ChevronDown className="h-3 w-3 text-[--k-muted]" />
           </button>
           {accountOpen && (
