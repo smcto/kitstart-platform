@@ -1,43 +1,107 @@
 import React from "react";
 import { AppShell } from "../components/AppShell";
-import { PageHeader } from "../components/PageHeader";
-import { Button } from "../components/ui/Button";
-import { ArrowRight } from "lucide-react";
+import {
+  Monitor, Radio, Package, Headphones, Sparkles,
+  CalendarDays, Settings, Users, BarChart3, ShieldCheck, Megaphone
+} from "lucide-react";
 
 const APPS = [
-  { name: "Bornes Manager", desc: "Parc, events, logs, diagnostics", to: "/bornes" },
-  { name: "Antennes", desc: "Réseau & supervision", to: "/antennes" },
-  { name: "Stocks", desc: "Consommables & alertes", to: "/stocks" },
-  { name: "Support", desc: "Tickets & suivi", to: "/support" },
-  { name: "Catalog IA", desc: "Génération de contenus / visuels", to: "/catalog" },
+  {
+    name: "Bornes Manager",
+    desc: "Configuration des bornes, downloads, retry",
+    to: "/bornes",
+    icon: Monitor,
+    color: "bg-indigo-50 text-indigo-500",
+  },
+  {
+    name: "Events",
+    desc: "Gestion des événements",
+    to: "/events",
+    icon: CalendarDays,
+    color: "bg-rose-50 text-rose-500",
+  },
+  {
+    name: "Antennes",
+    desc: "Réseau & supervision",
+    to: "/antennes",
+    icon: Radio,
+    color: "bg-pink-50 text-pink-500",
+  },
+  {
+    name: "Stocks",
+    desc: "Consommables & alertes",
+    to: "/stocks",
+    icon: Package,
+    color: "bg-emerald-50 text-emerald-500",
+  },
+  {
+    name: "Abonnements",
+    desc: "Gestion des abonnements",
+    to: "/support",
+    icon: Users,
+    color: "bg-sky-50 text-sky-500",
+  },
+  {
+    name: "Support",
+    desc: "Support & Knowledge base",
+    to: "/support",
+    icon: Headphones,
+    color: "bg-amber-50 text-amber-500",
+  },
+  {
+    name: "Catalog IA",
+    desc: "Génération de contenus / visuels",
+    to: "/catalog",
+    icon: Sparkles,
+    color: "bg-violet-50 text-violet-500",
+  },
+  {
+    name: "Statistiques",
+    desc: "Rapports & analytics",
+    to: "/stats",
+    icon: BarChart3,
+    color: "bg-teal-50 text-teal-500",
+  },
+  {
+    name: "Admin",
+    desc: "Administration du système",
+    to: "/settings",
+    icon: ShieldCheck,
+    color: "bg-slate-100 text-slate-500",
+  },
 ];
 
 export default function Hub() {
   return (
-    <AppShell currentApp="Konitys Hub" activeKey="dashboard">
-      <PageHeader
-        title="Konitys Hub"
-        subtitle="Accès rapide à vos applications"
-        primaryLabel="Ajouter une app"
-        secondaryLabel="Gérer les accès"
-        onPrimary={() => alert("Ajouter")}
-        onSecondary={() => alert("Accès")}
-      />
+    <AppShell currentApp="Konitys Hub" activeKey="dashboard" hubMode>
+      <div className="flex flex-col items-center px-6 pt-16 pb-12">
+        <h1 className="text-2xl font-bold text-[--k-text]">Applications</h1>
+        <p className="mt-2 text-sm text-[--k-muted]">Sélectionnez une application pour commencer</p>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {APPS.map((a) => (
-          <a
-            key={a.name}
-            href={a.to}
-            className="group flex items-center justify-between gap-3 rounded-xl border border-[--k-border] bg-white px-4 py-3 transition hover:border-[--k-primary-border] hover:bg-[--k-primary-2]/30"
-          >
-            <div className="min-w-0">
-              <div className="text-[13px] font-semibold text-[--k-text]">{a.name}</div>
-              <div className="text-xs text-[--k-muted] truncate">{a.desc}</div>
-            </div>
-            <ArrowRight className="h-4 w-4 shrink-0 text-[--k-muted] transition group-hover:text-[--k-primary] group-hover:translate-x-0.5" />
-          </a>
-        ))}
+        <div className="mt-10 grid w-full max-w-[920px] grid-cols-1 gap-4 sm:grid-cols-2">
+          {APPS.map((app) => {
+            const Icon = app.icon;
+            return (
+              <a
+                key={app.name}
+                href={app.to}
+                className="group flex items-center gap-4 rounded-2xl border border-[--k-border] bg-white px-5 py-5 transition hover:border-[--k-primary-border] hover:shadow-md hover:shadow-[--k-primary]/5"
+              >
+                <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${app.color}`}>
+                  <Icon className="h-6 w-6" />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-[15px] font-semibold text-[--k-text] group-hover:text-[--k-primary] transition">
+                    {app.name}
+                  </div>
+                  <div className="mt-0.5 text-[13px] text-[--k-muted] truncate">
+                    {app.desc}
+                  </div>
+                </div>
+              </a>
+            );
+          })}
+        </div>
       </div>
     </AppShell>
   );
