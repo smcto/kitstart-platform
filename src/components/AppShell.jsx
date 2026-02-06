@@ -25,8 +25,6 @@ export function AppShell({ currentApp, children, activeKey, hubMode = false }) {
       <Topbar
         currentApp={currentApp}
         apps={apps.filter(a => a.name !== "Konitys Hub")}
-        favorites={["Bornes Manager", "Stock Manager"]}
-        recents={["Antennes Selfizee", "Support"]}
         onGoHub={() => (window.location.href = "/")}
         onSelectApp={(name) => {
           const map = {
