@@ -5,7 +5,7 @@ export function Badge({ className, ...props }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-md border border-[--k-border] bg-white px-2 py-0.5 text-xs font-medium text-[--k-text]",
+        "inline-flex items-center rounded-full border border-[--k-border] bg-white px-2.5 py-0.5 text-xs font-medium text-[--k-text]",
         className
       )}
       {...props}
@@ -21,7 +21,7 @@ export function StatusPill({ status }) {
   };
   const s = map[status] ?? { bg: "bg-gray-50", dot: "bg-gray-400", t: status ?? "—" };
   return (
-    <span className={cn("inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-xs font-medium", s.bg)}>
+    <span className={cn("inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium", s.bg)}>
       <span className={cn("h-1.5 w-1.5 rounded-full", s.dot)} />
       {s.t}
     </span>

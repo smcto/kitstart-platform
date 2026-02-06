@@ -35,7 +35,7 @@ export function KonitysSwitcher({
       {open && (
         <>
           <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} aria-hidden="true" />
-          <div className="absolute z-40 mt-1 w-[260px] rounded-xl border border-[--k-border] bg-white shadow-lg shadow-black/5 py-1">
+          <div className="absolute z-40 mt-1 w-[260px] rounded-2xl border border-[--k-border] bg-white shadow-lg shadow-black/8 py-1">
 
             {/* Hub link */}
             <button

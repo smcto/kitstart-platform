@@ -104,7 +104,7 @@ export default function BorneDetail() {
 
       {/* Header */}
       <div className="mb-6 flex items-start gap-4">
-        <a href="/bornes/list" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[--k-border] bg-white hover:bg-[--k-surface-2] transition">
+        <a href="/bornes/list" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03] hover:bg-[--k-surface-2] transition">
           <ArrowLeft className="h-4 w-4 text-[--k-muted]" />
         </a>
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-100">
@@ -179,7 +179,7 @@ export default function BorneDetail() {
           </Section>
 
           {/* Coût de fabrication */}
-          <div className="rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 px-5 py-4 text-white">
+          <div className="rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-400 px-5 py-4 text-white shadow-sm shadow-emerald-500/20">
             <div className="text-[13px] font-medium text-white/80">Coût total de fabrication</div>
             <div className="text-2xl font-bold">{BORNE.coutFabrication} €</div>
           </div>
@@ -305,7 +305,7 @@ export default function BorneDetail() {
 
 function Section({ title, icon: Icon, children, compact }) {
   return (
-    <div className="rounded-xl border border-[--k-border] bg-white">
+    <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03]">
       <div className="flex items-center gap-2 border-b border-[--k-border] px-4 py-2.5">
         {Icon && (
           <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[--k-surface-2]">

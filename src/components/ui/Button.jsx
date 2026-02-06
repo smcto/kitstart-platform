@@ -3,7 +3,7 @@ import { cn } from "./cn";
 
 const VARIANTS = {
   primary:
-    "bg-[--k-primary] text-white border-[--k-primary] hover:brightness-110",
+    "bg-[--k-primary] text-white border-[--k-primary] hover:brightness-110 shadow-sm shadow-[--k-primary]/20",
   secondary:
     "bg-white text-[--k-text] border-[--k-border] hover:bg-[--k-surface-2]",
   ghost:
@@ -26,7 +26,7 @@ export function Button({
   return (
     <button
       className={cn(
-        "inline-flex items-center justify-center gap-1.5 rounded-lg border font-medium transition",
+        "inline-flex items-center justify-center gap-1.5 rounded-xl border font-medium transition",
         sizes[size],
         VARIANTS[variant],
         className

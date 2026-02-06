@@ -4,7 +4,7 @@ import { Button } from "./ui/Button";
 
 export function DataTable({ title, subtitle, rows }) {
   return (
-    <div className="rounded-xl border border-[--k-border] bg-white overflow-hidden">
+    <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03] overflow-hidden">
       {(title || subtitle) && (
         <div className="flex items-baseline justify-between gap-3 border-b border-[--k-border] px-4 py-2.5">
           <div className="text-[13px] font-semibold">{title}</div>

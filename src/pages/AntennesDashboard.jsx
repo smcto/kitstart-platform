@@ -56,7 +56,7 @@ export default function AntennesDashboard() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
 
         {/* Map placeholder */}
-        <div className="lg:col-span-2 rounded-xl border border-[--k-border] bg-white overflow-hidden">
+        <div className="lg:col-span-2 rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03] overflow-hidden">
           <div className="flex items-center justify-between border-b border-[--k-border] px-4 py-2.5">
             <div className="flex items-center gap-2">
               <MapPin className="h-4 w-4 text-[--k-primary]" />
@@ -101,7 +101,7 @@ export default function AntennesDashboard() {
         </div>
 
         {/* Répartition par région */}
-        <div className="rounded-xl border border-[--k-border] bg-white">
+        <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03]">
           <div className="flex items-center justify-between border-b border-[--k-border] px-4 py-2.5">
             <div className="flex items-center gap-2">
               <Layers className="h-4 w-4 text-[--k-primary]" />
@@ -129,7 +129,7 @@ export default function AntennesDashboard() {
       </div>
 
       {/* Contacts récents */}
-      <div className="mt-4 rounded-xl border border-[--k-border] bg-white overflow-hidden">
+      <div className="mt-4 rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03] overflow-hidden">
         <div className="flex items-center justify-between border-b border-[--k-border] px-4 py-2.5">
           <div className="flex items-center gap-2">
             <Building className="h-4 w-4 text-[--k-primary]" />

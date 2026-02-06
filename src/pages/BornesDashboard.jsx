@@ -66,7 +66,7 @@ export default function BornesDashboard() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
 
         {/* Répartition par parc */}
-        <div className="lg:col-span-2 rounded-xl border border-[--k-border] bg-white">
+        <div className="lg:col-span-2 rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03]">
           <div className="flex items-center justify-between border-b border-[--k-border] px-4 py-2.5">
             <div className="flex items-center gap-2">
               <Building2 className="h-4 w-4 text-[--k-primary]" />
@@ -91,7 +91,7 @@ export default function BornesDashboard() {
         </div>
 
         {/* Alertes récentes */}
-        <div className="rounded-xl border border-[--k-border] bg-white">
+        <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03]">
           <div className="flex items-center justify-between border-b border-[--k-border] px-4 py-2.5">
             <div className="flex items-center gap-2">
               <AlertTriangle className="h-4 w-4 text-amber-500" />
@@ -120,7 +120,7 @@ export default function BornesDashboard() {
       </div>
 
       {/* Activity feed */}
-      <div className="mt-4 rounded-xl border border-[--k-border] bg-white">
+      <div className="mt-4 rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03]">
         <div className="flex items-center justify-between border-b border-[--k-border] px-4 py-2.5">
           <div className="flex items-center gap-2">
             <Clock className="h-4 w-4 text-[--k-primary]" />
@@ -147,7 +147,7 @@ export default function BornesDashboard() {
 
 function MiniStat({ icon: Icon, label, value, trend }) {
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-[--k-border] bg-white px-4 py-3">
+    <div className="flex items-center gap-3 rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03] px-4 py-3">
       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[--k-surface-2]">
         <Icon className="h-[18px] w-[18px] text-[--k-muted]" />
       </div>

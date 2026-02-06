@@ -114,7 +114,7 @@ export default function Hub() {
               <a
                 key={app.name}
                 href={app.to}
-                className="group flex items-center gap-3 rounded-xl border border-[--k-border] bg-white px-4 py-3 transition hover:border-[--k-primary-border] hover:shadow-md hover:shadow-[--k-primary]/5"
+                className="group flex items-center gap-3 rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03] px-4 py-3 transition hover:border-[--k-primary-border] hover:shadow-md hover:shadow-[--k-primary]/5"
               >
                 <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${app.color}`}>
                   <Icon className="h-[18px] w-[18px]" />
@@ -133,7 +133,7 @@ export default function Hub() {
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
 
           {/* Todolist */}
-          <div className="rounded-xl border border-[--k-border] bg-white">
+          <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03]">
             <div className="flex items-center justify-between border-b border-[--k-border] px-4 py-2.5">
               <div className="flex items-center gap-2">
                 <Check className="h-4 w-4 text-[--k-primary]" />
@@ -166,7 +166,7 @@ export default function Hub() {
           </div>
 
           {/* News */}
-          <div className="rounded-xl border border-[--k-border] bg-white">
+          <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03]">
             <div className="flex items-center justify-between border-b border-[--k-border] px-4 py-2.5">
               <div className="flex items-center gap-2">
                 <Megaphone className="h-4 w-4 text-[--k-primary]" />
@@ -196,7 +196,7 @@ export default function Hub() {
           </div>
 
           {/* Birthdays */}
-          <div className="rounded-xl border border-[--k-border] bg-white px-4 py-3">
+          <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03] px-4 py-3">
             <div className="flex items-center gap-2 mb-3">
               <Cake className="h-4 w-4 text-pink-400" />
               <span className="text-[11px] font-semibold uppercase tracking-wider text-[--k-muted]/70">Anniversaires</span>
