@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Hub from "./pages/Hub.jsx";
 import BornesDashboard from "./pages/BornesDashboard.jsx";
 import BornesList from "./pages/BornesList.jsx";
+import BornesCarte from "./pages/BornesCarte.jsx";
 import AntennesDashboard from "./pages/AntennesDashboard.jsx";
 import AntennesList from "./pages/AntennesList.jsx";
 import StockDashboard from "./pages/StockDashboard.jsx";
@@ -25,6 +26,7 @@ export default function App() {
       {/* Bornes Manager */}
       <Route path="/bornes" element={<BornesDashboard />} />
       <Route path="/bornes/list" element={<BornesList />} />
+      <Route path="/bornes/carte" element={<BornesCarte />} />
 
       {/* Antennes Selfizee */}
       <Route path="/antennes" element={<AntennesDashboard />} />
