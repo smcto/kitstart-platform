@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { AppShell } from "../components/AppShell";
 import {
   Monitor, Radio, Package, Headphones, Sparkles,
-  CalendarDays, Settings, Users, BarChart3, ShieldCheck, Megaphone
+  CalendarDays, Settings, Users, BarChart3, ShieldCheck,
+  Coffee, Zap, Lightbulb, Smile
 } from "lucide-react";
 
 const APPS = [
@@ -71,27 +72,87 @@ const APPS = [
   },
 ];
 
+const TIPS = [
+  { text: "Cmd+K ouvre la palette de recherche depuis n'importe quelle page.", icon: Zap },
+  { text: "Tu peux mettre une app en favori pour la retrouver plus vite.", icon: Lightbulb },
+  { text: "Les raccourcis clavier sont listés dans l'aide de chaque app.", icon: Zap },
+  { text: "Le support est dispo 7j/7, n'hésite pas !", icon: Coffee },
+  { text: "Pense à vérifier les alertes bornes chaque matin.", icon: Lightbulb },
+  { text: "Un doute ? Le changelog est dans les paramètres.", icon: Zap },
+  { text: "Les exports CSV sont disponibles sur toutes les tables.", icon: Lightbulb },
+];
+
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h < 6) return "Bonne nuit";
+  if (h < 12) return "Bonjour";
+  if (h < 14) return "Bon appétit";
+  if (h < 18) return "Bon après-midi";
+  return "Bonsoir";
+}
+
+function getEmoji() {
+  const h = new Date().getHours();
+  if (h < 6) return "\u{1F31C}";
+  if (h < 12) return "\u{1F44B}";
+  if (h < 14) return "\u{2615}";
+  if (h < 18) return "\u{2600}\u{FE0F}";
+  return "\u{1F31A}";
+}
+
 export default function Hub() {
+  const tip = useMemo(() => TIPS[Math.floor(Math.random() * TIPS.length)], []);
+  const TipIcon = tip.icon;
+
   return (
     <AppShell currentApp="Konitys Hub" activeKey="dashboard" hubMode>
-      <div className="flex flex-col items-center px-6 pt-16 pb-12">
-        <h1 className="text-2xl font-bold text-[--k-text]">Applications</h1>
-        <p className="mt-2 text-sm text-[--k-muted]">Sélectionnez une application pour commencer</p>
+      <div className="mx-auto max-w-[960px] px-6 pt-12 pb-12">
 
-        <div className="mt-10 grid w-full max-w-[920px] grid-cols-1 gap-4 sm:grid-cols-2">
+        {/* Greeting */}
+        <div className="mb-10">
+          <h1 className="text-[28px] font-bold text-[--k-text]">
+            {getGreeting()} Seb {getEmoji()}
+          </h1>
+          <p className="mt-1 text-[15px] text-[--k-muted]">
+            Qu'est-ce qu'on fait de beau aujourd'hui ?
+          </p>
+        </div>
+
+        {/* Tip of the day */}
+        <div className="mb-8 flex items-start gap-3 rounded-xl border border-amber-200/60 bg-gradient-to-r from-amber-50/80 to-orange-50/40 px-4 py-3">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-600">
+            <TipIcon className="h-4 w-4" />
+          </div>
+          <div className="min-w-0 pt-0.5">
+            <div className="text-[12px] font-semibold uppercase tracking-wider text-amber-700/70">
+              Le tip du jour
+            </div>
+            <div className="mt-0.5 text-[13px] text-amber-900/80">
+              {tip.text}
+            </div>
+          </div>
+        </div>
+
+        {/* Apps grid */}
+        <div className="mb-3">
+          <div className="text-[11px] font-semibold uppercase tracking-widest text-[--k-muted]/60">
+            Applications
+          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {APPS.map((app) => {
             const Icon = app.icon;
             return (
               <a
                 key={app.name}
                 href={app.to}
-                className="group flex items-center gap-4 rounded-2xl border border-[--k-border] bg-white px-5 py-5 transition hover:border-[--k-primary-border] hover:shadow-md hover:shadow-[--k-primary]/5"
+                className="group flex items-center gap-4 rounded-2xl border border-[--k-border] bg-white px-5 py-4 transition hover:border-[--k-primary-border] hover:shadow-md hover:shadow-[--k-primary]/5"
               >
-                <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${app.color}`}>
-                  <Icon className="h-6 w-6" />
+                <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${app.color}`}>
+                  <Icon className="h-5 w-5" />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-[15px] font-semibold text-[--k-text] group-hover:text-[--k-primary] transition">
+                  <div className="text-[14px] font-semibold text-[--k-text] group-hover:text-[--k-primary] transition">
                     {app.name}
                   </div>
                   <div className="mt-0.5 text-[13px] text-[--k-muted] truncate">
