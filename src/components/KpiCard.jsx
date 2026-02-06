@@ -3,12 +3,12 @@ import { Card } from "./ui/Card";
 import { cn } from "./ui/cn";
 
 const SOFT_COLORS = [
-  "from-blue-50 to-indigo-50/50",
-  "from-rose-50 to-pink-50/50",
-  "from-emerald-50 to-teal-50/50",
-  "from-violet-50 to-purple-50/50",
-  "from-amber-50 to-orange-50/50",
-  "from-sky-50 to-cyan-50/50",
+  "from-indigo-50/80 to-blue-50/60",
+  "from-orange-50/80 to-amber-50/60",
+  "from-emerald-50/80 to-teal-50/60",
+  "from-rose-50/80 to-pink-50/60",
+  "from-amber-50/80 to-yellow-50/60",
+  "from-sky-50/80 to-blue-50/60",
 ];
 
 export function KpiCard({ title, subtitle, value, colorIndex = 0 }) {

@@ -174,7 +174,7 @@ export function Topbar({
             className="flex h-9 items-center gap-2 rounded-lg px-2 hover:bg-[--k-surface-2] transition"
             onClick={() => { setAccountOpen(v => !v); setNotifOpen(false); }}
           >
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-[--k-primary] to-violet-500 text-[11px] font-semibold text-white">SM</span>
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-blue-600 text-[11px] font-semibold text-white">SM</span>
             <span className="hidden sm:inline text-[13px] font-medium text-[--k-text]">Seb</span>
             <ChevronDown className="h-3 w-3 text-[--k-muted]" />
           </button>
@@ -207,7 +207,7 @@ function NotifItem({ title, desc, time, unread }) {
   return (
     <button className={cn(
       "flex w-full gap-3 px-4 py-3 text-left hover:bg-[--k-surface-2] transition",
-      unread && "bg-blue-50/40"
+      unread && "bg-indigo-50/40"
     )}>
       <div className="mt-0.5">
         {unread

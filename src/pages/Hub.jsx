@@ -10,15 +10,15 @@ import { cn } from "../components/ui/cn";
 /* ── Apps ─────────────────────────────────────────── */
 
 const APPS = [
-  { name: "Bornes Manager", desc: "Bornes, downloads, retry",       to: "/bornes",   icon: Monitor,      color: "bg-indigo-50 text-indigo-500" },
-  { name: "Events",         desc: "Gestion des événements",         to: "/events",   icon: CalendarDays, color: "bg-rose-50 text-rose-500" },
-  { name: "Antennes Selfizee", desc: "Réseau & supervision",         to: "/antennes", icon: Radio,        color: "bg-pink-50 text-pink-500" },
-  { name: "Stock Manager",    desc: "Consommables & alertes",       to: "/stocks",   icon: Package,      color: "bg-emerald-50 text-emerald-500" },
-  { name: "Abonnements",    desc: "Gestion des abonnements",        to: "/support",  icon: Users,        color: "bg-sky-50 text-sky-500" },
-  { name: "Support",        desc: "Support & Knowledge base",       to: "/support",  icon: Headphones,   color: "bg-amber-50 text-amber-500" },
-  { name: "Catalog IA",     desc: "Contenus & visuels",             to: "/catalog",  icon: Sparkles,     color: "bg-violet-50 text-violet-500" },
-  { name: "Statistiques",   desc: "Rapports & analytics",           to: "/stats",    icon: BarChart3,    color: "bg-teal-50 text-teal-500" },
-  { name: "Admin",          desc: "Administration système",          to: "/settings", icon: ShieldCheck,  color: "bg-slate-100 text-slate-500" },
+  { name: "Bornes Manager", desc: "Bornes, downloads, retry",       to: "/bornes",   icon: Monitor,      color: "bg-indigo-100/70 text-indigo-600" },
+  { name: "Events",         desc: "Gestion des événements",         to: "/events",   icon: CalendarDays, color: "bg-rose-100/70 text-rose-600" },
+  { name: "Antennes Selfizee", desc: "Réseau & supervision",         to: "/antennes", icon: Radio,        color: "bg-orange-100/70 text-orange-600" },
+  { name: "Stock Manager",    desc: "Consommables & alertes",       to: "/stocks",   icon: Package,      color: "bg-emerald-100/70 text-emerald-600" },
+  { name: "Abonnements",    desc: "Gestion des abonnements",        to: "/support",  icon: Users,        color: "bg-sky-100/70 text-sky-600" },
+  { name: "Support",        desc: "Support & Knowledge base",       to: "/support",  icon: Headphones,   color: "bg-amber-100/70 text-amber-600" },
+  { name: "Catalog IA",     desc: "Contenus & visuels",             to: "/catalog",  icon: Sparkles,     color: "bg-violet-100/70 text-violet-600" },
+  { name: "Statistiques",   desc: "Rapports & analytics",           to: "/stats",    icon: BarChart3,    color: "bg-teal-100/70 text-teal-600" },
+  { name: "Admin",          desc: "Administration système",          to: "/settings", icon: ShieldCheck,  color: "bg-stone-100/70 text-stone-600" },
 ];
 
 /* ── Mock data ────────────────────────────────────── */
@@ -31,9 +31,9 @@ const INITIAL_TODOS = [
 ];
 
 const BIRTHDAYS = [
-  { name: "Marie Dupont",  date: "Aujourd'hui", avatar: "MD", color: "from-pink-400 to-rose-500" },
-  { name: "Lucas Martin",  date: "Demain",      avatar: "LM", color: "from-blue-400 to-indigo-500" },
-  { name: "Camille Roux",  date: "8 fév.",      avatar: "CR", color: "from-emerald-400 to-teal-500" },
+  { name: "Marie Dupont",  date: "Aujourd'hui", avatar: "MD", color: "from-orange-400 to-rose-500" },
+  { name: "Lucas Martin",  date: "Demain",      avatar: "LM", color: "from-indigo-400 to-blue-500" },
+  { name: "Camille Roux",  date: "8 fév.",      avatar: "CR", color: "from-teal-400 to-emerald-500" },
 ];
 
 const NEWS = [
@@ -116,8 +116,8 @@ export default function Hub() {
                 href={app.to}
                 className="group flex items-center gap-3 rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03] px-4 py-3 transition hover:border-[--k-primary-border] hover:shadow-md hover:shadow-[--k-primary]/5"
               >
-                <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${app.color}`}>
-                  <Icon className="h-[18px] w-[18px]" />
+                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${app.color}`}>
+                  <Icon className="h-5 w-5" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="text-[13px] font-semibold text-[--k-text] group-hover:text-[--k-primary] transition">{app.name}</div>
