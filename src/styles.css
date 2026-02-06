@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Konitys tokens (light) */
+:root{
+  --k-bg:#F7F8FA;
+  --k-surface:#FFFFFF;
+  --k-surface-2:#F3F4F6;
+  --k-border:#E5E7EB;
+
+  --k-text:#111827;
+  --k-muted:#6B7280;
+
+  --k-primary:#2563EB;
+  --k-primary-2:#EEF2FF; /* selection */
+  --k-primary-border:#C7D2FE;
+
+  --k-success:#16A34A;
+  --k-warning:#F59E0B;
+  --k-danger:#DC2626;
+}
+
+*{ box-sizing:border-box; }
