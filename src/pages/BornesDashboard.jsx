@@ -48,10 +48,10 @@ export default function BornesDashboard() {
 
       {/* KPIs */}
       <div className="mb-5 grid grid-cols-2 gap-3 xl:grid-cols-4">
-        <KpiCard title="Bornes totales" value="845" colorIndex={0} />
-        <KpiCard title="En agence" value="363" colorIndex={2} />
-        <KpiCard title="En SAV" value="34" colorIndex={4} />
-        <KpiCard title="Hors service" value="28" colorIndex={1} />
+        <KpiCard title="Bornes totales" value="845" icon={Monitor} colorIndex={0} />
+        <KpiCard title="En agence" value="363" icon={MapPin} colorIndex={2} />
+        <KpiCard title="En SAV" value="34" icon={Wrench} colorIndex={4} />
+        <KpiCard title="Hors service" value="28" icon={XCircle} colorIndex={1} />
       </div>
 
       {/* Stats row */}
@@ -146,15 +146,17 @@ export default function BornesDashboard() {
 /* ── Sub-component ────────────────────────────────── */
 
 function MiniStat({ icon: Icon, label, value, trend }) {
+  const trendColor = trend === "up" ? "text-emerald-500" : trend === "down" ? "text-red-500" : "";
+  const trendBg = trend === "up" ? "bg-emerald-50" : trend === "down" ? "bg-red-50" : "bg-[--k-primary-2]";
   return (
     <div className="flex items-center gap-3 rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03] px-4 py-3">
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[--k-surface-2]">
-        <Icon className="h-[18px] w-[18px] text-[--k-muted]" />
+      <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl", trendBg)}>
+        <Icon className={cn("h-[18px] w-[18px]", trendColor || "text-[--k-primary]")} />
       </div>
       <div>
         <div className="text-[11px] text-[--k-muted]">{label}</div>
         <div className="flex items-center gap-1">
-          <span className="text-[16px] font-semibold tabular-nums text-[--k-text]">{value}</span>
+          <span className="text-[18px] font-bold tabular-nums text-[--k-text]">{value}</span>
           {trend === "up" && <ArrowUpRight className="h-3.5 w-3.5 text-emerald-500" />}
           {trend === "down" && <ArrowDownRight className="h-3.5 w-3.5 text-red-500" />}
         </div>

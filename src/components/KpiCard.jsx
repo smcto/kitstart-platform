@@ -1,28 +1,33 @@
 import React from "react";
-import { Card } from "./ui/Card";
 import { cn } from "./ui/cn";
 
-const SOFT_COLORS = [
-  "from-indigo-50/80 to-blue-50/60",
-  "from-orange-50/80 to-amber-50/60",
-  "from-emerald-50/80 to-teal-50/60",
-  "from-rose-50/80 to-pink-50/60",
-  "from-amber-50/80 to-yellow-50/60",
-  "from-sky-50/80 to-blue-50/60",
+const PALETTES = [
+  { bg: "bg-indigo-500",  light: "bg-indigo-400/30", text: "text-white" },
+  { bg: "bg-orange-500",  light: "bg-orange-400/30", text: "text-white" },
+  { bg: "bg-emerald-500", light: "bg-emerald-400/30", text: "text-white" },
+  { bg: "bg-rose-500",    light: "bg-rose-400/30",   text: "text-white" },
+  { bg: "bg-amber-500",   light: "bg-amber-400/30",  text: "text-white" },
+  { bg: "bg-sky-500",     light: "bg-sky-400/30",    text: "text-white" },
 ];
 
-export function KpiCard({ title, subtitle, value, colorIndex = 0 }) {
+export function KpiCard({ title, subtitle, value, icon: Icon, colorIndex = 0 }) {
+  const p = PALETTES[colorIndex % PALETTES.length];
   return (
     <div className={cn(
-      "rounded-2xl border border-[--k-border] bg-gradient-to-br px-4 py-3 shadow-sm shadow-black/[0.02]",
-      SOFT_COLORS[colorIndex % SOFT_COLORS.length]
+      "rounded-2xl px-4 py-4 shadow-md shadow-black/10",
+      p.bg
     )}>
-      <div className="flex items-baseline justify-between gap-3">
+      <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <div className="text-xs font-medium text-[--k-text]/70 truncate">{title}</div>
-          {subtitle && <div className="text-[11px] text-[--k-muted]/60 truncate">{subtitle}</div>}
+          <div className="text-[11px] font-medium text-white/70 uppercase tracking-wide truncate">{title}</div>
+          <div className="mt-1 text-[28px] font-bold leading-none tabular-nums text-white">{value}</div>
+          {subtitle && <div className="mt-1 text-[11px] text-white/60 truncate">{subtitle}</div>}
         </div>
-        <div className="text-xl font-semibold tabular-nums shrink-0 text-[--k-text]">{value}</div>
+        {Icon && (
+          <span className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl", p.light)}>
+            <Icon className="h-5 w-5 text-white" />
+          </span>
+        )}
       </div>
     </div>
   );

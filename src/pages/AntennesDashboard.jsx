@@ -45,11 +45,11 @@ export default function AntennesDashboard() {
 
       {/* KPIs */}
       <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-5">
-        <KpiCard title="Villes" value="174" colorIndex={0} />
-        <KpiCard title="Antennes" value="129" colorIndex={5} />
-        <KpiCard title="Classik" value="102" colorIndex={2} />
-        <KpiCard title="Spherik" value="241" colorIndex={3} />
-        <KpiCard title="Prestige" value="7" colorIndex={4} />
+        <KpiCard title="Villes" value="174" icon={MapPin} colorIndex={0} />
+        <KpiCard title="Antennes" value="129" icon={Radio} colorIndex={5} />
+        <KpiCard title="Classik" value="102" icon={Layers} colorIndex={2} />
+        <KpiCard title="Spherik" value="241" icon={Star} colorIndex={3} />
+        <KpiCard title="Prestige" value="7" icon={Crown} colorIndex={4} />
       </div>
 
       {/* Content */}
