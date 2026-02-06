@@ -71,7 +71,7 @@ export default function StockDashboard() {
 
         {/* Commandes en cours */}
         <div className="lg:col-span-2 rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03] overflow-hidden">
-          <div className="flex items-center justify-between border-b border-[--k-border] px-4 py-2.5">
+          <div className="flex items-center justify-between border-b border-[--k-border] bg-gradient-to-r from-blue-50/60 to-indigo-50/30 px-4 py-2.5">
             <div className="flex items-center gap-2">
               <ShoppingCart className="h-4 w-4 text-[--k-primary]" />
               <span className="text-[13px] font-semibold text-[--k-text]">Commandes en cours</span>
@@ -80,7 +80,7 @@ export default function StockDashboard() {
           </div>
           <table className="w-full text-[13px]">
             <thead>
-              <tr className="border-b border-[--k-border] bg-[--k-surface-2]/50 text-[--k-muted]">
+              <tr className="border-b border-[--k-border] bg-blue-50/30 text-[--k-muted]">
                 <th className="px-4 py-2 text-left text-xs font-medium">Réf.</th>
                 <th className="px-4 py-2 text-left text-xs font-medium">Fournisseur</th>
                 <th className="px-4 py-2 text-left text-xs font-medium">Produits</th>
@@ -110,12 +110,12 @@ export default function StockDashboard() {
 
         {/* Alertes stock */}
         <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03]">
-          <div className="flex items-center justify-between border-b border-[--k-border] px-4 py-2.5">
+          <div className="flex items-center justify-between border-b border-[--k-border] bg-gradient-to-r from-amber-50/50 to-orange-50/30 px-4 py-2.5 rounded-t-2xl">
             <div className="flex items-center gap-2">
               <AlertTriangle className="h-4 w-4 text-amber-500" />
               <span className="text-[13px] font-semibold text-[--k-text]">Alertes stock</span>
             </div>
-            <span className="text-[11px] font-medium text-amber-600 bg-amber-50 rounded-full px-2 py-0.5">{ALERTES_STOCK.length}</span>
+            <span className="text-[11px] font-medium text-amber-600 bg-amber-100/60 rounded-full px-2 py-0.5">{ALERTES_STOCK.length}</span>
           </div>
           <div className="divide-y divide-[--k-border]">
             {ALERTES_STOCK.map((a) => {
@@ -151,7 +151,7 @@ export default function StockDashboard() {
 
         {/* Top produits */}
         <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03]">
-          <div className="flex items-center justify-between border-b border-[--k-border] px-4 py-2.5">
+          <div className="flex items-center justify-between border-b border-[--k-border] bg-gradient-to-r from-indigo-50/50 to-blue-50/30 px-4 py-2.5 rounded-t-2xl">
             <div className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-[--k-primary]" />
               <span className="text-[13px] font-semibold text-[--k-text]">Top produits</span>
@@ -183,7 +183,7 @@ export default function StockDashboard() {
 
         {/* Fournisseurs */}
         <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03] overflow-hidden">
-          <div className="flex items-center justify-between border-b border-[--k-border] px-4 py-2.5">
+          <div className="flex items-center justify-between border-b border-[--k-border] bg-gradient-to-r from-emerald-50/40 to-teal-50/20 px-4 py-2.5">
             <div className="flex items-center gap-2">
               <Truck className="h-4 w-4 text-[--k-primary]" />
               <span className="text-[13px] font-semibold text-[--k-text]">Fournisseurs</span>
@@ -192,7 +192,7 @@ export default function StockDashboard() {
           </div>
           <table className="w-full text-[13px]">
             <thead>
-              <tr className="border-b border-[--k-border] bg-[--k-surface-2]/50 text-[--k-muted]">
+              <tr className="border-b border-[--k-border] bg-blue-50/30 text-[--k-muted]">
                 <th className="px-4 py-2 text-left text-xs font-medium">Nom</th>
                 <th className="px-4 py-2 text-left text-xs font-medium">Produits</th>
                 <th className="px-4 py-2 text-left text-xs font-medium">Cmd.</th>

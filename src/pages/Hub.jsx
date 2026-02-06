@@ -134,12 +134,12 @@ export default function Hub() {
 
           {/* Todolist */}
           <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03]">
-            <div className="flex items-center justify-between border-b border-[--k-border] px-4 py-2.5">
+            <div className="flex items-center justify-between border-b border-[--k-border] bg-gradient-to-r from-indigo-50/50 to-blue-50/30 px-4 py-2.5 rounded-t-2xl">
               <div className="flex items-center gap-2">
                 <Check className="h-4 w-4 text-[--k-primary]" />
                 <span className="text-[13px] font-semibold text-[--k-text]">Mes tâches</span>
               </div>
-              <span className="text-[11px] text-[--k-muted]">{todoDone}/{todos.length}</span>
+              <span className="rounded-full bg-indigo-100/60 px-2 py-0.5 text-[11px] font-medium text-indigo-600">{todoDone}/{todos.length}</span>
             </div>
 
             <form onSubmit={addTodo} className="flex items-center gap-2 border-b border-[--k-border] px-4 py-2">
@@ -167,7 +167,7 @@ export default function Hub() {
 
           {/* News */}
           <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03]">
-            <div className="flex items-center justify-between border-b border-[--k-border] px-4 py-2.5">
+            <div className="flex items-center justify-between border-b border-[--k-border] bg-gradient-to-r from-blue-50/40 to-sky-50/20 px-4 py-2.5 rounded-t-2xl">
               <div className="flex items-center gap-2">
                 <Megaphone className="h-4 w-4 text-[--k-primary]" />
                 <span className="text-[13px] font-semibold text-[--k-text]">Actualités</span>
@@ -196,7 +196,7 @@ export default function Hub() {
           </div>
 
           {/* Birthdays */}
-          <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03] px-4 py-3">
+          <div className="rounded-2xl border border-[--k-border] bg-gradient-to-br from-white to-pink-50/30 shadow-sm shadow-black/[0.03] px-4 py-3">
             <div className="flex items-center gap-2 mb-3">
               <Cake className="h-4 w-4 text-pink-400" />
               <span className="text-[11px] font-semibold uppercase tracking-wider text-[--k-muted]/70">Anniversaires</span>

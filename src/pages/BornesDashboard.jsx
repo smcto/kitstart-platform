@@ -67,7 +67,7 @@ export default function BornesDashboard() {
 
         {/* Répartition par parc */}
         <div className="lg:col-span-2 rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03]">
-          <div className="flex items-center justify-between border-b border-[--k-border] px-4 py-2.5">
+          <div className="flex items-center justify-between border-b border-[--k-border] bg-gradient-to-r from-indigo-50/50 to-blue-50/30 px-4 py-2.5 rounded-t-2xl">
             <div className="flex items-center gap-2">
               <Building2 className="h-4 w-4 text-[--k-primary]" />
               <span className="text-[13px] font-semibold text-[--k-text]">Répartition par parc</span>
@@ -78,7 +78,7 @@ export default function BornesDashboard() {
             {PARCS.map((p) => (
               <div key={p.name} className="flex items-center gap-3">
                 <div className="w-[130px] shrink-0 text-[12px] font-medium text-[--k-text] truncate">{p.name}</div>
-                <div className="flex-1 h-2 rounded-full bg-[--k-surface-2] overflow-hidden">
+                <div className="flex-1 h-2 rounded-full bg-blue-50 overflow-hidden">
                   <div
                     className={cn("h-full rounded-full transition-all", p.color)}
                     style={{ width: `${(p.bornes / p.total) * 100}%` }}
@@ -92,7 +92,7 @@ export default function BornesDashboard() {
 
         {/* Alertes récentes */}
         <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03]">
-          <div className="flex items-center justify-between border-b border-[--k-border] px-4 py-2.5">
+          <div className="flex items-center justify-between border-b border-[--k-border] bg-gradient-to-r from-amber-50/50 to-orange-50/30 px-4 py-2.5 rounded-t-2xl">
             <div className="flex items-center gap-2">
               <AlertTriangle className="h-4 w-4 text-amber-500" />
               <span className="text-[13px] font-semibold text-[--k-text]">Alertes récentes</span>
@@ -124,7 +124,7 @@ export default function BornesDashboard() {
 
       {/* Activity feed */}
       <div className="mt-4 rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03]">
-        <div className="flex items-center justify-between border-b border-[--k-border] px-4 py-2.5">
+        <div className="flex items-center justify-between border-b border-[--k-border] bg-gradient-to-r from-blue-50/50 to-indigo-50/30 px-4 py-2.5 rounded-t-2xl">
           <div className="flex items-center gap-2">
             <Clock className="h-4 w-4 text-[--k-primary]" />
             <span className="text-[13px] font-semibold text-[--k-text]">Activité récente</span>

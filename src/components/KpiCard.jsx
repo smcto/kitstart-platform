@@ -2,12 +2,12 @@ import React from "react";
 import { cn } from "./ui/cn";
 
 const ACCENTS = [
-  { valueBg: "bg-indigo-50",  valueText: "text-indigo-600", iconText: "text-indigo-400" },
-  { valueBg: "bg-orange-50",  valueText: "text-orange-600", iconText: "text-orange-400" },
-  { valueBg: "bg-emerald-50", valueText: "text-emerald-600", iconText: "text-emerald-400" },
-  { valueBg: "bg-rose-50",    valueText: "text-rose-600",   iconText: "text-rose-400" },
-  { valueBg: "bg-amber-50",   valueText: "text-amber-600",  iconText: "text-amber-400" },
-  { valueBg: "bg-sky-50",     valueText: "text-sky-600",    iconText: "text-sky-400" },
+  { valueBg: "bg-indigo-100/80",  valueText: "text-indigo-700", iconText: "text-indigo-400" },
+  { valueBg: "bg-orange-100/70",  valueText: "text-orange-700", iconText: "text-orange-400" },
+  { valueBg: "bg-emerald-100/70", valueText: "text-emerald-700", iconText: "text-emerald-400" },
+  { valueBg: "bg-rose-100/70",    valueText: "text-rose-700",   iconText: "text-rose-400" },
+  { valueBg: "bg-amber-100/70",   valueText: "text-amber-700",  iconText: "text-amber-400" },
+  { valueBg: "bg-sky-100/80",     valueText: "text-sky-700",    iconText: "text-sky-400" },
 ];
 
 export function KpiCard({ title, subtitle, value, icon: Icon, colorIndex = 0 }) {
