@@ -14,7 +14,7 @@ const SOFT_COLORS = [
 export function KpiCard({ title, subtitle, value, colorIndex = 0 }) {
   return (
     <div className={cn(
-      "rounded-xl border border-[--k-border] bg-gradient-to-br px-4 py-3",
+      "rounded-2xl border border-[--k-border] bg-gradient-to-br px-4 py-3 shadow-sm shadow-black/[0.02]",
       SOFT_COLORS[colorIndex % SOFT_COLORS.length]
     )}>
       <div className="flex items-baseline justify-between gap-3">

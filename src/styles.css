@@ -6,21 +6,28 @@
 
 /* Konitys tokens (light) */
 :root{
-  --k-bg:#F8F9FB;
+  --k-bg:#F7F7F8;
   --k-surface:#FFFFFF;
-  --k-surface-2:#F3F4F6;
-  --k-border:#E8EAED;
+  --k-surface-2:#F1F2F4;
+  --k-border:#E4E5E9;
 
-  --k-text:#0F172A;
-  --k-muted:#64748B;
+  --k-text:#1A1D26;
+  --k-muted:#6B7080;
 
-  --k-primary:#2563EB;
-  --k-primary-2:#EFF4FF;
-  --k-primary-border:#BFDBFE;
+  --k-primary:#6C5CE7;
+  --k-primary-2:#F0EEFF;
+  --k-primary-border:#C8C0F4;
 
   --k-success:#16A34A;
   --k-warning:#F59E0B;
   --k-danger:#DC2626;
+
+  --k-sidebar-bg:#1E1F2B;
+  --k-sidebar-text:#B0B3C0;
+  --k-sidebar-text-active:#FFFFFF;
+  --k-sidebar-hover:#2A2B3A;
+  --k-sidebar-border:#2E3040;
+  --k-sidebar-section:#6B7080;
 
   --k-sidebar-w: 224px;
   --k-sidebar-rail: 52px;

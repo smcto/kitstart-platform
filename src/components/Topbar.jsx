@@ -36,7 +36,7 @@ export function Topbar({
     : SEARCH_SUGGESTIONS;
 
   return (
-    <header className="sticky top-0 z-20 border-b border-[--k-border] bg-white/95 backdrop-blur-sm">
+    <header className="sticky top-0 z-20 border-b border-[--k-border]/60 bg-white/80 backdrop-blur-md shadow-sm shadow-black/[0.03]">
       <div className="flex h-12 items-center gap-2 px-3 md:gap-3 md:px-4">
         {/* Mobile hamburger */}
         {!hubMode && onToggleMobileMenu && (
@@ -74,7 +74,7 @@ export function Topbar({
         {searchOpen && (
           <>
             <div className="fixed inset-0 z-40 bg-black/20 backdrop-blur-[2px]" onClick={() => { setSearchOpen(false); setSearchQ(""); }} />
-            <div className="fixed left-3 right-3 top-[60px] z-50 mx-auto max-w-[480px] rounded-xl border border-[--k-border] bg-white shadow-xl shadow-black/10">
+            <div className="fixed left-3 right-3 top-[60px] z-50 mx-auto max-w-[480px] rounded-2xl border border-[--k-border] bg-white/95 backdrop-blur-lg shadow-2xl shadow-black/10">
               <div className="flex items-center gap-2.5 border-b border-[--k-border] px-4 py-3">
                 <Search className="h-4 w-4 text-[--k-muted] shrink-0" />
                 <input
@@ -125,7 +125,7 @@ export function Topbar({
           {notifOpen && (
             <>
               <div className="fixed inset-0 z-30" onClick={() => setNotifOpen(false)} />
-              <div className="absolute right-0 z-40 mt-2 w-[calc(100vw-24px)] sm:w-[340px] max-w-[340px] rounded-xl border border-[--k-border] bg-white shadow-lg shadow-black/5">
+              <div className="absolute right-0 z-40 mt-2 w-[calc(100vw-24px)] sm:w-[340px] max-w-[340px] rounded-2xl border border-[--k-border] bg-white/95 backdrop-blur-lg shadow-xl shadow-black/8">
                 <div className="flex items-center justify-between border-b border-[--k-border] px-4 py-3">
                   <span className="text-[14px] font-semibold">Notifications</span>
                   <button className="text-xs text-[--k-primary] hover:underline">Tout marquer lu</button>
@@ -174,14 +174,14 @@ export function Topbar({
             className="flex h-9 items-center gap-2 rounded-lg px-2 hover:bg-[--k-surface-2] transition"
             onClick={() => { setAccountOpen(v => !v); setNotifOpen(false); }}
           >
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-blue-600 text-[11px] font-semibold text-white">SM</span>
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-[--k-primary] to-violet-500 text-[11px] font-semibold text-white">SM</span>
             <span className="hidden sm:inline text-[13px] font-medium text-[--k-text]">Seb</span>
             <ChevronDown className="h-3 w-3 text-[--k-muted]" />
           </button>
           {accountOpen && (
             <>
               <div className="fixed inset-0 z-30" onClick={() => setAccountOpen(false)} />
-              <div className="absolute right-0 z-40 mt-2 w-[240px] rounded-xl border border-[--k-border] bg-white shadow-lg shadow-black/5 py-1">
+              <div className="absolute right-0 z-40 mt-2 w-[240px] rounded-2xl border border-[--k-border] bg-white/95 backdrop-blur-lg shadow-xl shadow-black/8 py-1">
                 <div className="px-3 py-2.5 border-b border-[--k-border]">
                   <div className="text-[13px] font-semibold text-[--k-text]">Seb Martin</div>
                   <div className="text-xs text-[--k-muted]">seb@konitys.com</div>

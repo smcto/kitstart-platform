@@ -70,7 +70,7 @@ export default function StockDashboard() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
 
         {/* Commandes en cours */}
-        <div className="lg:col-span-2 rounded-xl border border-[--k-border] bg-white overflow-hidden">
+        <div className="lg:col-span-2 rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03] overflow-hidden">
           <div className="flex items-center justify-between border-b border-[--k-border] px-4 py-2.5">
             <div className="flex items-center gap-2">
               <ShoppingCart className="h-4 w-4 text-[--k-primary]" />
@@ -109,7 +109,7 @@ export default function StockDashboard() {
         </div>
 
         {/* Alertes stock */}
-        <div className="rounded-xl border border-[--k-border] bg-white">
+        <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03]">
           <div className="flex items-center justify-between border-b border-[--k-border] px-4 py-2.5">
             <div className="flex items-center gap-2">
               <AlertTriangle className="h-4 w-4 text-amber-500" />
@@ -143,7 +143,7 @@ export default function StockDashboard() {
       <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
 
         {/* Top produits */}
-        <div className="rounded-xl border border-[--k-border] bg-white">
+        <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03]">
           <div className="flex items-center justify-between border-b border-[--k-border] px-4 py-2.5">
             <div className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-[--k-primary]" />
@@ -172,7 +172,7 @@ export default function StockDashboard() {
         </div>
 
         {/* Fournisseurs */}
-        <div className="rounded-xl border border-[--k-border] bg-white overflow-hidden">
+        <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm shadow-black/[0.03] overflow-hidden">
           <div className="flex items-center justify-between border-b border-[--k-border] px-4 py-2.5">
             <div className="flex items-center gap-2">
               <Truck className="h-4 w-4 text-[--k-primary]" />
