@@ -1,45 +1,47 @@
 import React from "react";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "./ui/Card";
 import { StatusPill } from "./ui/Badge";
 import { Button } from "./ui/Button";
 
 export function DataTable({ title, subtitle, rows }) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        {subtitle ? <CardDescription>{subtitle}</CardDescription> : null}
-      </CardHeader>
-      <CardContent>
-        <div className="overflow-auto">
-          <table className="min-w-[880px] w-full text-sm">
-            <thead>
-              <tr className="bg-[--k-surface-2] text-[--k-muted]">
-                <th className="p-3 text-left font-semibold">Nom</th>
-                <th className="p-3 text-left font-semibold">ID</th>
-                <th className="p-3 text-left font-semibold">Antenne</th>
-                <th className="p-3 text-left font-semibold">Statut</th>
-                <th className="p-3 text-left font-semibold">Sync</th>
-                <th className="p-3 text-right font-semibold">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((r) => (
-                <tr key={r.id} className="border-t border-[--k-border]">
-                  <td className="p-3 font-medium">{r.name}</td>
-                  <td className="p-3 text-[--k-muted]">{r.id}</td>
-                  <td className="p-3">{r.location}</td>
-                  <td className="p-3"><StatusPill status={r.status} /></td>
-                  <td className="p-3 text-[--k-muted]">{r.sync}</td>
-                  <td className="p-3 text-right">
-                    <Button variant="secondary" size="sm">…</Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+    <div className="rounded-xl border border-[--k-border] bg-white overflow-hidden">
+      {(title || subtitle) && (
+        <div className="flex items-baseline justify-between gap-3 border-b border-[--k-border] px-4 py-2.5">
+          <div className="text-[13px] font-semibold">{title}</div>
+          {subtitle && <div className="text-xs text-[--k-muted]">{subtitle}</div>}
         </div>
-      </CardContent>
-    </Card>
+      )}
+      <div className="overflow-auto">
+        <table className="w-full text-[13px]">
+          <thead>
+            <tr className="border-b border-[--k-border] bg-[--k-surface-2]/50 text-[--k-muted]">
+              <th className="px-4 py-2 text-left text-xs font-medium">Nom</th>
+              <th className="px-4 py-2 text-left text-xs font-medium">ID</th>
+              <th className="px-4 py-2 text-left text-xs font-medium">Antenne</th>
+              <th className="px-4 py-2 text-left text-xs font-medium">Statut</th>
+              <th className="px-4 py-2 text-left text-xs font-medium">Sync</th>
+              <th className="px-4 py-2 text-right text-xs font-medium">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={r.id} className="border-t border-[--k-border] hover:bg-[--k-surface-2]/30 transition-colors">
+                <td className="px-4 py-1.5 font-medium">{r.name}</td>
+                <td className="px-4 py-1.5 text-[--k-muted] tabular-nums">{r.id}</td>
+                <td className="px-4 py-1.5">{r.location}</td>
+                <td className="px-4 py-1.5"><StatusPill status={r.status} /></td>
+                <td className="px-4 py-1.5 text-[--k-muted]">{r.sync}</td>
+                <td className="px-4 py-1.5 text-right">
+                  <Button variant="ghost" size="sm">...</Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="flex items-center justify-between border-t border-[--k-border] px-4 py-2 text-xs text-[--k-muted]">
+        <span>{rows.length} résultat{rows.length > 1 ? "s" : ""}</span>
+      </div>
+    </div>
   );
 }

@@ -3,20 +3,20 @@ import { Button } from "./ui/Button";
 
 export function PageHeader({ title, subtitle, primaryLabel, onPrimary, secondaryLabel, onSecondary }) {
   return (
-    <div className="mb-4">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold text-[--k-text]">{title}</h1>
-          {subtitle ? <p className="mt-1 text-sm text-[--k-muted]">{subtitle}</p> : null}
+    <div className="mb-3">
+      <div className="flex items-center justify-between gap-4">
+        <div className="min-w-0">
+          <h1 className="text-lg font-semibold text-[--k-text]">{title}</h1>
+          {subtitle ? <p className="text-xs text-[--k-muted]">{subtitle}</p> : null}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 shrink-0">
           {secondaryLabel ? (
-            <Button variant="secondary" onClick={onSecondary}>
+            <Button variant="secondary" size="sm" onClick={onSecondary}>
               {secondaryLabel}
             </Button>
           ) : null}
           {primaryLabel ? (
-            <Button variant="primary" onClick={onPrimary}>
+            <Button variant="primary" size="sm" onClick={onPrimary}>
               {primaryLabel}
             </Button>
           ) : null}

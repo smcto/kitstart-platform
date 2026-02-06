@@ -1,24 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* Konitys tokens (light) */
 :root{
-  --k-bg:#F7F8FA;
+  --k-bg:#F8F9FB;
   --k-surface:#FFFFFF;
   --k-surface-2:#F3F4F6;
-  --k-border:#E5E7EB;
+  --k-border:#E8EAED;
 
-  --k-text:#111827;
-  --k-muted:#6B7280;
+  --k-text:#0F172A;
+  --k-muted:#64748B;
 
   --k-primary:#2563EB;
-  --k-primary-2:#EEF2FF; /* selection */
-  --k-primary-border:#C7D2FE;
+  --k-primary-2:#EFF4FF;
+  --k-primary-border:#BFDBFE;
 
   --k-success:#16A34A;
   --k-warning:#F59E0B;
   --k-danger:#DC2626;
+
+  --k-sidebar-w: 224px;
+  --k-sidebar-rail: 52px;
+  --k-topbar-h: 48px;
 }
 
 *{ box-sizing:border-box; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--k-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--k-muted); }

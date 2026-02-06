@@ -29,7 +29,6 @@ export function AppShell({ currentApp, children, activeKey }) {
         recents={["Antennes", "Support"]}
         onGoHub={() => (window.location.href = "/")}
         onSelectApp={(name) => {
-          // Exemple : mapping simple. À remplacer par ta logique de route / domaine.
           const map = {
             "Bornes Manager": "/bornes",
             "Antennes": "/antennes",
@@ -41,14 +40,14 @@ export function AppShell({ currentApp, children, activeKey }) {
         }}
         onPrimaryAction={() => alert("Primary action")}
       />
-      <div className="mx-auto flex max-w-[1400px]">
+      <div className="flex">
         <Sidebar
           appName={currentApp}
           collapsed={collapsed}
           onToggle={() => setCollapsed((v) => !v)}
           activeKey={activeKey}
         />
-        <main className="flex-1 p-6">{children}</main>
+        <main className="flex-1 min-w-0 p-5">{children}</main>
       </div>
     </div>
   );
