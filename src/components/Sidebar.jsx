@@ -175,12 +175,12 @@ export function Sidebar({ appName, collapsed, onToggle, activeKey, sections }) {
           "relative flex items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] font-medium transition-all duration-150",
           collapsed ? "justify-center px-0" : "justify-start",
           active
-            ? cn(identity.sidebarActive, "text-white")
-            : cn("text-[--k-sidebar-text] hover:text-[--k-sidebar-text-active]", identity.sidebarHover)
+            ? "bg-white/10 text-white"
+            : "text-[--k-sidebar-text] hover:bg-white/[0.06] hover:text-[--k-sidebar-text-active]"
         )}
       >
         {active && !collapsed && (
-          <span className={cn("absolute left-0 top-[6px] bottom-[6px] w-[2px] rounded-full", identity.sidebarActiveDot)} />
+          <span className="absolute left-0 top-[6px] bottom-[6px] w-[2px] rounded-full bg-white" />
         )}
         <Icon className={cn(
           "h-[16px] w-[16px] shrink-0",
@@ -200,8 +200,7 @@ export function Sidebar({ appName, collapsed, onToggle, activeKey, sections }) {
     const props = onClick ? { onClick } : { href };
     const inner = (
       <span className={cn(
-        "flex items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] font-medium text-[--k-sidebar-text] hover:text-[--k-sidebar-text-active] transition",
-        identity.sidebarHover,
+        "flex items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] font-medium text-[--k-sidebar-text] hover:bg-white/[0.06] hover:text-[--k-sidebar-text-active] transition",
         collapsed && "justify-center px-0",
         onClick && "w-full"
       )}>

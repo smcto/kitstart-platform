@@ -112,72 +112,87 @@ const ANIMATION_CATALOG = [
     id: "photobooth",
     label: "Animation Photobooth",
     icon: Camera,
-    options: [
-      "Animation photo",
-      "Animation vidéo",
-      "Animation GIF",
-      "Animation Boomerang",
-      "Animation Snapchat",
-      "Impression d'un photocall",
-      "Magnets personnalisés",
-      "Option fond vert",
-      "Prise de data",
-      "Envoi de mail",
-      "Galerie en ligne",
-      "Mur de photos",
+    sections: [
+      {
+        key: "type",
+        label: "Type d'animation",
+        options: ["Photo", "Vidéo", "GIF", "Boomerang", "Snapchat"],
+      },
+      {
+        key: "perso",
+        label: "Options de personnalisation",
+        options: ["Impression d'un photocall", "Magnets personnalisés", "Option fond vert"],
+      },
+      {
+        key: "partage",
+        label: "Partage & diffusion",
+        options: ["Envoi de mail", "Galerie en ligne", "Mur de photos", "Prise de data"],
+      },
     ],
   },
   {
     id: "diaporama",
     label: "Diaporama",
     icon: Monitor,
-    options: [
-      "Diaporama photo",
-      "Diaporama vidéo",
-      "Diaporama mixte",
-      "Affichage sur écran",
-      "Projection murale",
+    sections: [
+      {
+        key: "format",
+        label: "Format",
+        options: ["Diaporama photo", "Diaporama vidéo", "Diaporama mixte"],
+      },
+      {
+        key: "diffusion",
+        label: "Diffusion",
+        options: ["Affichage sur écran", "Projection murale"],
+      },
     ],
   },
   {
     id: "mosaique",
     label: "Mosaïque photo",
     icon: LayoutGrid,
-    options: [
-      "Mosaïque en temps réel",
-      "Mosaïque imprimée",
-      "Mosaïque digitale",
-      "Affichage sur écran géant",
+    sections: [
+      {
+        key: "type",
+        label: "Type de mosaïque",
+        options: ["Mosaïque en temps réel", "Mosaïque imprimée", "Mosaïque digitale"],
+      },
+      {
+        key: "affichage",
+        label: "Affichage",
+        options: ["Affichage sur écran géant", "Projection murale"],
+      },
     ],
   },
   {
     id: "jeux",
     label: "Animation Jeux",
     icon: Gamepad2,
-    options: [
-      "Quiz interactif",
-      "Roue de la fortune",
-      "Jeu de grattage digital",
-      "Tirage au sort",
-      "Challenge photo",
+    sections: [
+      {
+        key: "type",
+        label: "Type de jeu",
+        options: ["Quiz interactif", "Roue de la fortune", "Jeu de grattage digital", "Tirage au sort", "Challenge photo"],
+      },
     ],
   },
   {
     id: "social",
     label: "Social Wall",
     icon: Share2,
-    options: [
-      "Mur Instagram",
-      "Mur Twitter / X",
-      "Hashtag wall",
-      "QR code partage",
+    sections: [
+      {
+        key: "type",
+        label: "Réseaux & fonctionnalités",
+        options: ["Mur Instagram", "Mur Twitter / X", "Hashtag wall", "QR code partage"],
+      },
     ],
   },
   {
     id: "autre",
     label: "Autre animation",
     icon: Sparkles,
-    options: [],
+    sections: [],
     customName: true,
   },
 ];
@@ -276,7 +291,7 @@ export default function EventCreate() {
     responsableProjet: "",
     // Step 3 - Animation(s)
     dispositifs: [{ id: 1, type: "Classik", qty: 1 }],
-    animations: [{ catalogId: "photobooth", selectedOptions: [], customName: "" }],
+    animations: [{ catalogId: "photobooth", selectedOptions: [], comments: {}, customName: "" }],
     // Step 4 - Créa / Supports graphiques
     creaRealisee: "nous", // "nous" or "client"
     supportsACreer: "non", // "non" or "oui"
@@ -505,21 +520,25 @@ export default function EventCreate() {
                     </div>
                   </Field>
 
-                  <Field label="Groupe de client">
-                    <select value={form.clientGroup} onChange={e => update("clientGroup", e.target.value)} className="input-field">
-                      <option value="">Séléctionner</option>
-                      {CLIENT_GROUPS.map(g => <option key={g}>{g}</option>)}
-                    </select>
-                  </Field>
+                  {form.clientType !== "Particulier" && (
+                    <Field label="Groupe de client">
+                      <select value={form.clientGroup} onChange={e => update("clientGroup", e.target.value)} className="input-field">
+                        <option value="">Séléctionner</option>
+                        {CLIENT_GROUPS.map(g => <option key={g}>{g}</option>)}
+                      </select>
+                    </Field>
+                  )}
 
-                  <div className="sm:col-span-2 grid gap-4 sm:grid-cols-2">
-                    <Field label="Raison sociale" required>
-                      <input value={form.raisonSociale} onChange={e => update("raisonSociale", e.target.value)} className="input-field" />
-                    </Field>
-                    <Field label="Enseigne">
-                      <input value={form.enseigne} onChange={e => update("enseigne", e.target.value)} className="input-field" />
-                    </Field>
-                  </div>
+                  {form.clientType !== "Particulier" && (
+                    <div className="sm:col-span-2 grid gap-4 sm:grid-cols-2">
+                      <Field label="Raison sociale" required>
+                        <input value={form.raisonSociale} onChange={e => update("raisonSociale", e.target.value)} className="input-field" />
+                      </Field>
+                      <Field label="Enseigne">
+                        <input value={form.enseigne} onChange={e => update("enseigne", e.target.value)} className="input-field" />
+                      </Field>
+                    </div>
+                  )}
 
                   <Field label="Adresse" span={1}>
                     <input value={form.adresse} onChange={e => update("adresse", e.target.value)} placeholder="Indiquez un lieu" className="input-field" />
@@ -558,7 +577,7 @@ export default function EventCreate() {
                       {PAYS.map(p => <option key={p}>{p}</option>)}
                     </select>
                   </Field>
-                  <Field label="Tél entreprise">
+                  <Field label={form.clientType === "Particulier" ? "Téléphone" : "Tél entreprise"}>
                     <input value={form.telEntreprise} onChange={e => update("telEntreprise", e.target.value)} className="input-field" />
                   </Field>
 
@@ -1444,9 +1463,9 @@ export default function EventCreate() {
                       <X className="h-3.5 w-3.5" /> Retirer
                     </button>
                   </div>
-                  <div className="p-5">
+                  <div className="p-5 space-y-5">
                     {catalog.customName && (
-                      <div className="mb-4">
+                      <div>
                         <Field label="Nom de l'animation">
                           <input
                             value={anim.customName}
@@ -1457,32 +1476,63 @@ export default function EventCreate() {
                         </Field>
                       </div>
                     )}
-                    {catalog.options.length > 0 ? (
-                      <div className="grid gap-x-6 gap-y-1 sm:grid-cols-2">
-                        {catalog.options.map(opt => (
-                          <label key={opt} className="flex items-center gap-2.5 cursor-pointer py-1.5">
-                            <input
-                              type="checkbox"
-                              checked={anim.selectedOptions.includes(opt)}
-                              onChange={() => {
-                                setForm(f => ({
-                                  ...f,
-                                  animations: f.animations.map((a, i) => i === ai ? {
-                                    ...a,
-                                    selectedOptions: a.selectedOptions.includes(opt)
-                                      ? a.selectedOptions.filter(o => o !== opt)
-                                      : [...a.selectedOptions, opt],
-                                  } : a),
-                                }));
-                              }}
-                              className="rounded border-[--k-border] h-4 w-4"
-                            />
-                            <span className="text-[13px] text-[--k-text]">{opt}</span>
-                          </label>
-                        ))}
+                    {catalog.sections.length > 0 ? catalog.sections.map(section => (
+                      <div key={section.key}>
+                        <p className="text-[12px] font-semibold text-[--k-muted] uppercase tracking-wide mb-2">{section.label}</p>
+                        <div className="grid gap-x-6 gap-y-1 sm:grid-cols-2 lg:grid-cols-3">
+                          {section.options.map(opt => (
+                            <label key={opt} className="flex items-center gap-2.5 cursor-pointer py-1.5">
+                              <input
+                                type="checkbox"
+                                checked={anim.selectedOptions.includes(opt)}
+                                onChange={() => {
+                                  setForm(f => ({
+                                    ...f,
+                                    animations: f.animations.map((a, i) => i === ai ? {
+                                      ...a,
+                                      selectedOptions: a.selectedOptions.includes(opt)
+                                        ? a.selectedOptions.filter(o => o !== opt)
+                                        : [...a.selectedOptions, opt],
+                                    } : a),
+                                  }));
+                                }}
+                                className="rounded border-[--k-border] h-4 w-4"
+                              />
+                              <span className="text-[13px] text-[--k-text]">{opt}</span>
+                            </label>
+                          ))}
+                        </div>
+                        <div className="mt-2">
+                          <CollapsibleComment
+                            label={`Commentaire — ${section.label}`}
+                            value={anim.comments?.[section.key] || ""}
+                            onChange={val => setForm(f => ({
+                              ...f,
+                              animations: f.animations.map((a, i) => i === ai ? {
+                                ...a,
+                                comments: { ...a.comments, [section.key]: val },
+                              } : a),
+                            }))}
+                            placeholder={`Précisions sur ${section.label.toLowerCase()}...`}
+                          />
+                        </div>
                       </div>
-                    ) : !catalog.customName && (
+                    )) : !catalog.customName && (
                       <p className="text-[13px] text-[--k-muted]">Aucune option disponible</p>
+                    )}
+                    {catalog.customName && (
+                      <CollapsibleComment
+                        label="Commentaire"
+                        value={anim.comments?.general || ""}
+                        onChange={val => setForm(f => ({
+                          ...f,
+                          animations: f.animations.map((a, i) => i === ai ? {
+                            ...a,
+                            comments: { ...a.comments, general: val },
+                          } : a),
+                        }))}
+                        placeholder="Précisions sur cette animation..."
+                      />
                     )}
                   </div>
                 </div>
@@ -1503,7 +1553,7 @@ export default function EventCreate() {
                       return (
                         <button
                           key={cat.id}
-                          onClick={() => setForm(f => ({ ...f, animations: [...f.animations, { catalogId: cat.id, selectedOptions: [], customName: "" }] }))}
+                          onClick={() => setForm(f => ({ ...f, animations: [...f.animations, { catalogId: cat.id, selectedOptions: [], comments: {}, customName: "" }] }))}
                           className="flex items-center gap-2 rounded-lg border border-dashed border-[--k-border] px-3 py-2 text-[13px] text-[--k-muted] hover:border-[--k-primary] hover:text-[--k-primary] hover:bg-[--k-primary-2]/10 transition"
                         >
                           <Icon className="h-3.5 w-3.5" />
@@ -1811,8 +1861,18 @@ export default function EventCreate() {
                   {form.animations.map((anim, i) => {
                     const cat = ANIMATION_CATALOG.find(c => c.id === anim.catalogId);
                     const label = cat?.customName && anim.customName ? anim.customName : (cat?.label || anim.catalogId);
-                    const opts = anim.selectedOptions.length > 0 ? anim.selectedOptions.join(", ") : "Aucune option";
-                    return <RecapRow key={i} label={label} value={opts} />;
+                    if (cat?.sections?.length > 0) {
+                      return (
+                        <React.Fragment key={i}>
+                          <RecapRow label={label} value="" />
+                          {cat.sections.map(s => {
+                            const sectionOpts = s.options.filter(o => anim.selectedOptions.includes(o));
+                            return sectionOpts.length > 0 ? <RecapRow key={s.key} label={`  ${s.label}`} value={sectionOpts.join(", ")} /> : null;
+                          })}
+                        </React.Fragment>
+                      );
+                    }
+                    return <RecapRow key={i} label={label} value={anim.selectedOptions.length > 0 ? anim.selectedOptions.join(", ") : "—"} />;
                   })}
                 </RecapSection>
 
