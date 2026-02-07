@@ -147,7 +147,7 @@ export function Topbar({
         <button
           className="relative flex h-9 w-9 items-center justify-center rounded-lg text-[--k-muted] hover:bg-[--k-surface-2] hover:text-[--k-text] transition"
           title="Mes tâches"
-          onClick={() => window.location.href = '/'}
+          onClick={() => window.location.href = '/taches'}
         >
           <ListTodo className="h-[18px] w-[18px]" />
           <span className="absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[--k-primary] text-[9px] font-bold text-white ring-2 ring-white">3</span>
@@ -227,9 +227,8 @@ export function Topbar({
                   <div className="text-xs text-[--k-muted]">seb@konitys.com</div>
                 </div>
                 <div className="py-1">
-                  <AccountItem icon={User} label="Mon profil" />
-                  <AccountItem icon={Settings} label="Préférences" />
-                  <AccountItem icon={CreditCard} label="Abonnement" />
+                  <AccountItem icon={User} label="Mon compte" href="/compte" />
+                  <AccountItem icon={Settings} label="Préférences" href="/compte" />
                 </div>
                 <div className="border-t border-[--k-border] py-1">
                   <AccountItem icon={LogOut} label="Déconnexion" danger />
@@ -276,14 +275,13 @@ function QuickAddItem({ icon: Icon, label, app }) {
   );
 }
 
-function AccountItem({ icon: Icon, label, danger }) {
-  return (
-    <button className={cn(
-      "flex w-full items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition hover:bg-[--k-surface-2]",
-      danger ? "text-[--k-danger]" : "text-[--k-text]"
-    )}>
-      <Icon className="h-4 w-4" />
-      {label}
-    </button>
+function AccountItem({ icon: Icon, label, danger, href }) {
+  const cls = cn(
+    "flex w-full items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition hover:bg-[--k-surface-2]",
+    danger ? "text-[--k-danger]" : "text-[--k-text]"
   );
+  if (href) {
+    return <a href={href} className={cls}><Icon className="h-4 w-4" />{label}</a>;
+  }
+  return <button className={cls}><Icon className="h-4 w-4" />{label}</button>;
 }
