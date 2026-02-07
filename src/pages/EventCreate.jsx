@@ -96,6 +96,15 @@ const MOCK_CONTACTS = [
   { id: 3, nom: "Sophie Bernard", fonction: "Responsable communication", email: "sophie.bernard@client.fr", tel: "06 55 44 33 22" },
 ];
 
+const MODALITES_FACTURATION = [
+  { id: "email", label: "Envoi par email" },
+  { id: "chorus", label: "Chorus Pro (collectivité / établissement public)" },
+  { id: "courrier", label: "Envoi par courrier" },
+  { id: "plateforme", label: "Plateforme client (Coupa, Ariba, Ivalua...)" },
+  { id: "portail", label: "Portail fournisseur dédié" },
+  { id: "autre", label: "Autre" },
+];
+
 const BORNE_TYPES = [
   { id: "classik", name: "Classik", icon: "📷", desc: "Borne photo classique" },
   { id: "spherik", name: "Spherik", icon: "🔮", desc: "Borne sphérique 360°" },
@@ -151,6 +160,8 @@ export default function EventCreate() {
   const [showResponsablePicker, setShowResponsablePicker] = useState(false);
   const [selectedResponsables, setSelectedResponsables] = useState([]);
   const [internalTags, setInternalTags] = useState([]);
+  const [contactFacturation, setContactFacturation] = useState(null);
+  const [showFacturationContactPicker, setShowFacturationContactPicker] = useState(false);
   const [contactsCrea, setContactsCrea] = useState([]);
   const [showCreaContactPicker, setShowCreaContactPicker] = useState(false);
   const [contactsSurPlace, setContactsSurPlace] = useState([]);
@@ -173,6 +184,11 @@ export default function EventCreate() {
     tel2: "",
     emailGeneral: "",
     commentaire: "",
+    // Step 1 - Facturation
+    modaliteFacturation: "",
+    refFacturation: "",
+    infoFacturation: "",
+    commentaireFacturation: "",
     opportunite: "",
     // Step 2 - Événement
     eventName: "",
@@ -600,6 +616,119 @@ export default function EventCreate() {
               </div>
             </div>
 
+            {/* Facturation */}
+            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+              <div className="border-b border-[--k-border] px-5 py-3">
+                <h2 className="text-[14px] font-bold text-[--k-text]">Facturation</h2>
+                <p className="text-[12px] text-[--k-muted] mt-0.5">Contact facturation et modalités de dépôt des factures</p>
+              </div>
+              <div className="p-5 space-y-4">
+                {/* Contact facturation */}
+                <Field label="Contact facturation">
+                  {contactFacturation ? (
+                    <div className="flex items-center justify-between rounded-lg border border-[--k-border] px-3 py-2">
+                      <div>
+                        <span className="text-[13px] font-medium text-[--k-text]">{contactFacturation.nom}</span>
+                        {contactFacturation.fonction && <span className="text-[12px] text-[--k-muted] ml-2">{contactFacturation.fonction}</span>}
+                        <span className="text-[12px] text-[--k-muted] ml-2">{contactFacturation.email}</span>
+                        {contactFacturation.tel && <span className="text-[12px] text-[--k-muted] ml-2">{contactFacturation.tel}</span>}
+                      </div>
+                      <button onClick={() => setContactFacturation(null)} className="text-[--k-muted] hover:text-[--k-danger]">
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <button
+                        onClick={() => setShowFacturationContactPicker(!showFacturationContactPicker)}
+                        className="flex items-center gap-1.5 rounded-lg border border-dashed border-[--k-border] px-3 py-2 text-[12px] text-[--k-muted] hover:border-[--k-primary] hover:text-[--k-primary] transition w-full"
+                      >
+                        <Plus className="h-3.5 w-3.5" /> Sélectionner un contact facturation
+                      </button>
+                      {showFacturationContactPicker && (
+                        <div className="mt-2 rounded-lg border border-[--k-border] bg-[--k-surface-2] p-3">
+                          <div className="space-y-1">
+                            {/* Contacts existants */}
+                            {[...MOCK_CONTACTS, ...contacts.filter(c => c.isNew)].map(c => (
+                              <button
+                                key={c.id}
+                                onClick={() => { setContactFacturation(c); setShowFacturationContactPicker(false); }}
+                                className="w-full text-left rounded-lg px-3 py-2 text-[13px] hover:bg-white transition"
+                              >
+                                <span className="font-medium">{c.nom}</span>
+                                <span className="text-[--k-muted] ml-2">— {c.email}</span>
+                              </button>
+                            ))}
+                          </div>
+                          <p className="text-[11px] text-[--k-muted] mt-2 pt-2 border-t border-[--k-border]">
+                            Peut être différent du contact projet (ex: service comptabilité)
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </Field>
+
+                {/* Modalité de dépôt */}
+                <Field label="Modalité de dépôt des factures" required>
+                  <select value={form.modaliteFacturation} onChange={e => update("modaliteFacturation", e.target.value)} className="input-field">
+                    <option value="">Séléctionner</option>
+                    {MODALITES_FACTURATION.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
+                  </select>
+                </Field>
+
+                {/* Chorus-specific fields */}
+                {form.modaliteFacturation === "chorus" && (
+                  <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 space-y-3">
+                    <p className="text-[12px] font-semibold text-blue-800">Informations Chorus Pro</p>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <Field label="N° SIRET">
+                        <input value={form.refFacturation} onChange={e => update("refFacturation", e.target.value)} placeholder="Ex: 123 456 789 00012" className="input-field" />
+                      </Field>
+                      <Field label="Code service (si applicable)">
+                        <input value={form.infoFacturation} onChange={e => update("infoFacturation", e.target.value)} placeholder="Ex: COMPTA-01" className="input-field" />
+                      </Field>
+                    </div>
+                  </div>
+                )}
+
+                {/* Plateforme-specific fields */}
+                {form.modaliteFacturation === "plateforme" && (
+                  <div className="rounded-lg border border-purple-200 bg-purple-50 p-4 space-y-3">
+                    <p className="text-[12px] font-semibold text-purple-800">Informations plateforme</p>
+                    <Field label="Nom de la plateforme / URL">
+                      <input value={form.refFacturation} onChange={e => update("refFacturation", e.target.value)} placeholder="Ex: Coupa, https://..." className="input-field" />
+                    </Field>
+                  </div>
+                )}
+
+                {/* Portail-specific fields */}
+                {form.modaliteFacturation === "portail" && (
+                  <div className="rounded-lg border border-purple-200 bg-purple-50 p-4 space-y-3">
+                    <p className="text-[12px] font-semibold text-purple-800">Informations portail fournisseur</p>
+                    <Field label="URL / identifiants du portail">
+                      <input value={form.refFacturation} onChange={e => update("refFacturation", e.target.value)} placeholder="Ex: https://portail.client.fr" className="input-field" />
+                    </Field>
+                  </div>
+                )}
+
+                {/* Autre */}
+                {form.modaliteFacturation === "autre" && (
+                  <Field label="Précisez">
+                    <input value={form.refFacturation} onChange={e => update("refFacturation", e.target.value)} placeholder="Modalité de dépôt..." className="input-field" />
+                  </Field>
+                )}
+
+                {/* Note facturation collapsible */}
+                <CollapsibleComment
+                  label="Ajouter une note sur la facturation..."
+                  value={form.commentaireFacturation}
+                  onChange={val => update("commentaireFacturation", val)}
+                  placeholder="Informations complémentaires (n° de bon de commande, adresse de facturation spécifique, etc.)"
+                />
+              </div>
+            </div>
+
             {/* Commentaire */}
             <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm p-5">
               <CollapsibleComment
@@ -1012,14 +1141,14 @@ export default function EventCreate() {
                 </div>
 
                 {/* Google Map placeholder */}
-                <div className="w-full h-64 rounded-lg bg-blue-100 relative overflow-hidden">
+                <div className="w-full h-32 rounded-lg bg-blue-100 relative overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-b from-blue-200/60 to-blue-300/40" />
-                  <div className="absolute top-2 left-2 z-10 flex rounded overflow-hidden border border-[--k-border] bg-white shadow-sm">
-                    <button className="px-3 py-1.5 text-[12px] font-semibold text-[--k-text] bg-white">Plan</button>
-                    <button className="px-3 py-1.5 text-[12px] text-[--k-muted] bg-[--k-surface-2]">Satellite</button>
+                  <div className="absolute top-1.5 left-1.5 z-10 flex rounded overflow-hidden border border-[--k-border] bg-white shadow-sm">
+                    <button className="px-2 py-1 text-[11px] font-semibold text-[--k-text] bg-white">Plan</button>
+                    <button className="px-2 py-1 text-[11px] text-[--k-muted] bg-[--k-surface-2]">Satellite</button>
                   </div>
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <MapPin className="h-8 w-8 text-red-500" />
+                    <MapPin className="h-6 w-6 text-red-500" />
                   </div>
                 </div>
 
@@ -1040,20 +1169,14 @@ export default function EventCreate() {
               </div>
             </div>
 
-            {/* Documents */}
-            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
-              <div className="border-b border-[--k-border] px-5 py-3">
-                <h2 className="text-[16px] font-bold text-[--k-text]">Documents</h2>
+            {/* Documents (collapsible) */}
+            <CollapsibleSection title="Documents" buttonLabel="Ajouter des documents...">
+              <div className="flex items-center justify-center rounded-lg border-2 border-dashed border-[--k-border] bg-[--k-surface-2]/30 py-8 cursor-pointer hover:border-[--k-primary] hover:bg-[--k-primary-2]/20 transition">
+                <span className="inline-flex items-center gap-2 rounded-lg border border-[--k-border] bg-white px-4 py-2 text-[13px] text-[--k-muted] shadow-sm">
+                  Cliquer ou glisser vos fichiers ici
+                </span>
               </div>
-              <div className="p-5">
-                <div className="flex items-center justify-center rounded-lg border-2 border-dashed border-[--k-border] bg-[--k-surface-2]/30 py-12 cursor-pointer hover:border-[--k-primary] hover:bg-[--k-primary-2]/20 transition">
-                  <span className="inline-flex items-center gap-2 rounded-lg border border-[--k-border] bg-white px-4 py-2 text-[13px] text-[--k-muted] shadow-sm">
-                    Cliquer ou glisser vos fichiers ici
-                  </span>
-                </div>
-              </div>
-            </div>
-
+            </CollapsibleSection>
 
             {/* Contact(s) sur place */}
             <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
@@ -1716,6 +1839,31 @@ function ToolbarBtn({ children, title }) {
     >
       {children}
     </button>
+  );
+}
+
+function CollapsibleSection({ title, buttonLabel, children }) {
+  const [open, setOpen] = useState(false);
+  return open ? (
+    <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+      <div className="flex items-center justify-between border-b border-[--k-border] px-5 py-3">
+        <h2 className="text-[16px] font-bold text-[--k-text]">{title}</h2>
+        <button onClick={() => setOpen(false)} className="text-[--k-muted] hover:text-[--k-danger]">
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+      <div className="p-5">{children}</div>
+    </div>
+  ) : (
+    <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm p-4">
+      <button
+        onClick={() => setOpen(true)}
+        className="flex items-center gap-2 rounded-lg border border-dashed border-[--k-border] px-3 py-2 text-[12px] text-[--k-muted] hover:border-[--k-primary] hover:text-[--k-primary] transition w-full"
+      >
+        <Plus className="h-3.5 w-3.5" />
+        {buttonLabel || title}
+      </button>
+    </div>
   );
 }
 
