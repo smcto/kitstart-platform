@@ -22,15 +22,14 @@ const ANTENNES = [
     bornesReserved: 32,
     bornesTransit: 12,
     eventsMonth: 8,
-    caMonth: "62 400 €",
     events: [
       { id: "EVT-287", name: "Salon du Mariage Paris", date: "08-10 fév", bornes: 12, status: "ready", shipping: "locale" },
       { id: "EVT-291", name: "Soirée L'Oréal 50 ans", date: "10 fév", bornes: 4, status: "logistics", shipping: "locale" },
       { id: "EVT-294", name: "Mariage Dupont-Martin", date: "14 fév", bornes: 2, status: "design", shipping: "locale" },
       { id: "EVT-285", name: "Soirée Hermès", date: "08 fév", bornes: 3, status: "ready", shipping: "locale" },
       { id: "EVT-280", name: "Salon de la Photo", date: "06-09 fév", bornes: 6, status: "live", shipping: "locale" },
-      { id: "EVT-308", name: "Mariage Cohen-Lévy", date: "22 fév", bornes: 2, status: "prospect", shipping: "locale" },
-      { id: "EVT-315", name: "Anniversaire Nike", date: "28 fév", bornes: 5, status: "prospect", shipping: "locale" },
+      { id: "EVT-308", name: "Mariage Cohen-Lévy", date: "22 fév", bornes: 2, status: "confirmed", shipping: "locale" },
+      { id: "EVT-315", name: "Anniversaire Nike", date: "28 fév", bornes: 5, status: "confirmed", shipping: "locale" },
       { id: "EVT-256", name: "Soirée Chanel N°5", date: "28 jan", bornes: 3, status: "done", shipping: "locale" },
     ],
   },
@@ -45,11 +44,10 @@ const ANTENNES = [
     bornesReserved: 18,
     bornesTransit: 6,
     eventsMonth: 3,
-    caMonth: "18 200 €",
     events: [
       { id: "EVT-330", name: "Festival Inter-Celtic", date: "12-14 fév", bornes: 6, status: "confirmed", shipping: "locale" },
       { id: "EVT-332", name: "Mariage Le Goff", date: "20 fév", bornes: 2, status: "design", shipping: "locale" },
-      { id: "EVT-335", name: "Soirée Armor Lux", date: "26 fév", bornes: 3, status: "prospect", shipping: "locale" },
+      { id: "EVT-335", name: "Soirée Armor Lux", date: "26 fév", bornes: 3, status: "confirmed", shipping: "locale" },
     ],
   },
   {
@@ -63,10 +61,9 @@ const ANTENNES = [
     bornesReserved: 16,
     bornesTransit: 10,
     eventsMonth: 4,
-    caMonth: "28 600 €",
     events: [
       { id: "EVT-299", name: "Congrès Pharma Lyon", date: "12 fév", bornes: 3, status: "logistics", shipping: "locale" },
-      { id: "EVT-312", name: "Salon Auto Lyon", date: "25-27 fév", bornes: 10, status: "prospect", shipping: "locale" },
+      { id: "EVT-312", name: "Salon Auto Lyon", date: "25-27 fév", bornes: 10, status: "confirmed", shipping: "locale" },
       { id: "EVT-340", name: "Mariage Blanc", date: "15 fév", bornes: 1, status: "confirmed", shipping: "locale" },
       { id: "EVT-342", name: "Team Building Michelin", date: "22 fév", bornes: 2, status: "confirmed", shipping: "locale" },
     ],
@@ -82,11 +79,10 @@ const ANTENNES = [
     bornesReserved: 14,
     bornesTransit: 4,
     eventsMonth: 3,
-    caMonth: "21 800 €",
     events: [
       { id: "EVT-248", name: "Carnaval Nice", date: "24-26 jan", bornes: 15, status: "done", shipping: "locale" },
       { id: "EVT-320", name: "Mariage Silva", date: "01 mars", bornes: 1, status: "confirmed", shipping: "locale" },
-      { id: "EVT-318", name: "Gala Dior Cannes", date: "05 mars", bornes: 8, status: "prospect", shipping: "locale" },
+      { id: "EVT-318", name: "Gala Dior Cannes", date: "05 mars", bornes: 8, status: "confirmed", shipping: "locale" },
     ],
   },
   {
@@ -100,7 +96,6 @@ const ANTENNES = [
     bornesReserved: 8,
     bornesTransit: 8,
     eventsMonth: 2,
-    caMonth: "16 400 €",
     events: [
       { id: "EVT-298", name: "Festival Nantes Digital", date: "15-17 fév", bornes: 8, status: "confirmed", shipping: "locale" },
       { id: "EVT-345", name: "Anniversaire Decathlon", date: "25 fév", bornes: 4, status: "design", shipping: "UPS" },
@@ -117,7 +112,6 @@ const ANTENNES = [
     bornesReserved: 10,
     bornesTransit: 4,
     eventsMonth: 2,
-    caMonth: "12 200 €",
     events: [
       { id: "EVT-350", name: "Foire de Strasbourg", date: "18-20 fév", bornes: 6, status: "confirmed", shipping: "locale" },
       { id: "EVT-352", name: "Mariage Muller-Weber", date: "28 fév", bornes: 2, status: "design", shipping: "locale" },
@@ -134,16 +128,14 @@ const ANTENNES = [
     bornesReserved: 6,
     bornesTransit: 5,
     eventsMonth: 2,
-    caMonth: "9 200 €",
     events: [
       { id: "EVT-302", name: "Team Building Airbus", date: "18 fév", bornes: 3, status: "design", shipping: "locale" },
-      { id: "EVT-355", name: "Congrès Montpellier", date: "24 fév", bornes: 4, status: "prospect", shipping: "TNT" },
+      { id: "EVT-355", name: "Congrès Montpellier", date: "24 fév", bornes: 4, status: "confirmed", shipping: "TNT" },
     ],
   },
 ];
 
 const STATUS_MAP = {
-  prospect: { label: "Prospect", color: "bg-slate-100 text-slate-600", dot: "bg-slate-400" },
   confirmed: { label: "Confirmé", color: "bg-blue-50 text-blue-600", dot: "bg-blue-500" },
   design: { label: "Création", color: "bg-violet-50 text-violet-600", dot: "bg-violet-500" },
   logistics: { label: "Logistique", color: "bg-amber-50 text-amber-600", dot: "bg-amber-500" },
@@ -245,8 +237,8 @@ export default function EventsAntennes() {
                   </div>
                 </div>
                 <span className="text-right shrink-0">
-                  <div className="text-[13px] font-bold text-[--k-text]">{antenne.caMonth}</div>
-                  <div className="text-[10px] text-[--k-muted]">CA mois</div>
+                  <div className="text-[13px] font-bold text-[--k-text]">{antenne.eventsMonth}</div>
+                  <div className="text-[10px] text-[--k-muted]">Événements</div>
                 </span>
               </button>
 

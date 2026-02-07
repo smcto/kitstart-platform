@@ -3,7 +3,7 @@ import { AppShell } from "../components/AppShell";
 import { cn } from "../components/ui/cn";
 import {
   ArrowLeft, CalendarDays, Building2, Palette, Camera, Truck,
-  Euro, FileText, Plus, X, Search, Check, ChevronDown, MapPin,
+  FileText, Plus, X, Search, Check, ChevronDown, MapPin,
   Image, Printer, Wifi, Box, Star, Upload
 } from "lucide-react";
 
@@ -42,7 +42,6 @@ const SECTIONS = [
   { key: "design", label: "Personnalisation", icon: Palette },
   { key: "bornes", label: "Affectation bornes", icon: Camera },
   { key: "logistics", label: "Logistique", icon: Truck },
-  { key: "pricing", label: "Tarification", icon: Euro },
   { key: "notes", label: "Notes internes", icon: FileText },
 ];
 
@@ -60,10 +59,6 @@ export default function EventCreate() {
     notes: "",
   });
   const [borneRows, setBorneRows] = useState([{ model: "pro360", qty: 1 }]);
-  const [pricingRows, setPricingRows] = useState([
-    { label: "Location bornes", qty: "", price: "" },
-  ]);
-
   const update = (key, val) => setForm(f => ({ ...f, [key]: val }));
   const toggle = (key) => setForm(f => ({ ...f, [key]: !f[key] }));
 
@@ -298,45 +293,6 @@ export default function EventCreate() {
                 </div>
               </div>
             )}
-          </FormSection>
-
-          {/* Pricing */}
-          <FormSection id="pricing" title="Tarification" icon={Euro}>
-            <div className="space-y-2">
-              {pricingRows.map((row, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <input
-                    value={row.label}
-                    onChange={e => setPricingRows(rows => rows.map((r, j) => j === i ? { ...r, label: e.target.value } : r))}
-                    placeholder="Prestation"
-                    className="input-field flex-1"
-                  />
-                  <input
-                    value={row.qty}
-                    onChange={e => setPricingRows(rows => rows.map((r, j) => j === i ? { ...r, qty: e.target.value } : r))}
-                    placeholder="Qté"
-                    className="input-field w-20 text-center"
-                  />
-                  <input
-                    value={row.price}
-                    onChange={e => setPricingRows(rows => rows.map((r, j) => j === i ? { ...r, price: e.target.value } : r))}
-                    placeholder="0 €"
-                    className="input-field w-28 text-right"
-                  />
-                  {pricingRows.length > 1 && (
-                    <button onClick={() => setPricingRows(rows => rows.filter((_, j) => j !== i))} className="text-[--k-muted] hover:text-[--k-danger]">
-                      <X className="h-4 w-4" />
-                    </button>
-                  )}
-                </div>
-              ))}
-              <button
-                onClick={() => setPricingRows(rows => [...rows, { label: "", qty: "", price: "" }])}
-                className="flex items-center gap-1 text-[12px] font-medium text-[--k-primary] hover:underline"
-              >
-                <Plus className="h-3.5 w-3.5" /> Ajouter une ligne
-              </button>
-            </div>
           </FormSection>
 
           {/* Notes */}

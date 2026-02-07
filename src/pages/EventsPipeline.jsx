@@ -3,14 +3,14 @@ import { AppShell } from "../components/AppShell";
 import { PageHeader } from "../components/PageHeader";
 import { cn } from "../components/ui/cn";
 import {
-  Camera, CalendarDays, MapPin, Euro, Filter, Search, Plus, GripVertical
+  Camera, CalendarDays, MapPin, Filter, Search, Plus, GripVertical, Users
 } from "lucide-react";
 
 /* ── Mock data ────────────────────────────────────── */
 
 const STAGES = [
-  { key: "prospect", label: "Prospect", color: "bg-slate-400", headerBg: "bg-slate-50", headerBorder: "border-slate-200", headerText: "text-slate-600" },
   { key: "confirmed", label: "Confirmé", color: "bg-blue-500", headerBg: "bg-blue-50", headerBorder: "border-blue-200", headerText: "text-blue-600" },
+  { key: "briefing", label: "Briefing client", color: "bg-cyan-500", headerBg: "bg-cyan-50", headerBorder: "border-cyan-200", headerText: "text-cyan-600" },
   { key: "design", label: "Création graphique", color: "bg-violet-500", headerBg: "bg-violet-50", headerBorder: "border-violet-200", headerText: "text-violet-600" },
   { key: "logistics", label: "Logistique", color: "bg-amber-500", headerBg: "bg-amber-50", headerBorder: "border-amber-200", headerText: "text-amber-600" },
   { key: "ready", label: "Prêt", color: "bg-emerald-500", headerBg: "bg-emerald-50", headerBorder: "border-emerald-200", headerText: "text-emerald-600" },
@@ -18,26 +18,26 @@ const STAGES = [
 ];
 
 const ALL_EVENTS = [
-  // Prospects
-  { id: "EVT-308", name: "Mariage Cohen-Lévy", client: "Famille Cohen", date: "22 fév", bornes: 2, type: "Mariage", ca: "3 200 €", antenne: "IDF Paris", stage: "prospect" },
-  { id: "EVT-312", name: "Salon Auto Lyon", client: "Lyon Auto Events", date: "25-27 fév", bornes: 10, type: "Salon", ca: "16 800 €", antenne: "Rhône-Alpes", stage: "prospect" },
-  { id: "EVT-315", name: "Anniversaire Nike", client: "Nike France", date: "28 fév", bornes: 5, type: "Corporate", ca: "9 400 €", antenne: "IDF Paris", stage: "prospect" },
-  { id: "EVT-318", name: "Gala Dior Cannes", client: "Dior", date: "05 mars", bornes: 8, type: "Gala", ca: "22 000 €", antenne: "PACA", stage: "prospect" },
   // Confirmés
-  { id: "EVT-298", name: "Festival Nantes Digital", client: "Nantes Métropole", date: "15-17 fév", bornes: 8, type: "Festival", ca: "14 200 €", antenne: "Grand Ouest", stage: "confirmed" },
-  { id: "EVT-305", name: "Gala BMW Munich", client: "BMW AG", date: "20 fév", bornes: 6, type: "Corporate", ca: "12 800 €", antenne: "International", stage: "confirmed" },
-  { id: "EVT-320", name: "Mariage Silva", client: "Famille Silva", date: "01 mars", bornes: 1, type: "Mariage", ca: "1 800 €", antenne: "PACA", stage: "confirmed" },
+  { id: "EVT-308", name: "Mariage Cohen-Lévy", client: "Famille Cohen", date: "22 fév", bornes: 2, type: "Mariage", antenne: "IDF Paris", stage: "confirmed" },
+  { id: "EVT-312", name: "Salon Auto Lyon", client: "Lyon Auto Events", date: "25-27 fév", bornes: 10, type: "Salon", antenne: "Rhône-Alpes", stage: "confirmed" },
+  { id: "EVT-315", name: "Anniversaire Nike", client: "Nike France", date: "28 fév", bornes: 5, type: "Corporate", antenne: "IDF Paris", stage: "confirmed" },
+  { id: "EVT-318", name: "Gala Dior Cannes", client: "Dior", date: "05 mars", bornes: 8, type: "Gala", antenne: "PACA", stage: "confirmed" },
+  { id: "EVT-320", name: "Mariage Silva", client: "Famille Silva", date: "01 mars", bornes: 1, type: "Mariage", antenne: "PACA", stage: "confirmed" },
+  // Briefing
+  { id: "EVT-298", name: "Festival Nantes Digital", client: "Nantes Métropole", date: "15-17 fév", bornes: 8, type: "Festival", antenne: "Grand Ouest", stage: "briefing" },
+  { id: "EVT-305", name: "Gala BMW Munich", client: "BMW AG", date: "20 fév", bornes: 6, type: "Corporate", antenne: "International", stage: "briefing" },
   // Design
-  { id: "EVT-294", name: "Mariage Dupont-Martin", client: "Famille Dupont", date: "14 fév", bornes: 2, type: "Mariage", ca: "3 400 €", antenne: "IDF Paris", stage: "design" },
-  { id: "EVT-302", name: "Team Building Airbus", client: "Airbus SE", date: "18 fév", bornes: 3, type: "Corporate", ca: "5 100 €", antenne: "Occitanie", stage: "design" },
+  { id: "EVT-294", name: "Mariage Dupont-Martin", client: "Famille Dupont", date: "14 fév", bornes: 2, type: "Mariage", antenne: "IDF Paris", stage: "design" },
+  { id: "EVT-302", name: "Team Building Airbus", client: "Airbus SE", date: "18 fév", bornes: 3, type: "Corporate", antenne: "Occitanie", stage: "design" },
   // Logistique
-  { id: "EVT-291", name: "Soirée L'Oréal 50 ans", client: "L'Oréal Group", date: "10 fév", bornes: 4, type: "Corporate", ca: "8 200 €", antenne: "IDF Paris", stage: "logistics" },
-  { id: "EVT-299", name: "Congrès Pharma Lyon", client: "Sanofi", date: "12 fév", bornes: 3, type: "Corporate", ca: "5 800 €", antenne: "Rhône-Alpes", stage: "logistics" },
+  { id: "EVT-291", name: "Soirée L'Oréal 50 ans", client: "L'Oréal Group", date: "10 fév", bornes: 4, type: "Corporate", antenne: "IDF Paris", stage: "logistics" },
+  { id: "EVT-299", name: "Congrès Pharma Lyon", client: "Sanofi", date: "12 fév", bornes: 3, type: "Corporate", antenne: "Rhône-Alpes", stage: "logistics" },
   // Prêt
-  { id: "EVT-287", name: "Salon du Mariage Paris", client: "Salon Expo SAS", date: "08-10 fév", bornes: 12, type: "Salon", ca: "18 500 €", antenne: "IDF Paris", stage: "ready" },
-  { id: "EVT-285", name: "Soirée Hermès", client: "Hermès International", date: "08 fév", bornes: 3, type: "Corporate", ca: "7 200 €", antenne: "IDF Paris", stage: "ready" },
+  { id: "EVT-287", name: "Salon du Mariage Paris", client: "Salon Expo SAS", date: "08-10 fév", bornes: 12, type: "Salon", antenne: "IDF Paris", stage: "ready" },
+  { id: "EVT-285", name: "Soirée Hermès", client: "Hermès International", date: "08 fév", bornes: 3, type: "Corporate", antenne: "IDF Paris", stage: "ready" },
   // En cours
-  { id: "EVT-280", name: "Salon de la Photo", client: "Photo Expo", date: "06-09 fév", bornes: 6, type: "Salon", ca: "11 400 €", antenne: "IDF Paris", stage: "live" },
+  { id: "EVT-280", name: "Salon de la Photo", client: "Photo Expo", date: "06-09 fév", bornes: 6, type: "Salon", antenne: "IDF Paris", stage: "live" },
 ];
 
 const TYPE_COLORS = {
@@ -60,7 +60,7 @@ export default function EventsPipeline() {
   return (
     <AppShell currentApp="Events Manager" activeKey="pipeline">
       <PageHeader
-        title="Pipeline événements"
+        title="Pipeline de production"
         subtitle="Vue par état d'avancement"
         actions={
           <a href="/events/create" className="flex h-8 items-center gap-1.5 rounded-lg bg-[--k-primary] px-3 text-white text-[12px] font-medium hover:brightness-110 transition shadow-sm">
@@ -74,7 +74,6 @@ export default function EventsPipeline() {
       <div className="mb-4 flex flex-wrap gap-2">
         {STAGES.map(s => {
           const count = filteredEvents.filter(e => e.stage === s.key).length;
-          const totalCA = filteredEvents.filter(e => e.stage === s.key).reduce((sum, e) => sum + parseInt(e.ca.replace(/[^\d]/g, "")), 0);
           return (
             <div key={s.key} className={cn("flex items-center gap-2 rounded-xl border px-3 py-1.5", s.headerBg, s.headerBorder)}>
               <span className={cn("h-2.5 w-2.5 rounded-full", s.color)} />
@@ -103,7 +102,6 @@ export default function EventsPipeline() {
         {STAGES.map(stage => {
           const stageEvents = filteredEvents.filter(e => e.stage === stage.key);
           const totalBornes = stageEvents.reduce((s, e) => s + e.bornes, 0);
-          const totalCA = stageEvents.reduce((s, e) => s + parseInt(e.ca.replace(/[^\d]/g, "")), 0);
 
           return (
             <div key={stage.key} className="flex w-[280px] shrink-0 flex-col rounded-2xl border border-[--k-border] bg-[--k-surface-2]/30">
@@ -119,7 +117,7 @@ export default function EventsPipeline() {
               {/* Stats */}
               <div className="flex gap-3 px-3 py-2 border-b border-[--k-border]/50 text-[10px] text-[--k-muted]">
                 <span className="flex items-center gap-1"><Camera className="h-3 w-3" /> {totalBornes} bornes</span>
-                <span className="flex items-center gap-1"><Euro className="h-3 w-3" /> {(totalCA / 1000).toFixed(0)}k€</span>
+                <span className="flex items-center gap-1"><Users className="h-3 w-3" /> {stageEvents.length} événements</span>
               </div>
 
               {/* Cards */}
@@ -142,11 +140,10 @@ export default function EventsPipeline() {
                       <div className="text-[11px] text-[--k-muted] mb-2">{evt.client}</div>
                       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-[--k-muted]">
                         <span className="flex items-center gap-0.5"><CalendarDays className="h-3 w-3" /> {evt.date}</span>
-                        <span className="flex items-center gap-0.5"><Camera className="h-3 w-3" /> {evt.bornes}</span>
+                        <span className="flex items-center gap-0.5"><Camera className="h-3 w-3" /> {evt.bornes}b</span>
                         <span className="flex items-center gap-0.5"><MapPin className="h-3 w-3" /> {evt.antenne}</span>
                       </div>
-                      <div className="mt-2 flex items-center justify-between">
-                        <span className="text-[11px] font-bold text-[--k-text]">{evt.ca}</span>
+                      <div className="mt-2 text-right">
                         <span className="text-[10px] text-[--k-muted] font-mono">{evt.id}</span>
                       </div>
                     </a>
