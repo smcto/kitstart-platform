@@ -5,7 +5,7 @@ import {
   CalendarDays, Camera, MapPin, User, Phone, Mail, Building2,
   Clock, CheckCircle2, Circle, AlertTriangle, Truck, Package,
   Edit, Copy, Download, Printer, ArrowLeft, ChevronRight,
-  Palette, Box, Image, Wifi, Star, FileText, Send, MessageSquare
+  Palette, FileText, Send, MessageSquare
 } from "lucide-react";
 
 /* ── Mock data ────────────────────────────────────── */
@@ -20,10 +20,6 @@ const EVENT = {
   location: "Paris Expo — Porte de Versailles",
   address: "1 Place de la Porte de Versailles, 75015 Paris",
   antenne: "IDF Paris",
-  ca: "18 500 €",
-  acompte: "5 550 €",
-  solde: "12 950 €",
-  paiement: "Virement 30j",
   createdAt: "2025-12-15",
   notes: "Stand B42 — Hall 3. Accès montage vendredi 7 fév à partir de 14h. Parking exposants badge n°1842.",
 };
@@ -73,8 +69,6 @@ const CONTACTS_ANTENNE = [
 ];
 
 const CHECKLIST = [
-  { key: "devis", label: "Devis envoyé & signé", done: true },
-  { key: "acompte", label: "Acompte reçu (30%)", done: true },
   { key: "briefing", label: "Briefing client complété", done: true },
   { key: "design", label: "Création graphique validée", done: true },
   { key: "bornes", label: "Bornes affectées", done: true },
@@ -84,13 +78,10 @@ const CHECKLIST = [
   { key: "installation", label: "Installation sur site", done: false },
   { key: "event", label: "Événement réalisé", done: false },
   { key: "retour", label: "Retour bornes", done: false },
-  { key: "facture", label: "Facture émise & soldée", done: false },
 ];
 
 const TIMELINE = [
   { date: "15 déc 2025", action: "Événement créé", user: "Seb Martin", type: "create" },
-  { date: "18 déc 2025", action: "Devis envoyé (18 500 €)", user: "Seb Martin", type: "commercial" },
-  { date: "22 déc 2025", action: "Devis accepté — acompte 5 550 €", user: "Marie Laurent", type: "commercial" },
   { date: "10 jan 2026", action: "Briefing client complété", user: "Thomas Duval", type: "briefing" },
   { date: "18 jan 2026", action: "Maquettes envoyées au client", user: "Léa Martin", type: "design" },
   { date: "22 jan 2026", action: "Création graphique validée ✓", user: "Marie Laurent", type: "design" },
@@ -99,25 +90,13 @@ const TIMELINE = [
   { date: "07 fév 2026", action: "Test impression validé", user: "Lucas Faure", type: "tech" },
 ];
 
-const OPTIONS_PRICING = [
-  { label: "Location 12 bornes (3 jours)", qty: "12 × 3j", price: "14 400 €" },
-  { label: "Backdrop mur floral", qty: "1", price: "1 200 €" },
-  { label: "Kit props mariage premium", qty: "12", price: "600 €" },
-  { label: "Impressions illimitées", qty: "12 bornes", price: "1 200 €" },
-  { label: "GIF animé", qty: "12 bornes", price: "600 €" },
-  { label: "Galerie en ligne 30j", qty: "1", price: "300 €" },
-  { label: "Remise salon fidélité", qty: "", price: "-800 €" },
-];
-
 const STATUS_MAP = {
-  prospect: { label: "Prospect", color: "bg-slate-100 text-slate-600" },
   confirmed: { label: "Confirmé", color: "bg-blue-50 text-blue-600" },
   design: { label: "Création graphique", color: "bg-violet-50 text-violet-600" },
   logistics: { label: "Logistique", color: "bg-amber-50 text-amber-600" },
   ready: { label: "Prêt", color: "bg-emerald-50 text-emerald-600" },
   live: { label: "En cours", color: "bg-rose-50 text-rose-500" },
   done: { label: "Terminé", color: "bg-slate-100 text-slate-500" },
-  invoiced: { label: "Facturé", color: "bg-green-50 text-green-600" },
 };
 
 const BORNE_STATUS = {
@@ -215,47 +194,6 @@ export default function EventDetail() {
               <InfoRow label="Accueil" value={BRIEFING.texteAccueil} />
             </Card>
           </div>
-
-          {/* Options & Prestations */}
-          <Card title="Options & Tarification" icon={FileText}>
-            <div className="mb-3 flex flex-wrap gap-2">
-              {BRIEFING.impressions && <OptionPill label="Impressions" icon={Printer} />}
-              {BRIEFING.gif && <OptionPill label="GIF animé" icon={Image} />}
-              {BRIEFING.video && <OptionPill label="Vidéo" icon={Camera} />}
-              {BRIEFING.galerieEnLigne && <OptionPill label="Galerie en ligne" icon={Wifi} />}
-              <OptionPill label="Backdrop" icon={Box} />
-              <OptionPill label="Props" icon={Star} />
-            </div>
-            <table className="w-full text-[12px]">
-              <thead>
-                <tr className="border-b border-[--k-border] bg-rose-50/20">
-                  <th className="px-3 py-2 text-left font-semibold text-[--k-muted]">Prestation</th>
-                  <th className="px-3 py-2 text-center font-semibold text-[--k-muted]">Qté</th>
-                  <th className="px-3 py-2 text-right font-semibold text-[--k-muted]">Montant</th>
-                </tr>
-              </thead>
-              <tbody>
-                {OPTIONS_PRICING.map((o, i) => (
-                  <tr key={i} className="border-b border-[--k-border] last:border-0">
-                    <td className="px-3 py-2 text-[--k-text]">{o.label}</td>
-                    <td className="px-3 py-2 text-center text-[--k-muted]">{o.qty}</td>
-                    <td className={cn("px-3 py-2 text-right font-semibold", o.price.startsWith("-") ? "text-emerald-600" : "text-[--k-text]")}>{o.price}</td>
-                  </tr>
-                ))}
-              </tbody>
-              <tfoot>
-                <tr className="border-t-2 border-[--k-border]">
-                  <td colSpan={2} className="px-3 py-2 font-bold text-[--k-text]">Total HT</td>
-                  <td className="px-3 py-2 text-right text-[15px] font-bold text-[--k-text]">{EVENT.ca}</td>
-                </tr>
-              </tfoot>
-            </table>
-            <div className="mt-2 flex gap-4 text-[11px] text-[--k-muted]">
-              <span>Acompte: <strong className="text-emerald-600">{EVENT.acompte} ✓</strong></span>
-              <span>Solde: <strong className="text-[--k-text]">{EVENT.solde}</strong></span>
-              <span>Paiement: {EVENT.paiement}</span>
-            </div>
-          </Card>
 
           {/* Bornes assignées */}
           <Card title={`Bornes assignées (${BORNES_ASSIGNED.length})`} icon={Camera}>
@@ -414,14 +352,6 @@ function InfoRow({ label, value }) {
       <span className="w-24 shrink-0 text-[--k-muted]">{label}</span>
       <span className="text-[--k-text] font-medium">{value}</span>
     </div>
-  );
-}
-
-function OptionPill({ label, icon: Icon }) {
-  return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-rose-50 px-2.5 py-1 text-[11px] font-semibold text-rose-600">
-      <Icon className="h-3 w-3" /> {label}
-    </span>
   );
 }
 

@@ -4,22 +4,20 @@ import { PageHeader } from "../components/PageHeader";
 import { KpiCard } from "../components/KpiCard";
 import { cn } from "../components/ui/cn";
 import {
-  CalendarDays, TrendingUp, Camera, Euro, MapPin, Clock,
-  ArrowUpRight, ArrowDownRight, Users, Truck, CheckCircle2,
-  AlertTriangle, Star, ChevronRight
+  CalendarDays, Camera, MapPin, Clock,
+  Users, Truck, CheckCircle2,
+  AlertTriangle, ChevronRight, Clipboard
 } from "lucide-react";
 
 /* ── Mock data ────────────────────────────────────── */
 
 const PIPELINE_STAGES = [
-  { key: "prospect", label: "Prospect", count: 18, color: "bg-slate-400" },
   { key: "confirmed", label: "Confirmé", count: 24, color: "bg-blue-500" },
+  { key: "briefing", label: "Briefing client", count: 10, color: "bg-cyan-500" },
   { key: "design", label: "Création graphique", count: 12, color: "bg-violet-500" },
   { key: "logistics", label: "Logistique", count: 8, color: "bg-amber-500" },
   { key: "ready", label: "Prêt", count: 6, color: "bg-emerald-500" },
   { key: "live", label: "En cours", count: 3, color: "bg-rose-500" },
-  { key: "done", label: "Terminé", count: 142, color: "bg-slate-300" },
-  { key: "invoiced", label: "Facturé", count: 134, color: "bg-green-600" },
 ];
 
 const UPCOMING_EVENTS = [
@@ -35,25 +33,14 @@ const RECENT_ACTIVITY = [
   { action: "Création graphique validée", target: "EVT-0287 — Salon du Mariage", time: "il y a 20 min", tag: "Design", tagColor: "bg-violet-50 text-violet-600" },
   { action: "Bornes expédiées via UPS", target: "EVT-0291 — L'Oréal (4 bornes)", time: "il y a 1h", tag: "Logistique", tagColor: "bg-amber-50 text-amber-600" },
   { action: "Briefing client complété", target: "EVT-0294 — Mariage Dupont", time: "il y a 2h", tag: "Briefing", tagColor: "bg-blue-50 text-blue-600" },
-  { action: "Devis accepté", target: "EVT-0305 — Gala BMW Munich", time: "il y a 3h", tag: "Commercial", tagColor: "bg-emerald-50 text-emerald-600" },
-  { action: "Nouvelle réservation", target: "EVT-0308 — Mariage Cohen (Lyon)", time: "il y a 5h", tag: "Prospect", tagColor: "bg-rose-50 text-rose-500" },
-];
-
-const TOP_CLIENTS = [
-  { name: "L'Oréal Group", events: 12, ca: "84 200 €", trend: "+23%" },
-  { name: "Salon Expo SAS", events: 8, ca: "62 500 €", trend: "+15%" },
-  { name: "Airbus SE", events: 6, ca: "41 800 €", trend: "+8%" },
-  { name: "BMW AG", events: 4, ca: "38 600 €", trend: "new" },
-  { name: "Nantes Métropole", events: 3, ca: "22 100 €", trend: "+5%" },
+  { action: "Bornes affectées", target: "EVT-0305 — Gala BMW Munich", time: "il y a 3h", tag: "Affectation", tagColor: "bg-emerald-50 text-emerald-600" },
+  { action: "Événement confirmé", target: "EVT-0308 — Mariage Cohen (Lyon)", time: "il y a 5h", tag: "Planification", tagColor: "bg-rose-50 text-rose-500" },
 ];
 
 const CALENDAR_DAYS = (() => {
   const days = [];
-  const startDay = 1; // Feb 2026 starts on Sunday
-  const daysInMonth = 28;
-  // Fill blanks for alignment (Feb 2026 starts on Sun = 6 blanks for Mon-start)
   for (let i = 0; i < 6; i++) days.push(null);
-  for (let d = 1; d <= daysInMonth; d++) days.push(d);
+  for (let d = 1; d <= 28; d++) days.push(d);
   return days;
 })();
 
@@ -61,14 +48,13 @@ const EVENT_DAYS = new Set([2, 3, 8, 9, 10, 14, 15, 16, 17, 18, 20, 22, 25, 26, 
 const TODAY = 7;
 
 const STATUS_MAP = {
-  prospect: { label: "Prospect", color: "bg-slate-100 text-slate-600" },
   confirmed: { label: "Confirmé", color: "bg-blue-50 text-blue-600" },
+  briefing: { label: "Briefing", color: "bg-cyan-50 text-cyan-600" },
   design: { label: "Création", color: "bg-violet-50 text-violet-600" },
   logistics: { label: "Logistique", color: "bg-amber-50 text-amber-600" },
   ready: { label: "Prêt", color: "bg-emerald-50 text-emerald-600" },
   live: { label: "En cours", color: "bg-rose-50 text-rose-500" },
   done: { label: "Terminé", color: "bg-slate-100 text-slate-500" },
-  invoiced: { label: "Facturé", color: "bg-green-50 text-green-600" },
 };
 
 const TYPE_COLORS = {
@@ -81,6 +67,8 @@ const TYPE_COLORS = {
 /* ── Page ──────────────────────────────────────────── */
 
 export default function EventsDashboard() {
+  const activeTotal = PIPELINE_STAGES.reduce((s, st) => s + st.count, 0);
+
   return (
     <AppShell currentApp="Events Manager" activeKey="dashboard">
       <PageHeader
@@ -91,9 +79,9 @@ export default function EventsDashboard() {
       {/* KPIs */}
       <div className="mb-5 grid grid-cols-2 gap-3 xl:grid-cols-4">
         <KpiCard title="Événements ce mois" value="47" icon={CalendarDays} colorIndex={3} />
-        <KpiCard title="CA prévisionnel" value="186k€" icon={Euro} colorIndex={0} />
-        <KpiCard title="Bornes réservées" value="124" icon={Camera} colorIndex={2} />
-        <KpiCard title="Satisfaction client" value="4.8/5" icon={Star} colorIndex={4} />
+        <KpiCard title="Bornes réservées" value="124 / 850" icon={Camera} colorIndex={0} />
+        <KpiCard title="En production" value={String(activeTotal)} icon={Clipboard} colorIndex={2} />
+        <KpiCard title="Événements terminés" value="142" icon={CheckCircle2} colorIndex={4} />
       </div>
 
       {/* Pipeline + Calendar row */}
@@ -101,7 +89,7 @@ export default function EventsDashboard() {
         {/* Pipeline Summary */}
         <div className="lg:col-span-2 rounded-2xl border border-[--k-border] bg-white shadow-sm">
           <div className="flex items-center justify-between border-b border-[--k-border] bg-gradient-to-r from-rose-50/50 to-pink-50/30 px-4 py-3 rounded-t-2xl">
-            <span className="text-[13px] font-semibold text-[--k-text]">Pipeline des événements</span>
+            <span className="text-[13px] font-semibold text-[--k-text]">Pipeline de production</span>
             <a href="/events/pipeline" className="text-[12px] font-medium text-[--k-primary] hover:underline flex items-center gap-1">
               Voir pipeline <ChevronRight className="h-3 w-3" />
             </a>
@@ -109,18 +97,18 @@ export default function EventsDashboard() {
           <div className="p-4">
             {/* Pipeline bar */}
             <div className="mb-4 flex h-5 w-full overflow-hidden rounded-full">
-              {PIPELINE_STAGES.filter(s => s.key !== "done" && s.key !== "invoiced").map(s => (
+              {PIPELINE_STAGES.map(s => (
                 <div
                   key={s.key}
                   className={cn("h-full transition-all", s.color)}
-                  style={{ width: `${(s.count / 71) * 100}%` }}
+                  style={{ width: `${(s.count / activeTotal) * 100}%` }}
                   title={`${s.label}: ${s.count}`}
                 />
               ))}
             </div>
             {/* Stage counts */}
             <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
-              {PIPELINE_STAGES.filter(s => s.key !== "done" && s.key !== "invoiced").map(s => (
+              {PIPELINE_STAGES.map(s => (
                 <div key={s.key} className="text-center">
                   <div className="text-[18px] font-bold text-[--k-text]">{s.count}</div>
                   <div className="flex items-center justify-center gap-1">
@@ -137,8 +125,8 @@ export default function EventsDashboard() {
                 <span><strong className="text-[--k-text]">142</strong> terminés ce trimestre</span>
               </div>
               <div className="flex items-center gap-2 text-[12px] text-[--k-muted]">
-                <Euro className="h-3.5 w-3.5 text-green-600" />
-                <span><strong className="text-[--k-text]">134</strong> facturés (892k€)</span>
+                <Clock className="h-3.5 w-3.5 text-blue-500" />
+                <span><strong className="text-[--k-text]">{activeTotal}</strong> en production</span>
               </div>
             </div>
           </div>
@@ -168,9 +156,6 @@ export default function EventsDashboard() {
                   )}
                 >
                   {d}
-                  {EVENT_DAYS.has(d) && d !== TODAY && (
-                    <span className="absolute mt-5 h-1 w-1 rounded-full bg-rose-400" />
-                  )}
                 </div>
               ))}
             </div>
@@ -261,44 +246,19 @@ export default function EventsDashboard() {
         </div>
       </div>
 
-      {/* Top Clients + Quick Stats */}
-      <div className="grid gap-3 lg:grid-cols-3">
-        {/* Top clients */}
-        <div className="lg:col-span-2 rounded-2xl border border-[--k-border] bg-white shadow-sm">
-          <div className="border-b border-[--k-border] bg-gradient-to-r from-rose-50/50 to-pink-50/30 px-4 py-3 rounded-t-2xl">
-            <span className="text-[13px] font-semibold text-[--k-text]">Top clients 2026</span>
-          </div>
-          <div className="divide-y divide-[--k-border]">
-            {TOP_CLIENTS.map((c, i) => (
-              <div key={c.name} className="flex items-center gap-3 px-4 py-2.5 hover:bg-[--k-surface-2]/30 transition">
-                <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-gradient-to-br from-rose-400 to-pink-500 text-[10px] font-bold text-white">{i + 1}</span>
-                <div className="flex-1 min-w-0">
-                  <div className="text-[13px] font-medium text-[--k-text] truncate">{c.name}</div>
-                  <div className="text-[11px] text-[--k-muted]">{c.events} événements</div>
-                </div>
-                <div className="text-right shrink-0">
-                  <div className="text-[13px] font-semibold text-[--k-text]">{c.ca}</div>
-                  <div className={cn("text-[11px] font-medium", c.trend === "new" ? "text-blue-500" : "text-emerald-600")}>{c.trend === "new" ? "Nouveau" : c.trend}</div>
-                </div>
-              </div>
-            ))}
-          </div>
+      {/* Logistics */}
+      <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm">
+        <div className="flex items-center justify-between border-b border-[--k-border] bg-gradient-to-r from-rose-50/50 to-pink-50/30 px-4 py-3 rounded-t-2xl">
+          <span className="text-[13px] font-semibold text-[--k-text]">Logistique en cours</span>
+          <a href="/events/logistics" className="text-[12px] font-medium text-[--k-primary] hover:underline flex items-center gap-1">
+            Détails <ChevronRight className="h-3 w-3" />
+          </a>
         </div>
-
-        {/* Quick logistics stats */}
-        <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm">
-          <div className="border-b border-[--k-border] bg-gradient-to-r from-rose-50/50 to-pink-50/30 px-4 py-3 rounded-t-2xl">
-            <span className="text-[13px] font-semibold text-[--k-text]">Logistique en cours</span>
-          </div>
-          <div className="p-4 space-y-3">
-            <LogStat icon={Truck} label="Expéditions en transit" value="6" sub="UPS: 4 / TNT: 2" color="text-amber-500" />
-            <LogStat icon={MapPin} label="Bornes en antenne" value="312" sub="Prêtes pour affectation" color="text-blue-500" />
-            <LogStat icon={Camera} label="Bornes réservées" value="124" sub="Sur 850 total (14.6%)" color="text-rose-500" />
-            <LogStat icon={AlertTriangle} label="Retours en attente" value="3" sub="Délai moyen: 2.4j" color="text-orange-500" />
-          </div>
-          <div className="border-t border-[--k-border] px-4 py-2.5 text-center">
-            <a href="/events/logistics" className="text-[12px] font-medium text-[--k-primary] hover:underline">Voir la logistique →</a>
-          </div>
+        <div className="grid grid-cols-2 gap-3 p-4 lg:grid-cols-4">
+          <LogStat icon={Truck} label="Expéditions en transit" value="6" sub="UPS: 4 / TNT: 2" color="text-amber-500" />
+          <LogStat icon={MapPin} label="Bornes en antenne" value="312" sub="Prêtes pour affectation" color="text-blue-500" />
+          <LogStat icon={Camera} label="Bornes réservées" value="124" sub="Sur 850 total (14.6%)" color="text-rose-500" />
+          <LogStat icon={AlertTriangle} label="Retours en attente" value="3" sub="Délai moyen: 2.4j" color="text-orange-500" />
         </div>
       </div>
     </AppShell>

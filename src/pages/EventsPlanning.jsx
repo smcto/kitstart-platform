@@ -15,9 +15,9 @@ const EVENTS_DATA = [
   { id: "EVT-298", name: "Festival Nantes Digital", dateStart: 15, dateEnd: 17, type: "Festival", bornes: 8, client: "Nantes Métropole", status: "confirmed" },
   { id: "EVT-302", name: "Team Building Airbus", dateStart: 18, dateEnd: 18, type: "Corporate", bornes: 3, client: "Airbus SE", status: "design" },
   { id: "EVT-305", name: "Gala BMW Munich", dateStart: 20, dateEnd: 20, type: "Corporate", bornes: 6, client: "BMW AG", status: "confirmed" },
-  { id: "EVT-308", name: "Mariage Cohen", dateStart: 22, dateEnd: 22, type: "Mariage", bornes: 2, client: "Famille Cohen", status: "prospect" },
-  { id: "EVT-312", name: "Salon Auto Lyon", dateStart: 25, dateEnd: 27, type: "Salon", bornes: 10, client: "Lyon Auto Events", status: "prospect" },
-  { id: "EVT-315", name: "Anniversaire Nike", dateStart: 28, dateEnd: 28, type: "Corporate", bornes: 5, client: "Nike France", status: "prospect" },
+  { id: "EVT-308", name: "Mariage Cohen", dateStart: 22, dateEnd: 22, type: "Mariage", bornes: 2, client: "Famille Cohen", status: "confirmed" },
+  { id: "EVT-312", name: "Salon Auto Lyon", dateStart: 25, dateEnd: 27, type: "Salon", bornes: 10, client: "Lyon Auto Events", status: "confirmed" },
+  { id: "EVT-315", name: "Anniversaire Nike", dateStart: 28, dateEnd: 28, type: "Corporate", bornes: 5, client: "Nike France", status: "confirmed" },
   { id: "EVT-320", name: "Mariage Silva", dateStart: 1, dateEnd: 1, type: "Mariage", bornes: 1, client: "Famille Silva", status: "confirmed" },
   { id: "EVT-322", name: "Séminaire Total", dateStart: 3, dateEnd: 4, type: "Corporate", bornes: 3, client: "TotalEnergies", status: "confirmed" },
 ];
@@ -30,7 +30,6 @@ const TYPE_COLORS = {
 };
 
 const STATUS_DOT = {
-  prospect: "bg-slate-400",
   confirmed: "bg-blue-500",
   design: "bg-violet-500",
   logistics: "bg-amber-500",
