@@ -96,11 +96,16 @@ const MOCK_CONTACTS = [
   { id: 3, nom: "Sophie Bernard", fonction: "Responsable communication", email: "sophie.bernard@client.fr", tel: "06 55 44 33 22" },
 ];
 
-const BORNE_TYPES = [
-  { id: "classik", name: "Classik", icon: "📷", desc: "Borne photo classique" },
-  { id: "spherik", name: "Spherik", icon: "🔮", desc: "Borne sphérique 360°" },
-  { id: "prestige", name: "Prestige", icon: "✨", desc: "Borne haut de gamme" },
+const MODALITES_FACTURATION = [
+  { id: "email", label: "Envoi par email" },
+  { id: "chorus", label: "Chorus Pro (collectivité / établissement public)" },
+  { id: "courrier", label: "Envoi par courrier" },
+  { id: "plateforme", label: "Plateforme client (Coupa, Ariba, Ivalua...)" },
+  { id: "portail", label: "Portail fournisseur dédié" },
+  { id: "autre", label: "Autre" },
 ];
+
+const BORNE_TYPES = ["Classik", "Spherik", "Prestige"];
 
 const ANIMATION_OPTIONS = [
   "Impression d'un photocall",
@@ -151,6 +156,8 @@ export default function EventCreate() {
   const [showResponsablePicker, setShowResponsablePicker] = useState(false);
   const [selectedResponsables, setSelectedResponsables] = useState([]);
   const [internalTags, setInternalTags] = useState([]);
+  const [contactFacturation, setContactFacturation] = useState(null);
+  const [showFacturationContactPicker, setShowFacturationContactPicker] = useState(false);
   const [contactsCrea, setContactsCrea] = useState([]);
   const [showCreaContactPicker, setShowCreaContactPicker] = useState(false);
   const [contactsSurPlace, setContactsSurPlace] = useState([]);
@@ -173,6 +180,11 @@ export default function EventCreate() {
     tel2: "",
     emailGeneral: "",
     commentaire: "",
+    // Step 1 - Facturation
+    modaliteFacturation: "",
+    refFacturation: "",
+    infoFacturation: "",
+    commentaireFacturation: "",
     opportunite: "",
     // Step 2 - Événement
     eventName: "",
@@ -203,7 +215,7 @@ export default function EventCreate() {
     commentaireSurPlace: "",
     responsableProjet: "",
     // Step 3 - Animation(s)
-    bornes: { classik: 0, spherik: 0, prestige: 0 },
+    dispositifs: [{ id: 1, type: "Classik", qty: 1, numeros: "" }],
     animationOptions: [],
     // Step 4 - Créa / Supports graphiques
     creaRealisee: "nous", // "nous" or "client"
@@ -600,6 +612,119 @@ export default function EventCreate() {
               </div>
             </div>
 
+            {/* Facturation */}
+            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+              <div className="border-b border-[--k-border] px-5 py-3">
+                <h2 className="text-[14px] font-bold text-[--k-text]">Facturation</h2>
+                <p className="text-[12px] text-[--k-muted] mt-0.5">Contact facturation et modalités de dépôt des factures</p>
+              </div>
+              <div className="p-5 space-y-4">
+                {/* Contact facturation */}
+                <Field label="Contact facturation">
+                  {contactFacturation ? (
+                    <div className="flex items-center justify-between rounded-lg border border-[--k-border] px-3 py-2">
+                      <div>
+                        <span className="text-[13px] font-medium text-[--k-text]">{contactFacturation.nom}</span>
+                        {contactFacturation.fonction && <span className="text-[12px] text-[--k-muted] ml-2">{contactFacturation.fonction}</span>}
+                        <span className="text-[12px] text-[--k-muted] ml-2">{contactFacturation.email}</span>
+                        {contactFacturation.tel && <span className="text-[12px] text-[--k-muted] ml-2">{contactFacturation.tel}</span>}
+                      </div>
+                      <button onClick={() => setContactFacturation(null)} className="text-[--k-muted] hover:text-[--k-danger]">
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <button
+                        onClick={() => setShowFacturationContactPicker(!showFacturationContactPicker)}
+                        className="flex items-center gap-1.5 rounded-lg border border-dashed border-[--k-border] px-3 py-2 text-[12px] text-[--k-muted] hover:border-[--k-primary] hover:text-[--k-primary] transition w-full"
+                      >
+                        <Plus className="h-3.5 w-3.5" /> Sélectionner un contact facturation
+                      </button>
+                      {showFacturationContactPicker && (
+                        <div className="mt-2 rounded-lg border border-[--k-border] bg-[--k-surface-2] p-3">
+                          <div className="space-y-1">
+                            {/* Contacts existants */}
+                            {[...MOCK_CONTACTS, ...contacts.filter(c => c.isNew)].map(c => (
+                              <button
+                                key={c.id}
+                                onClick={() => { setContactFacturation(c); setShowFacturationContactPicker(false); }}
+                                className="w-full text-left rounded-lg px-3 py-2 text-[13px] hover:bg-white transition"
+                              >
+                                <span className="font-medium">{c.nom}</span>
+                                <span className="text-[--k-muted] ml-2">— {c.email}</span>
+                              </button>
+                            ))}
+                          </div>
+                          <p className="text-[11px] text-[--k-muted] mt-2 pt-2 border-t border-[--k-border]">
+                            Peut être différent du contact projet (ex: service comptabilité)
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </Field>
+
+                {/* Modalité de dépôt */}
+                <Field label="Modalité de dépôt des factures" required>
+                  <select value={form.modaliteFacturation} onChange={e => update("modaliteFacturation", e.target.value)} className="input-field">
+                    <option value="">Séléctionner</option>
+                    {MODALITES_FACTURATION.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
+                  </select>
+                </Field>
+
+                {/* Chorus-specific fields */}
+                {form.modaliteFacturation === "chorus" && (
+                  <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 space-y-3">
+                    <p className="text-[12px] font-semibold text-blue-800">Informations Chorus Pro</p>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <Field label="N° SIRET">
+                        <input value={form.refFacturation} onChange={e => update("refFacturation", e.target.value)} placeholder="Ex: 123 456 789 00012" className="input-field" />
+                      </Field>
+                      <Field label="Code service (si applicable)">
+                        <input value={form.infoFacturation} onChange={e => update("infoFacturation", e.target.value)} placeholder="Ex: COMPTA-01" className="input-field" />
+                      </Field>
+                    </div>
+                  </div>
+                )}
+
+                {/* Plateforme-specific fields */}
+                {form.modaliteFacturation === "plateforme" && (
+                  <div className="rounded-lg border border-purple-200 bg-purple-50 p-4 space-y-3">
+                    <p className="text-[12px] font-semibold text-purple-800">Informations plateforme</p>
+                    <Field label="Nom de la plateforme / URL">
+                      <input value={form.refFacturation} onChange={e => update("refFacturation", e.target.value)} placeholder="Ex: Coupa, https://..." className="input-field" />
+                    </Field>
+                  </div>
+                )}
+
+                {/* Portail-specific fields */}
+                {form.modaliteFacturation === "portail" && (
+                  <div className="rounded-lg border border-purple-200 bg-purple-50 p-4 space-y-3">
+                    <p className="text-[12px] font-semibold text-purple-800">Informations portail fournisseur</p>
+                    <Field label="URL / identifiants du portail">
+                      <input value={form.refFacturation} onChange={e => update("refFacturation", e.target.value)} placeholder="Ex: https://portail.client.fr" className="input-field" />
+                    </Field>
+                  </div>
+                )}
+
+                {/* Autre */}
+                {form.modaliteFacturation === "autre" && (
+                  <Field label="Précisez">
+                    <input value={form.refFacturation} onChange={e => update("refFacturation", e.target.value)} placeholder="Modalité de dépôt..." className="input-field" />
+                  </Field>
+                )}
+
+                {/* Note facturation collapsible */}
+                <CollapsibleComment
+                  label="Ajouter une note sur la facturation..."
+                  value={form.commentaireFacturation}
+                  onChange={val => update("commentaireFacturation", val)}
+                  placeholder="Informations complémentaires (n° de bon de commande, adresse de facturation spécifique, etc.)"
+                />
+              </div>
+            </div>
+
             {/* Commentaire */}
             <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm p-5">
               <CollapsibleComment
@@ -777,14 +902,6 @@ export default function EventCreate() {
                       value={form.eventType}
                       onChange={val => update("eventType", val)}
                       options={EVENT_TYPES}
-                      placeholder="Séléctionner"
-                    />
-                  </Field>
-                  <Field label="Type d'animation" required>
-                    <SelectWithClear
-                      value={form.animationType}
-                      onChange={val => update("animationType", val)}
-                      options={ANIMATION_TYPES}
                       placeholder="Séléctionner"
                     />
                   </Field>
@@ -1020,14 +1137,14 @@ export default function EventCreate() {
                 </div>
 
                 {/* Google Map placeholder */}
-                <div className="w-full h-64 rounded-lg bg-blue-100 relative overflow-hidden">
+                <div className="w-full h-32 rounded-lg bg-blue-100 relative overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-b from-blue-200/60 to-blue-300/40" />
-                  <div className="absolute top-2 left-2 z-10 flex rounded overflow-hidden border border-[--k-border] bg-white shadow-sm">
-                    <button className="px-3 py-1.5 text-[12px] font-semibold text-[--k-text] bg-white">Plan</button>
-                    <button className="px-3 py-1.5 text-[12px] text-[--k-muted] bg-[--k-surface-2]">Satellite</button>
+                  <div className="absolute top-1.5 left-1.5 z-10 flex rounded overflow-hidden border border-[--k-border] bg-white shadow-sm">
+                    <button className="px-2 py-1 text-[11px] font-semibold text-[--k-text] bg-white">Plan</button>
+                    <button className="px-2 py-1 text-[11px] text-[--k-muted] bg-[--k-surface-2]">Satellite</button>
                   </div>
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <MapPin className="h-8 w-8 text-red-500" />
+                    <MapPin className="h-6 w-6 text-red-500" />
                   </div>
                 </div>
 
@@ -1048,20 +1165,14 @@ export default function EventCreate() {
               </div>
             </div>
 
-            {/* Documents */}
-            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
-              <div className="border-b border-[--k-border] px-5 py-3">
-                <h2 className="text-[16px] font-bold text-[--k-text]">Documents</h2>
+            {/* Documents (collapsible) */}
+            <CollapsibleSection title="Documents" buttonLabel="Ajouter des documents...">
+              <div className="flex items-center justify-center rounded-lg border-2 border-dashed border-[--k-border] bg-[--k-surface-2]/30 py-8 cursor-pointer hover:border-[--k-primary] hover:bg-[--k-primary-2]/20 transition">
+                <span className="inline-flex items-center gap-2 rounded-lg border border-[--k-border] bg-white px-4 py-2 text-[13px] text-[--k-muted] shadow-sm">
+                  Cliquer ou glisser vos fichiers ici
+                </span>
               </div>
-              <div className="p-5">
-                <div className="flex items-center justify-center rounded-lg border-2 border-dashed border-[--k-border] bg-[--k-surface-2]/30 py-12 cursor-pointer hover:border-[--k-primary] hover:bg-[--k-primary-2]/20 transition">
-                  <span className="inline-flex items-center gap-2 rounded-lg border border-[--k-border] bg-white px-4 py-2 text-[13px] text-[--k-muted] shadow-sm">
-                    Cliquer ou glisser vos fichiers ici
-                  </span>
-                </div>
-              </div>
-            </div>
-
+            </CollapsibleSection>
 
             {/* Contact(s) sur place */}
             <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
@@ -1172,66 +1283,76 @@ export default function EventCreate() {
         {/* ─── Step 3: Animation(s) ────────────────── */}
         {currentStep === 3 && (
           <div className="space-y-5">
-            {/* Borne(s) */}
+            {/* Dispositif(s) */}
             <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
-              <div className="border-b border-[--k-border] px-5 py-3">
-                <h2 className="text-[16px] font-bold text-[--k-text]">Borne(s)</h2>
-                <p className="text-[12px] text-[--k-muted] mt-0.5">Sélectionnez le type et le nombre de bornes pour cet événement</p>
+              <div className="flex items-center justify-between border-b border-[--k-border] px-5 py-3">
+                <h2 className="text-[16px] font-bold text-[--k-text]">Dispositif(s)</h2>
+                <button
+                  onClick={() => setForm(f => ({ ...f, dispositifs: [...f.dispositifs, { id: Date.now(), type: "Classik", qty: 1, numeros: "" }] }))}
+                  className="h-9 rounded-lg bg-[--k-success] px-4 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5"
+                >
+                  <Plus className="h-3.5 w-3.5" /> Ajouter un dispositif
+                </button>
               </div>
               <div className="p-5">
-                <div className="grid gap-4 sm:grid-cols-3">
-                  {BORNE_TYPES.map(bt => {
-                    const qty = form.bornes[bt.id] || 0;
-                    const isActive = qty > 0;
-                    return (
-                      <div
-                        key={bt.id}
-                        className={cn(
-                          "rounded-xl border-2 p-4 transition cursor-pointer",
-                          isActive
-                            ? "border-[--k-primary] bg-[--k-primary-2]/30 shadow-sm"
-                            : "border-[--k-border] bg-white hover:border-[--k-primary]/40"
+                <div className="space-y-3">
+                  {form.dispositifs.map((d, i) => (
+                    <div key={d.id} className="flex items-start gap-3 rounded-lg border border-[--k-border] p-3">
+                      <div className="flex-1 grid gap-3 sm:grid-cols-[180px_80px_1fr]">
+                        <Field label={i === 0 ? "Type" : undefined}>
+                          <select
+                            value={d.type}
+                            onChange={e => setForm(f => ({ ...f, dispositifs: f.dispositifs.map(x => x.id === d.id ? { ...x, type: e.target.value } : x) }))}
+                            className="input-field"
+                          >
+                            {BORNE_TYPES.map(t => <option key={t}>{t}</option>)}
+                            <option value="__autre">Autre...</option>
+                          </select>
+                        </Field>
+                        <Field label={i === 0 ? "Qté" : undefined}>
+                          <input
+                            type="number"
+                            min="1"
+                            value={d.qty}
+                            onChange={e => setForm(f => ({ ...f, dispositifs: f.dispositifs.map(x => x.id === d.id ? { ...x, qty: parseInt(e.target.value) || 1 } : x) }))}
+                            className="input-field text-center"
+                          />
+                        </Field>
+                        <Field label={i === 0 ? "N° de borne(s)" : undefined}>
+                          <input
+                            value={d.numeros}
+                            onChange={e => setForm(f => ({ ...f, dispositifs: f.dispositifs.map(x => x.id === d.id ? { ...x, numeros: e.target.value } : x) }))}
+                            placeholder="Ex: B-001, B-002, B-003"
+                            className="input-field"
+                          />
+                        </Field>
+                        {d.type === "__autre" && (
+                          <div className="sm:col-span-3">
+                            <Field label="Nom du dispositif">
+                              <input
+                                value={d.autreNom || ""}
+                                onChange={e => setForm(f => ({ ...f, dispositifs: f.dispositifs.map(x => x.id === d.id ? { ...x, autreNom: e.target.value } : x) }))}
+                                placeholder="Ex: Mur digital, Borne tactile..."
+                                className="input-field"
+                              />
+                            </Field>
+                          </div>
                         )}
-                        onClick={() => {
-                          if (!isActive) setForm(f => ({ ...f, bornes: { ...f.bornes, [bt.id]: 1 } }));
-                        }}
-                      >
-                        <div className="text-center mb-3">
-                          <span className="text-2xl">{bt.icon}</span>
-                          <h3 className="text-[14px] font-bold text-[--k-text] mt-1">{bt.name}</h3>
-                          <p className="text-[11px] text-[--k-muted]">{bt.desc}</p>
-                        </div>
-                        <div className="flex items-center justify-center gap-2">
-                          <button
-                            onClick={e => { e.stopPropagation(); setForm(f => ({ ...f, bornes: { ...f.bornes, [bt.id]: Math.max(0, (f.bornes[bt.id] || 0) - 1) } })); }}
-                            className={cn(
-                              "h-8 w-8 rounded-lg flex items-center justify-center text-[16px] font-bold transition",
-                              qty > 0 ? "bg-[--k-surface-2] text-[--k-text] hover:bg-[--k-border]" : "bg-[--k-surface-2] text-[--k-muted] opacity-40"
-                            )}
-                          >
-                            −
-                          </button>
-                          <span className={cn(
-                            "text-[18px] font-bold w-8 text-center",
-                            isActive ? "text-[--k-primary]" : "text-[--k-muted]"
-                          )}>{qty}</span>
-                          <button
-                            onClick={e => { e.stopPropagation(); setForm(f => ({ ...f, bornes: { ...f.bornes, [bt.id]: (f.bornes[bt.id] || 0) + 1 } })); }}
-                            className="h-8 w-8 rounded-lg flex items-center justify-center bg-[--k-success] text-white text-[16px] font-bold hover:brightness-110 transition"
-                          >
-                            +
-                          </button>
-                        </div>
                       </div>
-                    );
-                  })}
+                      {form.dispositifs.length > 1 && (
+                        <button
+                          onClick={() => setForm(f => ({ ...f, dispositifs: f.dispositifs.filter(x => x.id !== d.id) }))}
+                          className="mt-6 text-[--k-muted] hover:text-[--k-danger] transition shrink-0"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
                 </div>
-                {(form.bornes.classik + form.bornes.spherik + form.bornes.prestige) > 0 && (
-                  <p className="mt-3 text-[12px] text-[--k-primary] font-medium">
-                    Total : {form.bornes.classik + form.bornes.spherik + form.bornes.prestige} borne(s) sélectionnée(s)
-                    {form.bornes.classik > 0 && ` — ${form.bornes.classik} Classik`}
-                    {form.bornes.spherik > 0 && ` — ${form.bornes.spherik} Spherik`}
-                    {form.bornes.prestige > 0 && ` — ${form.bornes.prestige} Prestige`}
+                {form.dispositifs.length > 0 && (
+                  <p className="mt-3 text-[12px] text-[--k-muted]">
+                    Total : {form.dispositifs.reduce((sum, d) => sum + d.qty, 0)} dispositif(s)
                   </p>
                 )}
               </div>
@@ -1441,110 +1562,101 @@ export default function EventCreate() {
               </div>
             </div>
 
-            {/* Logistique aller */}
-            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
-              <div className="border-b border-[--k-border] px-5 py-3">
-                <h2 className="text-[16px] font-bold text-[--k-text]">Logistique aller</h2>
-              </div>
-              <div className="p-5 space-y-4">
-                <Field label="Type d'installation / envoi" required>
-                  <SelectWithClear
-                    value={form.typeInstallation}
-                    onChange={val => update("typeInstallation", val)}
-                    options={TYPES_INSTALLATION}
-                    placeholder="Séléctionner"
+            {/* Logistique aller / retour — 50/50 */}
+            <div className="grid gap-5 lg:grid-cols-2">
+              {/* Aller */}
+              <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+                <div className="border-b border-[--k-border] px-5 py-3">
+                  <h2 className="text-[16px] font-bold text-[--k-text]">Logistique aller</h2>
+                </div>
+                <div className="p-5 space-y-4">
+                  <Field label="Type d'installation / envoi" required>
+                    <SelectWithClear
+                      value={form.typeInstallation}
+                      onChange={val => update("typeInstallation", val)}
+                      options={TYPES_INSTALLATION}
+                      placeholder="Séléctionner"
+                    />
+                  </Field>
+                  <button className="h-8 rounded-lg bg-[--k-primary] px-3 text-[12px] font-medium text-white hover:brightness-110 transition shadow-sm">
+                    Ajouter un colis transporteur
+                  </button>
+                  <CollapsibleComment
+                    label="Commentaire interne..."
+                    value={form.commentaireAllerInterne}
+                    onChange={val => update("commentaireAllerInterne", val)}
+                    placeholder="Commentaire interne..."
                   />
-                </Field>
-                <button className="h-9 rounded-lg bg-[--k-primary] px-4 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm">
-                  Ajouter un colis transporteur
-                </button>
-                <CollapsibleComment
-                  label="Ajouter un commentaire interne..."
-                  value={form.commentaireAllerInterne}
-                  onChange={val => update("commentaireAllerInterne", val)}
-                  placeholder="Commentaire interne..."
-                />
-                <CollapsibleComment
-                  label="Ajouter une note pour le client..."
-                  value={form.noteAllerClient}
-                  onChange={val => update("noteAllerClient", val)}
-                  placeholder="Note visible par le client..."
-                />
+                  <CollapsibleComment
+                    label="Note pour le client..."
+                    value={form.noteAllerClient}
+                    onChange={val => update("noteAllerClient", val)}
+                    placeholder="Note visible par le client..."
+                  />
+                </div>
               </div>
-            </div>
 
-            {/* Logistique retour */}
-            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
-              <div className="border-b border-[--k-border] px-5 py-3">
-                <h2 className="text-[16px] font-bold text-[--k-text]">Logistique retour</h2>
-              </div>
-              <div className="p-5 space-y-4">
-                <Field label="Type de désinstallation / retour" required>
-                  <SelectWithClear
-                    value={form.typeRetour}
-                    onChange={val => update("typeRetour", val)}
-                    options={TYPES_RETOUR}
-                    placeholder="Séléctionner"
-                  />
-                </Field>
-                {form.typeRetour && (
-                  <>
-                    <Field label="Jour retour">
-                      <input type="date" value={form.jourRetour} onChange={e => update("jourRetour", e.target.value)} className="input-field" />
-                    </Field>
-                    <div className="flex items-center gap-4">
-                      <label className="flex items-center gap-1.5 text-[13px] text-[--k-text] cursor-pointer">
-                        <input
-                          type="radio"
-                          name="heureRetourMode"
-                          checked={form.heureRetourMode === "precise"}
-                          onChange={() => update("heureRetourMode", "precise")}
-                          className="accent-[--k-primary]"
-                        />
-                        Heure précise
-                      </label>
-                      <label className="flex items-center gap-1.5 text-[13px] text-[--k-text] cursor-pointer">
-                        <input
-                          type="radio"
-                          name="heureRetourMode"
-                          checked={form.heureRetourMode === "tranche"}
-                          onChange={() => update("heureRetourMode", "tranche")}
-                          className="accent-[--k-primary]"
-                        />
-                        Tranche horaire
-                      </label>
-                    </div>
-                    {form.heureRetourMode === "precise" ? (
-                      <Field label="Heure retour">
-                        <input type="time" value={form.heureRetour} onChange={e => update("heureRetour", e.target.value)} className="input-field" />
+              {/* Retour */}
+              <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+                <div className="border-b border-[--k-border] px-5 py-3">
+                  <h2 className="text-[16px] font-bold text-[--k-text]">Logistique retour</h2>
+                </div>
+                <div className="p-5 space-y-4">
+                  <Field label="Type de désinstallation / retour" required>
+                    <SelectWithClear
+                      value={form.typeRetour}
+                      onChange={val => update("typeRetour", val)}
+                      options={TYPES_RETOUR}
+                      placeholder="Séléctionner"
+                    />
+                  </Field>
+                  {form.typeRetour && (
+                    <>
+                      <Field label="Jour retour">
+                        <input type="date" value={form.jourRetour} onChange={e => update("jourRetour", e.target.value)} className="input-field" />
                       </Field>
-                    ) : (
-                      <div className="grid gap-4 sm:grid-cols-2">
-                        <Field label="Heure début">
-                          <input type="time" value={form.heureRetourDebut} onChange={e => update("heureRetourDebut", e.target.value)} className="input-field" />
-                        </Field>
-                        <Field label="Heure fin">
-                          <input type="time" value={form.heureRetourFin} onChange={e => update("heureRetourFin", e.target.value)} className="input-field" />
-                        </Field>
+                      <div className="flex items-center gap-3">
+                        <label className="flex items-center gap-1.5 text-[12px] text-[--k-text] cursor-pointer">
+                          <input type="radio" name="heureRetourMode" checked={form.heureRetourMode === "precise"} onChange={() => update("heureRetourMode", "precise")} className="accent-[--k-primary]" />
+                          Heure précise
+                        </label>
+                        <label className="flex items-center gap-1.5 text-[12px] text-[--k-text] cursor-pointer">
+                          <input type="radio" name="heureRetourMode" checked={form.heureRetourMode === "tranche"} onChange={() => update("heureRetourMode", "tranche")} className="accent-[--k-primary]" />
+                          Tranche horaire
+                        </label>
                       </div>
-                    )}
-                  </>
-                )}
-                <button className="h-9 rounded-lg bg-[--k-primary] px-4 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm">
-                  Ajouter un colis transporteur
-                </button>
-                <CollapsibleComment
-                  label="Ajouter un commentaire interne..."
-                  value={form.commentaireRetourInterne}
-                  onChange={val => update("commentaireRetourInterne", val)}
-                  placeholder="Commentaire interne..."
-                />
-                <CollapsibleComment
-                  label="Ajouter une note pour le client..."
-                  value={form.noteRetourClient}
-                  onChange={val => update("noteRetourClient", val)}
-                  placeholder="Note visible par le client..."
-                />
+                      {form.heureRetourMode === "precise" ? (
+                        <Field label="Heure retour">
+                          <input type="time" value={form.heureRetour} onChange={e => update("heureRetour", e.target.value)} className="input-field" />
+                        </Field>
+                      ) : (
+                        <div className="grid gap-3 grid-cols-2">
+                          <Field label="Début">
+                            <input type="time" value={form.heureRetourDebut} onChange={e => update("heureRetourDebut", e.target.value)} className="input-field" />
+                          </Field>
+                          <Field label="Fin">
+                            <input type="time" value={form.heureRetourFin} onChange={e => update("heureRetourFin", e.target.value)} className="input-field" />
+                          </Field>
+                        </div>
+                      )}
+                    </>
+                  )}
+                  <button className="h-8 rounded-lg bg-[--k-primary] px-3 text-[12px] font-medium text-white hover:brightness-110 transition shadow-sm">
+                    Ajouter un colis transporteur
+                  </button>
+                  <CollapsibleComment
+                    label="Commentaire interne..."
+                    value={form.commentaireRetourInterne}
+                    onChange={val => update("commentaireRetourInterne", val)}
+                    placeholder="Commentaire interne..."
+                  />
+                  <CollapsibleComment
+                    label="Note pour le client..."
+                    value={form.noteRetourClient}
+                    onChange={val => update("noteRetourClient", val)}
+                    placeholder="Note visible par le client..."
+                  />
+                </div>
               </div>
             </div>
 
@@ -1592,9 +1704,9 @@ export default function EventCreate() {
                 </RecapSection>
 
                 <RecapSection title="Animation(s)">
-                  <RecapRow label="Bornes Classik" value={form.bornes.classik || "0"} />
-                  <RecapRow label="Bornes Spherik" value={form.bornes.spherik || "0"} />
-                  <RecapRow label="Bornes Prestige" value={form.bornes.prestige || "0"} />
+                  {form.dispositifs.map((d, i) => (
+                    <RecapRow key={d.id} label={d.type === "__autre" ? (d.autreNom || "Autre") : d.type} value={`×${d.qty}${d.numeros ? ` — ${d.numeros}` : ""}`} />
+                  ))}
                   {form.animationOptions.length > 0 && <RecapRow label="Options animation" value={form.animationOptions.join(", ")} />}
                 </RecapSection>
 
@@ -1618,22 +1730,6 @@ export default function EventCreate() {
                     ))}
                   </RecapSection>
                 )}
-              </div>
-            </div>
-
-            {/* Notes internes */}
-            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
-              <div className="border-b border-[--k-border] px-5 py-3">
-                <h2 className="text-[16px] font-bold text-[--k-text]">Notes internes</h2>
-              </div>
-              <div className="p-5">
-                <textarea
-                  value={form.notes}
-                  onChange={e => update("notes", e.target.value)}
-                  rows={4}
-                  placeholder="Notes internes, instructions particulières, accès, horaires montage..."
-                  className="input-field w-full resize-none"
-                />
               </div>
             </div>
 
@@ -1724,6 +1820,31 @@ function ToolbarBtn({ children, title }) {
     >
       {children}
     </button>
+  );
+}
+
+function CollapsibleSection({ title, buttonLabel, children }) {
+  const [open, setOpen] = useState(false);
+  return open ? (
+    <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+      <div className="flex items-center justify-between border-b border-[--k-border] px-5 py-3">
+        <h2 className="text-[16px] font-bold text-[--k-text]">{title}</h2>
+        <button onClick={() => setOpen(false)} className="text-[--k-muted] hover:text-[--k-danger]">
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+      <div className="p-5">{children}</div>
+    </div>
+  ) : (
+    <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm p-4">
+      <button
+        onClick={() => setOpen(true)}
+        className="flex items-center gap-2 rounded-lg border border-dashed border-[--k-border] px-3 py-2 text-[12px] text-[--k-muted] hover:border-[--k-primary] hover:text-[--k-primary] transition w-full"
+      >
+        <Plus className="h-3.5 w-3.5" />
+        {buttonLabel || title}
+      </button>
+    </div>
   );
 }
 
