@@ -74,7 +74,7 @@ const APP_IDENTITY = {
     border: "border-violet-200",
     topStripe: "bg-violet-500",
   },
-  "Events": {
+  "Events Manager": {
     icon: CalendarDays,
     bg: "bg-rose-50",
     text: "text-rose-500",

@@ -14,6 +14,7 @@ export function AppShell({ currentApp, children, activeKey, hubMode = false }) {
 
   const apps = useMemo(() => ([
     { name: "Konitys Hub", badge: "Home", description: "Catalogue des apps" },
+    { name: "Events Manager", description: "Événements, planning & logistique" },
     { name: "Bornes Manager", description: "Parc, events, logs, diagnostics" },
     { name: "Antennes Selfizee", description: "Réseau & supervision" },
     { name: "Stock Manager", description: "Consommables & alertes" },
@@ -30,6 +31,7 @@ export function AppShell({ currentApp, children, activeKey, hubMode = false }) {
         onToggleMobileMenu={() => setMobileMenuOpen(v => !v)}
         onSelectApp={(name) => {
           const map = {
+            "Events Manager": "/events",
             "Bornes Manager": "/bornes",
             "Antennes Selfizee": "/antennes",
             "Stock Manager": "/stocks",
