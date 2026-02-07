@@ -10,6 +10,9 @@ import AntennesDashboard from "./pages/AntennesDashboard.jsx";
 import AntennesList from "./pages/AntennesList.jsx";
 import StockDashboard from "./pages/StockDashboard.jsx";
 import StockList from "./pages/StockList.jsx";
+import MonCompte from "./pages/MonCompte.jsx";
+import StatsDashboard from "./pages/StatsDashboard.jsx";
+import Taches from "./pages/Taches.jsx";
 
 function Placeholder({ name }) {
   return (
@@ -39,6 +42,11 @@ export default function App() {
       {/* Stock Manager */}
       <Route path="/stocks" element={<StockDashboard />} />
       <Route path="/stocks/produits" element={<StockList />} />
+
+      {/* Platform */}
+      <Route path="/compte" element={<MonCompte />} />
+      <Route path="/stats" element={<StatsDashboard />} />
+      <Route path="/taches" element={<Taches />} />
 
       {/* Shared */}
       <Route path="/support" element={<BornesList />} />
