@@ -4,7 +4,8 @@ import { cn } from "../components/ui/cn";
 import {
   Plus, X, Search, ChevronDown, MapPin,
   Bold, Italic, Underline, Strikethrough, List, ListOrdered,
-  Link2, Type, Check, ChevronRight, ChevronLeft
+  Link2, Type, Check, ChevronRight, ChevronLeft,
+  Camera, Monitor, LayoutGrid, Gamepad2, Share2, Sparkles
 } from "lucide-react";
 
 /* ── Data ────────────────────────────────────── */
@@ -107,19 +108,79 @@ const MODALITES_FACTURATION = [
 
 const BORNE_TYPES = ["Classik", "Spherik", "Prestige"];
 
-const ANIMATION_OPTIONS = [
-  "Impression d'un photocall",
-  "Magnets personnalisés",
-  "Prise de data",
-  "Option fond vert",
-  "Envoi de mail",
-  "Animation Snapchat",
-  "Animation photo",
-  "Animation vidéo",
-  "Animation GIF",
-  "Animation Boomerang",
-  "Galerie en ligne",
-  "Mur de photos",
+const ANIMATION_CATALOG = [
+  {
+    id: "photobooth",
+    label: "Animation Photobooth",
+    icon: Camera,
+    options: [
+      "Animation photo",
+      "Animation vidéo",
+      "Animation GIF",
+      "Animation Boomerang",
+      "Animation Snapchat",
+      "Impression d'un photocall",
+      "Magnets personnalisés",
+      "Option fond vert",
+      "Prise de data",
+      "Envoi de mail",
+      "Galerie en ligne",
+      "Mur de photos",
+    ],
+  },
+  {
+    id: "diaporama",
+    label: "Diaporama",
+    icon: Monitor,
+    options: [
+      "Diaporama photo",
+      "Diaporama vidéo",
+      "Diaporama mixte",
+      "Affichage sur écran",
+      "Projection murale",
+    ],
+  },
+  {
+    id: "mosaique",
+    label: "Mosaïque photo",
+    icon: LayoutGrid,
+    options: [
+      "Mosaïque en temps réel",
+      "Mosaïque imprimée",
+      "Mosaïque digitale",
+      "Affichage sur écran géant",
+    ],
+  },
+  {
+    id: "jeux",
+    label: "Animation Jeux",
+    icon: Gamepad2,
+    options: [
+      "Quiz interactif",
+      "Roue de la fortune",
+      "Jeu de grattage digital",
+      "Tirage au sort",
+      "Challenge photo",
+    ],
+  },
+  {
+    id: "social",
+    label: "Social Wall",
+    icon: Share2,
+    options: [
+      "Mur Instagram",
+      "Mur Twitter / X",
+      "Hashtag wall",
+      "QR code partage",
+    ],
+  },
+  {
+    id: "autre",
+    label: "Autre animation",
+    icon: Sparkles,
+    options: [],
+    customName: true,
+  },
 ];
 
 const TYPES_INSTALLATION = ["Envoi transporteur", "Pick-up", "Livraison & installation", "Livraison seulement", "Installation seulement"];
@@ -216,7 +277,7 @@ export default function EventCreate() {
     responsableProjet: "",
     // Step 3 - Animation(s)
     dispositifs: [{ id: 1, type: "Classik", qty: 1 }],
-    animationOptions: [],
+    animations: [{ catalogId: "photobooth", selectedOptions: [], customName: "" }],
     // Step 4 - Créa / Supports graphiques
     creaRealisee: "nous", // "nous" or "client"
     supportsACreer: "non", // "non" or "oui"
@@ -1022,31 +1083,16 @@ export default function EventCreate() {
                           </button>
                         ))}
                       </div>
-                      <div className="flex items-center gap-2">
-                        <input
-                          value={tagInput}
-                          onChange={e => setTagInput(e.target.value)}
-                          onKeyDown={e => {
-                            if (e.key === "Enter" && tagInput.trim()) {
-                              setInternalTags(prev => prev.includes(tagInput.trim()) ? prev : [...prev, tagInput.trim()]);
-                              setTagInput("");
-                            }
-                          }}
-                          placeholder="Ajouter un tag personnalisé..."
-                          className="input-field flex-1"
-                        />
-                        <button
-                          onClick={() => {
-                            if (tagInput.trim()) {
-                              setInternalTags(prev => prev.includes(tagInput.trim()) ? prev : [...prev, tagInput.trim()]);
-                              setTagInput("");
-                            }
-                          }}
-                          className="h-9 rounded-lg bg-[--k-text] px-3 text-[12px] font-medium text-white hover:brightness-110 transition"
-                        >
-                          <Plus className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
+                      <CollapsibleTagInput
+                        value={tagInput}
+                        onChange={setTagInput}
+                        onAdd={() => {
+                          if (tagInput.trim()) {
+                            setInternalTags(prev => prev.includes(tagInput.trim()) ? prev : [...prev, tagInput.trim()]);
+                            setTagInput("");
+                          }
+                        }}
+                      />
                     </Field>
                   </div>
                 </div>
@@ -1334,35 +1380,98 @@ export default function EventCreate() {
               </div>
             </div>
 
-            {/* Animation photobooth */}
-            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
-              <div className="flex items-center justify-between border-b border-[--k-border] px-5 py-3">
-                <h2 className="text-[16px] font-bold text-[--k-text]">Animation photobooth</h2>
-                <button className="h-9 rounded-lg bg-[--k-danger] px-4 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm">
-                  Supprimer
-                </button>
-              </div>
-              <div className="p-5 space-y-2">
-                {ANIMATION_OPTIONS.map(opt => (
-                  <label key={opt} className="flex items-center gap-2.5 cursor-pointer py-1.5">
-                    <input
-                      type="checkbox"
-                      checked={form.animationOptions.includes(opt)}
-                      onChange={() => {
-                        setForm(f => ({
-                          ...f,
-                          animationOptions: f.animationOptions.includes(opt)
-                            ? f.animationOptions.filter(o => o !== opt)
-                            : [...f.animationOptions, opt],
-                        }));
-                      }}
-                      className="rounded border-[--k-border] h-4 w-4"
-                    />
-                    <span className="text-[14px] font-medium text-[--k-text]">{opt}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
+            {/* Animation cards */}
+            {form.animations.map((anim, ai) => {
+              const catalog = ANIMATION_CATALOG.find(c => c.id === anim.catalogId);
+              if (!catalog) return null;
+              const Icon = catalog.icon;
+              return (
+                <div key={ai} className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+                  <div className="flex items-center justify-between border-b border-[--k-border] px-5 py-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-[--k-primary-2]/30 text-[--k-primary]">
+                        <Icon className="h-4 w-4" />
+                      </div>
+                      <h2 className="text-[16px] font-bold text-[--k-text]">{catalog.label}</h2>
+                    </div>
+                    <button
+                      onClick={() => setForm(f => ({ ...f, animations: f.animations.filter((_, i) => i !== ai) }))}
+                      className="h-8 rounded-lg border border-[--k-border] px-3 text-[12px] font-medium text-[--k-muted] hover:border-[--k-danger] hover:text-[--k-danger] transition flex items-center gap-1.5"
+                    >
+                      <X className="h-3.5 w-3.5" /> Retirer
+                    </button>
+                  </div>
+                  <div className="p-5">
+                    {catalog.customName && (
+                      <div className="mb-4">
+                        <Field label="Nom de l'animation">
+                          <input
+                            value={anim.customName}
+                            onChange={e => setForm(f => ({ ...f, animations: f.animations.map((a, i) => i === ai ? { ...a, customName: e.target.value } : a) }))}
+                            placeholder="Ex: Animation sur-mesure..."
+                            className="input-field"
+                          />
+                        </Field>
+                      </div>
+                    )}
+                    {catalog.options.length > 0 ? (
+                      <div className="grid gap-x-6 gap-y-1 sm:grid-cols-2">
+                        {catalog.options.map(opt => (
+                          <label key={opt} className="flex items-center gap-2.5 cursor-pointer py-1.5">
+                            <input
+                              type="checkbox"
+                              checked={anim.selectedOptions.includes(opt)}
+                              onChange={() => {
+                                setForm(f => ({
+                                  ...f,
+                                  animations: f.animations.map((a, i) => i === ai ? {
+                                    ...a,
+                                    selectedOptions: a.selectedOptions.includes(opt)
+                                      ? a.selectedOptions.filter(o => o !== opt)
+                                      : [...a.selectedOptions, opt],
+                                  } : a),
+                                }));
+                              }}
+                              className="rounded border-[--k-border] h-4 w-4"
+                            />
+                            <span className="text-[13px] text-[--k-text]">{opt}</span>
+                          </label>
+                        ))}
+                      </div>
+                    ) : !catalog.customName && (
+                      <p className="text-[13px] text-[--k-muted]">Aucune option disponible</p>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Add animation picker */}
+            {(() => {
+              const usedIds = form.animations.map(a => a.catalogId);
+              const available = ANIMATION_CATALOG.filter(c => !usedIds.includes(c.id) || c.id === "autre");
+              if (available.length === 0) return null;
+              return (
+                <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm p-5">
+                  <p className="text-[13px] font-semibold text-[--k-text] mb-3">Ajouter une animation</p>
+                  <div className="flex flex-wrap gap-2">
+                    {available.map(cat => {
+                      const Icon = cat.icon;
+                      return (
+                        <button
+                          key={cat.id}
+                          onClick={() => setForm(f => ({ ...f, animations: [...f.animations, { catalogId: cat.id, selectedOptions: [], customName: "" }] }))}
+                          className="flex items-center gap-2 rounded-lg border border-dashed border-[--k-border] px-3 py-2 text-[13px] text-[--k-muted] hover:border-[--k-primary] hover:text-[--k-primary] hover:bg-[--k-primary-2]/10 transition"
+                        >
+                          <Icon className="h-3.5 w-3.5" />
+                          {cat.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
 
           </div>
         )}
@@ -1653,10 +1762,15 @@ export default function EventCreate() {
                 </RecapSection>
 
                 <RecapSection title="Animation(s)">
-                  {form.dispositifs.map((d, i) => (
+                  {form.dispositifs.map((d) => (
                     <RecapRow key={d.id} label={d.type === "__autre" ? (d.autreNom || "Autre") : d.type} value={`×${d.qty}`} />
                   ))}
-                  {form.animationOptions.length > 0 && <RecapRow label="Options animation" value={form.animationOptions.join(", ")} />}
+                  {form.animations.map((anim, i) => {
+                    const cat = ANIMATION_CATALOG.find(c => c.id === anim.catalogId);
+                    const label = cat?.customName && anim.customName ? anim.customName : (cat?.label || anim.catalogId);
+                    const opts = anim.selectedOptions.length > 0 ? anim.selectedOptions.join(", ") : "Aucune option";
+                    return <RecapRow key={i} label={label} value={opts} />;
+                  })}
                 </RecapSection>
 
                 <RecapSection title="Créa">
@@ -1824,6 +1938,35 @@ function CollapsibleComment({ label, value, onChange, placeholder }) {
     >
       <Plus className="h-3.5 w-3.5" />
       {label || "Ajouter un commentaire..."}
+    </button>
+  );
+}
+
+function CollapsibleTagInput({ value, onChange, onAdd }) {
+  const [open, setOpen] = useState(false);
+  return open ? (
+    <div className="flex items-center gap-2">
+      <input
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        onKeyDown={e => { if (e.key === "Enter") { onAdd(); } }}
+        placeholder="Tag personnalisé..."
+        className="input-field flex-1"
+        autoFocus
+      />
+      <button onClick={onAdd} className="h-9 rounded-lg bg-[--k-text] px-3 text-[12px] font-medium text-white hover:brightness-110 transition">
+        <Plus className="h-3.5 w-3.5" />
+      </button>
+      <button onClick={() => { onChange(""); setOpen(false); }} className="text-[--k-muted] hover:text-[--k-danger]">
+        <X className="h-3.5 w-3.5" />
+      </button>
+    </div>
+  ) : (
+    <button
+      onClick={() => setOpen(true)}
+      className="flex items-center gap-1.5 text-[12px] text-[--k-muted] hover:text-[--k-primary] transition mt-1"
+    >
+      <Plus className="h-3 w-3" /> Tag personnalisé...
     </button>
   );
 }
