@@ -780,14 +780,6 @@ export default function EventCreate() {
                       placeholder="Séléctionner"
                     />
                   </Field>
-                  <Field label="Type d'animation" required>
-                    <SelectWithClear
-                      value={form.animationType}
-                      onChange={val => update("animationType", val)}
-                      options={ANIMATION_TYPES}
-                      placeholder="Séléctionner"
-                    />
-                  </Field>
                   {/* Responsable(s) - Person picker */}
                   <div className="sm:col-span-2">
                     <Field label="Responsable(s) / Antenne">
