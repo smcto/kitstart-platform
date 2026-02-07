@@ -2,9 +2,9 @@ import React, { useState, useRef, useEffect } from "react";
 import { AppShell } from "../components/AppShell";
 import { cn } from "../components/ui/cn";
 import {
-  Plus, X, Search, ChevronDown, ChevronUp, MapPin, Save, Eye, LogOut,
-  Users, Bold, Italic, Underline, Strikethrough, List, ListOrdered,
-  Link2, Type, Camera, Truck, Palette, FileText, Check, ChevronRight, ChevronLeft
+  Plus, X, Search, ChevronDown, MapPin,
+  Bold, Italic, Underline, Strikethrough, List, ListOrdered,
+  Link2, Type, Check, ChevronRight, ChevronLeft
 } from "lucide-react";
 
 /* ── Data ────────────────────────────────────── */
@@ -74,6 +74,30 @@ const MOCK_CONTACTS = [
   { id: 2, nom: "Pierre Martin", fonction: "Chef de projet", email: "pierre.martin@client.fr", tel: "06 98 76 54 32" },
   { id: 3, nom: "Sophie Bernard", fonction: "Responsable communication", email: "sophie.bernard@client.fr", tel: "06 55 44 33 22" },
 ];
+
+const BORNE_TYPES = [
+  { id: "classik", name: "Classik" },
+  { id: "spherik", name: "Spherik" },
+];
+
+const ANIMATION_OPTIONS = [
+  "Impression d'un photocall",
+  "Magnets personnalisés",
+  "Prise de data",
+  "Option fond vert",
+  "Envoi de mail",
+  "Animation Snapchat",
+  "Animation photo",
+  "Animation vidéo",
+  "Animation GIF",
+  "Animation Boomerang",
+  "Galerie en ligne",
+  "Mur de photos",
+];
+
+const TYPES_INSTALLATION = ["Envoi transporteur", "Pick-up", "Livraison & installation", "Livraison seulement", "Installation seulement"];
+
+const TYPES_RETOUR = ["Retour Pick-up", "Retour transporteur", "Désinstallation & retour", "Désinstallation seulement", "Retour seulement"];
 
 const BORNE_MODELS = [
   { id: "pro360", name: "Selfizee Pro 360", available: 312 },
@@ -145,6 +169,9 @@ export default function EventCreate() {
     commentaireSurPlace: "",
     responsableProjet: "",
     // Step 3 - Animation(s)
+    bornesClassik: 0,
+    bornesSphrik: 0,
+    animationOptions: [],
     bornesSelection: [{ model: "pro360", qty: 1 }],
     options: { impressions: true, gif: false, video: false, galerieEnLigne: true },
     // Step 4 - Créa
@@ -154,7 +181,20 @@ export default function EventCreate() {
     texteAccueil: "",
     textePartage: "",
     logo: null,
-    // Step 5 - Logistique
+    // Step 5 - Logistique aller
+    typeInstallation: "",
+    commentaireAllerInterne: "",
+    noteAllerClient: "",
+    // Step 5 - Logistique retour
+    typeRetour: "",
+    jourRetour: "",
+    heureRetourMode: "precise", // "precise" or "tranche"
+    heureRetour: "",
+    heureRetourDebut: "",
+    heureRetourFin: "",
+    commentaireRetourInterne: "",
+    noteRetourClient: "",
+    // Legacy logistique fields
     antenneId: "",
     transporteur: "Antenne locale (pas d'expédition)",
     adresseLivraison: "",
@@ -908,100 +948,63 @@ export default function EventCreate() {
         {/* ─── Step 3: Animation(s) ────────────────── */}
         {currentStep === 3 && (
           <div className="space-y-5">
+            {/* Borne(s) */}
             <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
               <div className="border-b border-[--k-border] px-5 py-3">
-                <h2 className="text-[16px] font-bold text-[--k-text]">Affectation des bornes</h2>
+                <h2 className="text-[16px] font-bold text-[--k-text]">Borne(s) :</h2>
               </div>
               <div className="p-5 space-y-3">
-                {form.bornesSelection.map((row, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <select
-                      value={row.model}
-                      onChange={e => {
-                        const newRows = [...form.bornesSelection];
-                        newRows[i] = { ...newRows[i], model: e.target.value };
-                        update("bornesSelection", newRows);
-                      }}
-                      className="input-field flex-1"
-                    >
-                      {BORNE_MODELS.map(m => (
-                        <option key={m.id} value={m.id}>{m.name} ({m.available} dispo)</option>
-                      ))}
-                    </select>
+                {BORNE_TYPES.map(bt => (
+                  <div key={bt.id} className="flex items-center gap-3">
                     <input
                       type="number"
-                      min="1"
-                      value={row.qty}
-                      onChange={e => {
-                        const newRows = [...form.bornesSelection];
-                        newRows[i] = { ...newRows[i], qty: parseInt(e.target.value) || 1 };
-                        update("bornesSelection", newRows);
-                      }}
+                      min="0"
+                      value={bt.id === "classik" ? form.bornesClassik : form.bornesSphrik}
+                      onChange={e => update(bt.id === "classik" ? "bornesClassik" : "bornesSphrik", parseInt(e.target.value) || 0)}
                       className="input-field w-20 text-center"
                     />
-                    <span className="text-[11px] text-[--k-muted] w-10">unité{row.qty > 1 ? "s" : ""}</span>
-                    {form.bornesSelection.length > 1 && (
-                      <button
-                        onClick={() => update("bornesSelection", form.bornesSelection.filter((_, j) => j !== i))}
-                        className="text-[--k-muted] hover:text-[--k-danger]"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    )}
+                    <button className="flex items-center justify-center h-7 w-7 rounded-md bg-[--k-success] text-white hover:brightness-110 transition">
+                      <Plus className="h-4 w-4" />
+                    </button>
+                    <span className="text-[14px] font-medium text-[--k-text]">{bt.name}</span>
                   </div>
                 ))}
-                <button
-                  onClick={() => update("bornesSelection", [...form.bornesSelection, { model: "pro360", qty: 1 }])}
-                  className="flex items-center gap-1 text-[12px] font-medium text-[--k-primary] hover:underline"
-                >
-                  <Plus className="h-3.5 w-3.5" /> Ajouter un modèle
-                </button>
-                <div className="mt-3 rounded-lg bg-blue-50/50 border border-blue-100 p-3 text-[12px]">
-                  <div className="font-semibold text-blue-700 mb-1">Récapitulatif</div>
-                  <div className="text-blue-600">
-                    {form.bornesSelection.reduce((s, r) => s + r.qty, 0)} borne(s) demandée(s) — {form.bornesSelection.map(r => {
-                      const m = BORNE_MODELS.find(b => b.id === r.model);
-                      return `${r.qty}× ${m?.name}`;
-                    }).join(", ")}
-                  </div>
-                </div>
               </div>
             </div>
 
-            {/* Options & Prestations */}
+            {/* Animation photobooth */}
             <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
-              <div className="border-b border-[--k-border] px-5 py-3">
-                <h2 className="text-[16px] font-bold text-[--k-text]">Options & Prestations</h2>
+              <div className="flex items-center justify-between border-b border-[--k-border] px-5 py-3">
+                <h2 className="text-[16px] font-bold text-[--k-text]">Animation photobooth</h2>
+                <button className="h-9 rounded-lg bg-[--k-danger] px-4 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm">
+                  Supprimer
+                </button>
               </div>
-              <div className="p-5">
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                  {[
-                    { key: "impressions", label: "Impressions" },
-                    { key: "gif", label: "GIF animé" },
-                    { key: "video", label: "Vidéo" },
-                    { key: "galerieEnLigne", label: "Galerie en ligne" },
-                  ].map(opt => (
-                    <button
-                      key={opt.key}
-                      onClick={() => setForm(f => ({ ...f, options: { ...f.options, [opt.key]: !f.options[opt.key] } }))}
-                      className={cn(
-                        "flex items-center gap-2 rounded-xl border px-3 py-2.5 text-[12px] font-medium transition",
-                        form.options[opt.key]
-                          ? "border-[--k-primary-border] bg-[--k-primary-2] text-[--k-primary]"
-                          : "border-[--k-border] bg-white text-[--k-muted] hover:border-[--k-primary]/30"
-                      )}
-                    >
-                      {opt.label}
-                      {form.options[opt.key] && <Check className="h-3.5 w-3.5 ml-auto" />}
-                    </button>
-                  ))}
-                </div>
+              <div className="p-5 space-y-2">
+                {ANIMATION_OPTIONS.map(opt => (
+                  <label key={opt} className="flex items-center gap-2.5 cursor-pointer py-1.5">
+                    <input
+                      type="checkbox"
+                      checked={form.animationOptions.includes(opt)}
+                      onChange={() => {
+                        setForm(f => ({
+                          ...f,
+                          animationOptions: f.animationOptions.includes(opt)
+                            ? f.animationOptions.filter(o => o !== opt)
+                            : [...f.animationOptions, opt],
+                        }));
+                      }}
+                      className="rounded border-[--k-border] h-4 w-4"
+                    />
+                    <span className="text-[14px] font-medium text-[--k-text]">{opt}</span>
+                  </label>
+                ))}
               </div>
             </div>
 
             {/* Navigation */}
             <div className="flex justify-between">
-              <button onClick={goPrev} className="h-10 rounded-lg border border-[--k-border] px-6 text-[13px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition flex items-center gap-1.5">
+              <button onClick={goPrev} className="h-10 rounded-lg bg-[--k-primary] px-6 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5">
                 <ChevronLeft className="h-4 w-4" /> Précédent
               </button>
               <button onClick={goNext} className="h-10 rounded-lg bg-[--k-primary] px-6 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5">
@@ -1071,52 +1074,131 @@ export default function EventCreate() {
         {/* ─── Step 5: Logistique ──────────────────── */}
         {currentStep === 5 && (
           <div className="space-y-5">
+            {/* Rappel des dates */}
+            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+              <div className="px-5 py-4">
+                <p className="text-[15px] font-medium text-[--k-text]">
+                  Rappel des dates de l'événement : {form.dateAnimation
+                    ? `le ${new Date(form.dateAnimation).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "short", year: "numeric" })}`
+                    : "le Dimanche 15 Fev 2026"}
+                </p>
+              </div>
+            </div>
+
+            {/* Logistique aller */}
             <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
               <div className="border-b border-[--k-border] px-5 py-3">
-                <h2 className="text-[16px] font-bold text-[--k-text]">Logistique & Expédition</h2>
+                <h2 className="text-[16px] font-bold text-[--k-text]">Logistique aller</h2>
               </div>
-              <div className="p-5">
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <Field label="Antenne de rattachement">
-                    <select value={form.antenneId} onChange={e => update("antenneId", e.target.value)} className="input-field">
-                      <option value="">Choisir une antenne...</option>
-                      {ANTENNES.map(a => (
-                        <option key={a.id} value={a.id}>{a.name}</option>
-                      ))}
-                    </select>
-                  </Field>
-                  <Field label="Mode d'expédition">
-                    <select value={form.transporteur} onChange={e => update("transporteur", e.target.value)} className="input-field">
-                      {TRANSPORTEURS.map(t => <option key={t}>{t}</option>)}
-                    </select>
-                  </Field>
-                  {form.transporteur !== TRANSPORTEURS[0] && (
-                    <>
-                      <Field label="Adresse de livraison" span={2}>
-                        <input value={form.adresseLivraison} onChange={e => update("adresseLivraison", e.target.value)} placeholder="Adresse complète de livraison" className="input-field" />
-                      </Field>
-                      <Field label="Date de livraison souhaitée">
-                        <input type="date" value={form.dateLivraison} onChange={e => update("dateLivraison", e.target.value)} className="input-field" />
-                      </Field>
-                    </>
-                  )}
-                </div>
-                {form.antenneId && (
-                  <div className="mt-4 rounded-lg bg-amber-50/50 border border-amber-100 p-3 text-[12px]">
-                    <div className="font-semibold text-amber-700 mb-1 flex items-center gap-1">
-                      <MapPin className="h-3.5 w-3.5" /> Antenne sélectionnée
+              <div className="p-5 space-y-4">
+                <Field label="Type d'installation / envoi" required>
+                  <SelectWithClear
+                    value={form.typeInstallation}
+                    onChange={val => update("typeInstallation", val)}
+                    options={TYPES_INSTALLATION}
+                    placeholder="Séléctionner"
+                  />
+                </Field>
+                <button className="h-9 rounded-lg bg-[--k-primary] px-4 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm">
+                  Ajouter un colis transporteur
+                </button>
+                <Field label="Commentaire à usage interne">
+                  <RichTextEditor
+                    value={form.commentaireAllerInterne}
+                    onChange={val => update("commentaireAllerInterne", val)}
+                    placeholder="Commentaire interne..."
+                  />
+                </Field>
+                <Field label="Note pour le client">
+                  <RichTextEditor
+                    value={form.noteAllerClient}
+                    onChange={val => update("noteAllerClient", val)}
+                    placeholder="Note visible par le client..."
+                  />
+                </Field>
+              </div>
+            </div>
+
+            {/* Logistique retour */}
+            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+              <div className="border-b border-[--k-border] px-5 py-3">
+                <h2 className="text-[16px] font-bold text-[--k-text]">Logistique retour</h2>
+              </div>
+              <div className="p-5 space-y-4">
+                <Field label="Type de désinstallation / retour" required>
+                  <SelectWithClear
+                    value={form.typeRetour}
+                    onChange={val => update("typeRetour", val)}
+                    options={TYPES_RETOUR}
+                    placeholder="Séléctionner"
+                  />
+                </Field>
+                {form.typeRetour && (
+                  <>
+                    <Field label="Jour retour">
+                      <input type="date" value={form.jourRetour} onChange={e => update("jourRetour", e.target.value)} className="input-field" />
+                    </Field>
+                    <div className="flex items-center gap-4">
+                      <label className="flex items-center gap-1.5 text-[13px] text-[--k-text] cursor-pointer">
+                        <input
+                          type="radio"
+                          name="heureRetourMode"
+                          checked={form.heureRetourMode === "precise"}
+                          onChange={() => update("heureRetourMode", "precise")}
+                          className="accent-[--k-primary]"
+                        />
+                        Heure précise
+                      </label>
+                      <label className="flex items-center gap-1.5 text-[13px] text-[--k-text] cursor-pointer">
+                        <input
+                          type="radio"
+                          name="heureRetourMode"
+                          checked={form.heureRetourMode === "tranche"}
+                          onChange={() => update("heureRetourMode", "tranche")}
+                          className="accent-[--k-primary]"
+                        />
+                        Tranche horaire
+                      </label>
                     </div>
-                    <div className="text-amber-600">
-                      {ANTENNES.find(x => x.id === form.antenneId)?.name}
-                    </div>
-                  </div>
+                    {form.heureRetourMode === "precise" ? (
+                      <Field label="Heure retour">
+                        <input type="time" value={form.heureRetour} onChange={e => update("heureRetour", e.target.value)} className="input-field" />
+                      </Field>
+                    ) : (
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <Field label="Heure début">
+                          <input type="time" value={form.heureRetourDebut} onChange={e => update("heureRetourDebut", e.target.value)} className="input-field" />
+                        </Field>
+                        <Field label="Heure fin">
+                          <input type="time" value={form.heureRetourFin} onChange={e => update("heureRetourFin", e.target.value)} className="input-field" />
+                        </Field>
+                      </div>
+                    )}
+                  </>
                 )}
+                <button className="h-9 rounded-lg bg-[--k-primary] px-4 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm">
+                  Ajouter un colis transporteur
+                </button>
+                <Field label="Commentaire à usage interne">
+                  <RichTextEditor
+                    value={form.commentaireRetourInterne}
+                    onChange={val => update("commentaireRetourInterne", val)}
+                    placeholder="Commentaire interne..."
+                  />
+                </Field>
+                <Field label="Note pour le client">
+                  <RichTextEditor
+                    value={form.noteRetourClient}
+                    onChange={val => update("noteRetourClient", val)}
+                    placeholder="Note visible par le client..."
+                  />
+                </Field>
               </div>
             </div>
 
             {/* Navigation */}
             <div className="flex justify-between">
-              <button onClick={goPrev} className="h-10 rounded-lg border border-[--k-border] px-6 text-[13px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition flex items-center gap-1.5">
+              <button onClick={goPrev} className="h-10 rounded-lg bg-[--k-primary] px-6 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5">
                 <ChevronLeft className="h-4 w-4" /> Précédent
               </button>
               <button onClick={goNext} className="h-10 rounded-lg bg-[--k-primary] px-6 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5">
@@ -1158,14 +1240,9 @@ export default function EventCreate() {
                 </RecapSection>
 
                 <RecapSection title="Animation(s)">
-                  <RecapRow
-                    label="Bornes"
-                    value={form.bornesSelection.map(r => {
-                      const m = BORNE_MODELS.find(b => b.id === r.model);
-                      return `${r.qty}× ${m?.name}`;
-                    }).join(", ") || "—"}
-                  />
-                  <RecapRow label="Options" value={Object.entries(form.options).filter(([, v]) => v).map(([k]) => k).join(", ") || "—"} />
+                  <RecapRow label="Bornes Classik" value={form.bornesClassik || "0"} />
+                  <RecapRow label="Bornes Spherik" value={form.bornesSphrik || "0"} />
+                  {form.animationOptions.length > 0 && <RecapRow label="Options animation" value={form.animationOptions.join(", ")} />}
                 </RecapSection>
 
                 <RecapSection title="Créa">
@@ -1175,14 +1252,10 @@ export default function EventCreate() {
                 </RecapSection>
 
                 <RecapSection title="Logistique">
-                  <RecapRow label="Antenne" value={ANTENNES.find(a => a.id === form.antenneId)?.name || "—"} />
-                  <RecapRow label="Transport" value={form.transporteur} />
-                  {form.transporteur !== TRANSPORTEURS[0] && (
-                    <>
-                      <RecapRow label="Adresse livraison" value={form.adresseLivraison || "—"} />
-                      <RecapRow label="Date livraison" value={form.dateLivraison || "—"} />
-                    </>
-                  )}
+                  <RecapRow label="Installation / envoi" value={form.typeInstallation || "—"} />
+                  <RecapRow label="Retour" value={form.typeRetour || "—"} />
+                  {form.jourRetour && <RecapRow label="Jour retour" value={form.jourRetour} />}
+                  {form.heureRetour && <RecapRow label="Heure retour" value={form.heureRetour} />}
                 </RecapSection>
 
                 {contacts.length > 0 && (
