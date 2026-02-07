@@ -176,7 +176,7 @@ export function Sidebar({ appName, collapsed, onToggle, activeKey, sections }) {
           collapsed ? "justify-center px-0" : "justify-start",
           active
             ? "bg-white/10 text-white"
-            : "text-[--k-sidebar-text] hover:bg-white/[0.06] hover:text-[--k-sidebar-text-active]"
+            : cn("text-[--k-sidebar-text] hover:text-[--k-sidebar-text-active]", identity.sidebarHover)
         )}
       >
         {active && !collapsed && (
@@ -200,7 +200,8 @@ export function Sidebar({ appName, collapsed, onToggle, activeKey, sections }) {
     const props = onClick ? { onClick } : { href };
     const inner = (
       <span className={cn(
-        "flex items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] font-medium text-[--k-sidebar-text] hover:bg-white/[0.06] hover:text-[--k-sidebar-text-active] transition",
+        "flex items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] font-medium text-[--k-sidebar-text] hover:text-[--k-sidebar-text-active] transition",
+        identity.sidebarHover,
         collapsed && "justify-center px-0",
         onClick && "w-full"
       )}>
