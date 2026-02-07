@@ -629,26 +629,19 @@ export default function EventCreate() {
               </div>
             )}
 
-            {/* Opportunité */}
+            {/* Opportunité & Devis */}
             <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
               <div className="border-b border-[--k-border] px-5 py-3">
-                <h2 className="text-[16px] font-bold text-[--k-text]">Opportunité</h2>
+                <h2 className="text-[16px] font-bold text-[--k-text]">Opportunité & Devis</h2>
+                <p className="text-[12px] text-[--k-muted] mt-0.5">Sélectionner l'opportunité et le(s) devis associé(s) à l'événement</p>
               </div>
-              <div className="p-5">
-                <select value={form.opportunite} onChange={e => update("opportunite", e.target.value)} className="input-field">
-                  <option value="">Séléctionner</option>
-                  {MOCK_OPPORTUNITIES.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
-                </select>
-              </div>
-            </div>
-
-            {/* Devis associés */}
-            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
-              <div className="border-b border-[--k-border] px-5 py-3">
-                <h2 className="text-[16px] font-bold text-[--k-text]">Devis associé(s)</h2>
-                <p className="text-[12px] text-[--k-muted] mt-0.5">Sélectionner le(s) devis associé(s) à l'événement, ou indiquer pourquoi aucun devis n'est lié</p>
-              </div>
-              <div className="p-5">
+              <div className="p-5 space-y-4">
+                <Field label="Opportunité">
+                  <select value={form.opportunite} onChange={e => update("opportunite", e.target.value)} className="input-field">
+                    <option value="">Séléctionner</option>
+                    {MOCK_OPPORTUNITIES.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
+                  </select>
+                </Field>
                 {/* Skip devis toggle */}
                 <label className="flex items-center gap-2.5 mb-4 cursor-pointer">
                   <input
