@@ -55,7 +55,7 @@ const MOCK_RESPONSABLES = [
 
 const OBJECTIFS_EVENT = [
   "Collecte data", "Animation", "Marque employeur", "Communication",
-  "Engagement réseaux sociaux", "Lancement produit", "Remerciement clients",
+  "Engagement réseaux sociaux", "Remerciement clients",
 ];
 
 const INTERNAL_TAGS = [
