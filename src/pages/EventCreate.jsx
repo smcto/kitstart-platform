@@ -41,16 +41,26 @@ const EVENT_TYPES = ["Corporate", "Mariage", "Salon", "Festival", "Anniversaire"
 
 const ANIMATION_TYPES = ["Selfizee", "Selfizee 360", "Selfizee Mirror", "Selfizee Mini", "Photobooth classique", "Borne tactile", "Mur digital", "Mosaïque photo", "Animation sur-mesure"];
 
-const ANTENNES = [
-  { id: "idf", name: "IDF Paris" },
-  { id: "bretagne", name: "Bretagne" },
-  { id: "rhone", name: "Rhône-Alpes" },
-  { id: "paca", name: "PACA" },
-  { id: "ouest", name: "Grand Ouest" },
-  { id: "est", name: "Grand Est" },
-  { id: "occitanie", name: "Occitanie" },
-  { id: "nord", name: "Hauts-de-France" },
-  { id: "international", name: "International" },
+const MOCK_RESPONSABLES = [
+  { id: 1, prenom: "Thomas", nom: "Lefebvre", ville: "Paris", color: "bg-indigo-500" },
+  { id: 2, prenom: "Julie", nom: "Martin", ville: "Rennes", color: "bg-pink-500" },
+  { id: 3, prenom: "Maxime", nom: "Dubois", ville: "Lyon", color: "bg-emerald-500" },
+  { id: 4, prenom: "Camille", nom: "Moreau", ville: "Nantes", color: "bg-amber-500" },
+  { id: 5, prenom: "Alexandre", nom: "Petit", ville: "Bordeaux", color: "bg-cyan-500" },
+  { id: 6, prenom: "Léa", nom: "Roux", ville: "Marseille", color: "bg-violet-500" },
+  { id: 7, prenom: "Nicolas", nom: "Lambert", ville: "Strasbourg", color: "bg-rose-500" },
+  { id: 8, prenom: "Emma", nom: "Garcia", ville: "Toulouse", color: "bg-teal-500" },
+];
+
+const OBJECTIFS_EVENT = [
+  "Collecte de data", "Animation", "Marque employeur", "Communication",
+  "Engagement réseaux sociaux", "Divertissement", "Activation de marque",
+  "Lancement produit", "Remerciement clients", "Team building",
+];
+
+const INTERNAL_TAGS = [
+  "Client important", "VIP", "Récurrent", "Première commande",
+  "Urgent", "Partenaire", "À surveiller", "Premium",
 ];
 
 const PAYS = ["France", "Belgique", "Suisse", "Luxembourg", "Espagne", "Italie", "Allemagne", "Royaume-Uni", "Portugal", "Pays-Bas"];
@@ -64,9 +74,20 @@ const MOCK_OPPORTUNITIES = [
 ];
 
 const MOCK_DEVIS = [
-  { id: "D-2026-0142", borne: "Selfizee Pro 360", event: "Salon du Mariage Paris", contact: "Marie Dupont", date: "15/01/2026", ht: "2 450,00 €", ttc: "2 940,00 €", etat: "Accepté" },
-  { id: "D-2026-0156", borne: "Selfizee Mirror XL", event: "Gala Entreprise", contact: "Pierre Martin", date: "22/01/2026", ht: "3 800,00 €", ttc: "4 560,00 €", etat: "En attente" },
-  { id: "D-2026-0163", borne: "Selfizee 360 Spin", event: "Festival Nantes", contact: "Sophie Bernard", date: "28/01/2026", ht: "1 950,00 €", ttc: "2 340,00 €", etat: "Brouillon" },
+  { id: "D-2026-0142", borne: "Selfizee Pro 360", event: "Salon du Mariage Paris", eventType: "Salon", animationType: "Selfizee", dateEvent: "2026-03-15", contact: "Marie Dupont", date: "15/01/2026", ht: "2 450,00 €", ttc: "2 940,00 €", etat: "Accepté" },
+  { id: "D-2026-0156", borne: "Selfizee Mirror XL", event: "Gala Entreprise", eventType: "Gala", animationType: "Selfizee Mirror", dateEvent: "2026-04-22", contact: "Pierre Martin", date: "22/01/2026", ht: "3 800,00 €", ttc: "4 560,00 €", etat: "Accepté" },
+  { id: "D-2026-0163", borne: "Selfizee 360 Spin", event: "Festival Nantes", eventType: "Festival", animationType: "Selfizee 360", dateEvent: "2026-06-10", contact: "Sophie Bernard", date: "28/01/2026", ht: "1 950,00 €", ttc: "2 340,00 €", etat: "En attente" },
+  { id: "D-2026-0178", borne: "Selfizee Mini", event: "Team Building Rennes", eventType: "Team Building", animationType: "Selfizee Mini", dateEvent: "2026-05-05", contact: "Marie Dupont", date: "03/02/2026", ht: "1 200,00 €", ttc: "1 440,00 €", etat: "Brouillon" },
+];
+
+const SKIP_DEVIS_REASONS = [
+  "Partenariat",
+  "Ami / famille",
+  "Événement interne",
+  "Démonstration / showroom",
+  "Prestation offerte",
+  "Échange de services",
+  "Autre",
 ];
 
 const MOCK_CONTACTS = [
@@ -76,8 +97,9 @@ const MOCK_CONTACTS = [
 ];
 
 const BORNE_TYPES = [
-  { id: "classik", name: "Classik" },
-  { id: "spherik", name: "Spherik" },
+  { id: "classik", name: "Classik", icon: "📷", desc: "Borne photo classique" },
+  { id: "spherik", name: "Spherik", icon: "🔮", desc: "Borne sphérique 360°" },
+  { id: "prestige", name: "Prestige", icon: "✨", desc: "Borne haut de gamme" },
 ];
 
 const ANIMATION_OPTIONS = [
@@ -119,6 +141,18 @@ export default function EventCreate() {
   const [villeManuelle, setVilleManuelle] = useState(false);
   const [contacts, setContacts] = useState([]);
   const [showContactPicker, setShowContactPicker] = useState(false);
+  const [showNewContactForm, setShowNewContactForm] = useState(false);
+  const [newContact, setNewContact] = useState({ nom: "", prenom: "", fonction: "", email: "", tel: "" });
+  const [selectedDevis, setSelectedDevis] = useState([]);
+  const [skipDevis, setSkipDevis] = useState(false);
+  const [skipDevisReason, setSkipDevisReason] = useState("");
+  const [skipDevisCustomReason, setSkipDevisCustomReason] = useState("");
+  const [responsableSearch, setResponsableSearch] = useState("");
+  const [showResponsablePicker, setShowResponsablePicker] = useState(false);
+  const [selectedResponsables, setSelectedResponsables] = useState([]);
+  const [internalTags, setInternalTags] = useState([]);
+  const [contactsCrea, setContactsCrea] = useState([]);
+  const [showCreaContactPicker, setShowCreaContactPicker] = useState(false);
   const [contactsSurPlace, setContactsSurPlace] = useState([]);
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
@@ -144,9 +178,9 @@ export default function EventCreate() {
     eventName: "",
     eventType: "",
     animationType: "Selfizee",
-    antennes: [],
+    responsables: [],
     description: "",
-    objectifs: "",
+    objectifs: [],
     // Step 2 - Dates événement
     periode: "jour", // "jour" or "periode"
     dateAnimation: "",
@@ -169,18 +203,14 @@ export default function EventCreate() {
     commentaireSurPlace: "",
     responsableProjet: "",
     // Step 3 - Animation(s)
-    bornesClassik: 0,
-    bornesSphrik: 0,
+    bornes: { classik: 0, spherik: 0, prestige: 0 },
     animationOptions: [],
-    bornesSelection: [{ model: "pro360", qty: 1 }],
-    options: { impressions: true, gif: false, video: false, galerieEnLigne: true },
-    // Step 4 - Créa
-    template: "",
-    couleur1: "#4F46E5",
-    couleur2: "#FFFFFF",
-    texteAccueil: "",
-    textePartage: "",
-    logo: null,
+    // Step 4 - Créa / Supports graphiques
+    creaRealisee: "nous", // "nous" or "client"
+    supportsACreer: "non", // "non" or "oui"
+    supportsAImprimer: "non", // "non" or "oui"
+    infosComplementairesCrea: "",
+    commentaireCrea: "",
     // Step 5 - Logistique aller
     typeInstallation: "",
     commentaireAllerInterne: "",
@@ -271,7 +301,22 @@ export default function EventCreate() {
     setTags(tags.filter(t => t !== tag));
   };
 
-  const goNext = () => setCurrentStep(s => Math.min(s + 1, 6));
+  const goNext = () => {
+    // Pre-fill Step 2 from selected devis when leaving Step 1
+    if (currentStep === 1 && selectedDevis.length > 0) {
+      const firstDevis = MOCK_DEVIS.find(d => d.id === selectedDevis[0]);
+      if (firstDevis) {
+        setForm(f => ({
+          ...f,
+          eventName: f.eventName || firstDevis.event,
+          eventType: f.eventType || firstDevis.eventType,
+          animationType: f.animationType === "Selfizee" ? (firstDevis.animationType || f.animationType) : f.animationType,
+          dateAnimation: f.dateAnimation || firstDevis.dateEvent,
+        }));
+      }
+    }
+    setCurrentStep(s => Math.min(s + 1, 6));
+  };
   const goPrev = () => setCurrentStep(s => Math.max(s - 1, 1));
 
   // Close client dropdown on outside click
@@ -491,7 +536,7 @@ export default function EventCreate() {
                 )}
                 {showContactPicker && (
                   <div className="mt-3 rounded-lg border border-[--k-border] bg-[--k-surface-2] p-3">
-                    <div className="text-[12px] font-semibold text-[--k-text] mb-2">Sélectionner un contact :</div>
+                    <div className="text-[12px] font-semibold text-[--k-text] mb-2">Sélectionner un contact existant :</div>
                     <div className="space-y-1">
                       {MOCK_CONTACTS.filter(c => !contacts.find(x => x.id === c.id)).map(c => (
                         <button
@@ -505,6 +550,51 @@ export default function EventCreate() {
                         </button>
                       ))}
                     </div>
+                    <div className="mt-3 pt-3 border-t border-[--k-border]">
+                      <button
+                        onClick={() => { setShowNewContactForm(true); setShowContactPicker(false); }}
+                        className="flex items-center gap-1.5 text-[13px] font-medium text-[--k-primary] hover:underline"
+                      >
+                        <Plus className="h-3.5 w-3.5" /> Créer un nouveau contact
+                      </button>
+                    </div>
+                  </div>
+                )}
+                {showNewContactForm && (
+                  <div className="mt-3 rounded-lg border border-[--k-primary-border] bg-[--k-primary-2]/30 p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[13px] font-semibold text-[--k-text]">Nouveau contact</span>
+                      <button onClick={() => setShowNewContactForm(false)} className="text-[--k-muted] hover:text-[--k-danger]">
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <input value={newContact.prenom} onChange={e => setNewContact(c => ({ ...c, prenom: e.target.value }))} placeholder="Prénom *" className="input-field" />
+                      <input value={newContact.nom} onChange={e => setNewContact(c => ({ ...c, nom: e.target.value }))} placeholder="Nom *" className="input-field" />
+                      <input value={newContact.fonction} onChange={e => setNewContact(c => ({ ...c, fonction: e.target.value }))} placeholder="Fonction" className="input-field" />
+                      <input type="email" value={newContact.email} onChange={e => setNewContact(c => ({ ...c, email: e.target.value }))} placeholder="Email *" className="input-field" />
+                      <input value={newContact.tel} onChange={e => setNewContact(c => ({ ...c, tel: e.target.value }))} placeholder="Téléphone" className="input-field" />
+                    </div>
+                    <button
+                      onClick={() => {
+                        if (newContact.nom && newContact.email) {
+                          const contact = {
+                            id: Date.now(),
+                            nom: `${newContact.prenom} ${newContact.nom}`.trim(),
+                            fonction: newContact.fonction,
+                            email: newContact.email,
+                            tel: newContact.tel,
+                            isNew: true,
+                          };
+                          setContacts(prev => [...prev, contact]);
+                          setNewContact({ nom: "", prenom: "", fonction: "", email: "", tel: "" });
+                          setShowNewContactForm(false);
+                        }
+                      }}
+                      className="h-9 rounded-lg bg-[--k-primary] px-4 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm"
+                    >
+                      Ajouter ce contact
+                    </button>
                   </div>
                 )}
               </div>
@@ -525,23 +615,23 @@ export default function EventCreate() {
             </div>
 
             {/* Localisation Google Map */}
-            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
-              <div className="border-b border-[--k-border] px-5 py-3">
-                <h2 className="text-[14px] font-bold text-[--k-text]">Localisation google map du client</h2>
-              </div>
-              <div className="p-5">
-                <div className="w-full h-64 rounded-lg bg-blue-100 flex items-center justify-center relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-b from-blue-200/60 to-blue-300/40" />
-                  <div className="relative z-10 flex flex-col items-center gap-2">
-                    <MapPin className="h-8 w-8 text-red-500" />
-                    <span className="text-[12px] text-[--k-muted]">
-                      {form.adresse ? `${form.adresse}, ${form.codePostal} ${form.ville}` : "Localisation du client"}
-                    </span>
+            {selectedClient && (
+              <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+                <div className="flex items-center justify-between border-b border-[--k-border] px-5 py-3">
+                  <h2 className="text-[14px] font-bold text-[--k-text]">Localisation du client</h2>
+                  <span className="text-[12px] text-[--k-muted]">{form.adresse}, {form.codePostal} {form.ville}</span>
+                </div>
+                <div className="p-5">
+                  <div className="w-full h-36 rounded-lg bg-blue-100 flex items-center justify-center relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-b from-blue-200/60 to-blue-300/40" />
+                    <div className="relative z-10 flex flex-col items-center gap-1">
+                      <MapPin className="h-6 w-6 text-red-500" />
+                      <span className="text-[11px] text-[--k-muted]">{form.adresse}, {form.codePostal} {form.ville}</span>
+                    </div>
                   </div>
                 </div>
-                <p className="text-[11px] text-[--k-muted] mt-1">Vous pouvez déplacer la position du curseur</p>
               </div>
-            </div>
+            )}
 
             {/* Opportunité */}
             <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
@@ -560,52 +650,114 @@ export default function EventCreate() {
             <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
               <div className="border-b border-[--k-border] px-5 py-3">
                 <h2 className="text-[16px] font-bold text-[--k-text]">Devis associé(s)</h2>
-                <p className="text-[12px] text-[--k-muted] mt-0.5">Sélectionner le(s) devis associé(s) à l'événement</p>
+                <p className="text-[12px] text-[--k-muted] mt-0.5">Sélectionner le(s) devis associé(s) à l'événement, ou indiquer pourquoi aucun devis n'est lié</p>
               </div>
               <div className="p-5">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-[13px]">
-                    <thead>
-                      <tr className="border-b border-[--k-border]">
-                        <th className="text-left py-2 px-3 text-[12px] font-semibold text-[--k-muted]">N°</th>
-                        <th className="text-left py-2 px-3 text-[12px] font-semibold text-[--k-muted]">Borne</th>
-                        <th className="text-left py-2 px-3 text-[12px] font-semibold text-[--k-muted]">Event</th>
-                        <th className="text-left py-2 px-3 text-[12px] font-semibold text-[--k-muted]">Contact</th>
-                        <th className="text-left py-2 px-3 text-[12px] font-semibold text-[--k-muted]">Date devis</th>
-                        <th className="text-right py-2 px-3 text-[12px] font-semibold text-[--k-muted]">HT</th>
-                        <th className="text-right py-2 px-3 text-[12px] font-semibold text-[--k-muted]">TTC</th>
-                        <th className="text-left py-2 px-3 text-[12px] font-semibold text-[--k-muted]">Etat</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {selectedClient ? MOCK_DEVIS.map(d => (
-                        <tr key={d.id} className="border-b border-[--k-border] last:border-0 hover:bg-[--k-surface-2] transition">
-                          <td className="py-2.5 px-3 font-medium">{d.id}</td>
-                          <td className="py-2.5 px-3">{d.borne}</td>
-                          <td className="py-2.5 px-3">{d.event}</td>
-                          <td className="py-2.5 px-3">{d.contact}</td>
-                          <td className="py-2.5 px-3">{d.date}</td>
-                          <td className="py-2.5 px-3 text-right">{d.ht}</td>
-                          <td className="py-2.5 px-3 text-right">{d.ttc}</td>
-                          <td className="py-2.5 px-3">
-                            <span className={cn(
-                              "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium",
-                              d.etat === "Accepté" && "bg-green-100 text-green-700",
-                              d.etat === "En attente" && "bg-amber-100 text-amber-700",
-                              d.etat === "Brouillon" && "bg-gray-100 text-gray-600",
-                            )}>{d.etat}</span>
-                          </td>
+                {/* Skip devis toggle */}
+                <label className="flex items-center gap-2.5 mb-4 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={skipDevis}
+                    onChange={() => { setSkipDevis(!skipDevis); if (!skipDevis) setSelectedDevis([]); }}
+                    className="rounded border-[--k-border] h-4 w-4 accent-[--k-primary]"
+                  />
+                  <span className="text-[13px] font-medium text-[--k-text]">Pas de devis associé</span>
+                </label>
+
+                {skipDevis ? (
+                  <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 space-y-3">
+                    <p className="text-[13px] font-medium text-amber-800">Pourquoi n'y a-t-il pas de devis ?</p>
+                    <div className="flex flex-wrap gap-2">
+                      {SKIP_DEVIS_REASONS.map(reason => (
+                        <button
+                          key={reason}
+                          onClick={() => setSkipDevisReason(reason)}
+                          className={cn(
+                            "px-3 py-1.5 rounded-full text-[12px] font-medium border transition",
+                            skipDevisReason === reason
+                              ? "bg-[--k-primary] text-white border-[--k-primary]"
+                              : "bg-white text-[--k-text] border-[--k-border] hover:border-[--k-primary] hover:text-[--k-primary]"
+                          )}
+                        >
+                          {reason}
+                        </button>
+                      ))}
+                    </div>
+                    {skipDevisReason === "Autre" && (
+                      <input
+                        value={skipDevisCustomReason}
+                        onChange={e => setSkipDevisCustomReason(e.target.value)}
+                        placeholder="Précisez la raison..."
+                        className="input-field mt-2"
+                      />
+                    )}
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-[13px]">
+                      <thead>
+                        <tr className="border-b border-[--k-border]">
+                          <th className="w-10 py-2 px-3"></th>
+                          <th className="text-left py-2 px-3 text-[12px] font-semibold text-[--k-muted]">N°</th>
+                          <th className="text-left py-2 px-3 text-[12px] font-semibold text-[--k-muted]">Borne</th>
+                          <th className="text-left py-2 px-3 text-[12px] font-semibold text-[--k-muted]">Event</th>
+                          <th className="text-left py-2 px-3 text-[12px] font-semibold text-[--k-muted]">Contact</th>
+                          <th className="text-left py-2 px-3 text-[12px] font-semibold text-[--k-muted]">Date devis</th>
+                          <th className="text-right py-2 px-3 text-[12px] font-semibold text-[--k-muted]">HT</th>
+                          <th className="text-right py-2 px-3 text-[12px] font-semibold text-[--k-muted]">TTC</th>
+                          <th className="text-left py-2 px-3 text-[12px] font-semibold text-[--k-muted]">Etat</th>
                         </tr>
-                      )) : (
-                        <tr>
-                          <td colSpan={8} className="py-6 text-center text-[13px] text-[--k-muted]">
-                            Sélectionnez un client pour voir les devis associés
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody>
+                        {selectedClient ? MOCK_DEVIS.map(d => (
+                          <tr
+                            key={d.id}
+                            onClick={() => setSelectedDevis(prev => prev.includes(d.id) ? prev.filter(x => x !== d.id) : [...prev, d.id])}
+                            className={cn(
+                              "border-b border-[--k-border] last:border-0 cursor-pointer transition",
+                              selectedDevis.includes(d.id) ? "bg-[--k-primary-2]" : "hover:bg-[--k-surface-2]"
+                            )}
+                          >
+                            <td className="py-2.5 px-3">
+                              <input
+                                type="checkbox"
+                                checked={selectedDevis.includes(d.id)}
+                                onChange={() => {}}
+                                className="rounded border-[--k-border] h-4 w-4 accent-[--k-primary]"
+                              />
+                            </td>
+                            <td className="py-2.5 px-3 font-medium">{d.id}</td>
+                            <td className="py-2.5 px-3">{d.borne}</td>
+                            <td className="py-2.5 px-3">{d.event}</td>
+                            <td className="py-2.5 px-3">{d.contact}</td>
+                            <td className="py-2.5 px-3">{d.date}</td>
+                            <td className="py-2.5 px-3 text-right">{d.ht}</td>
+                            <td className="py-2.5 px-3 text-right">{d.ttc}</td>
+                            <td className="py-2.5 px-3">
+                              <span className={cn(
+                                "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium",
+                                d.etat === "Accepté" && "bg-green-100 text-green-700",
+                                d.etat === "En attente" && "bg-amber-100 text-amber-700",
+                                d.etat === "Brouillon" && "bg-gray-100 text-gray-600",
+                              )}>{d.etat}</span>
+                            </td>
+                          </tr>
+                        )) : (
+                          <tr>
+                            <td colSpan={9} className="py-6 text-center text-[13px] text-[--k-muted]">
+                              Sélectionnez un client pour voir les devis associés
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                    {selectedDevis.length > 0 && (
+                      <p className="mt-2 text-[12px] text-[--k-primary] font-medium">
+                        {selectedDevis.length} devis sélectionné(s) — les informations seront pré-remplies à l'étape suivante
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -621,6 +773,59 @@ export default function EventCreate() {
         {/* ─── Step 2: Événement ────────────────────── */}
         {currentStep === 2 && (
           <div className="space-y-5">
+            {/* Informations / Tags internes */}
+            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+              <div className="border-b border-[--k-border] px-5 py-3">
+                <h2 className="text-[16px] font-bold text-[--k-text]">Informations</h2>
+                <p className="text-[12px] text-[--k-muted] mt-0.5">Tags internes pour qualifier cet événement</p>
+              </div>
+              <div className="p-5">
+                <div className="flex flex-wrap gap-2">
+                  {INTERNAL_TAGS.map(tag => (
+                    <button
+                      key={tag}
+                      onClick={() => setInternalTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag])}
+                      className={cn(
+                        "px-3 py-1.5 rounded-full text-[12px] font-medium border transition",
+                        internalTags.includes(tag)
+                          ? "bg-[--k-text] text-white border-[--k-text]"
+                          : "bg-white text-[--k-muted] border-[--k-border] hover:border-[--k-text] hover:text-[--k-text]"
+                      )}
+                    >
+                      {internalTags.includes(tag) && <Check className="inline h-3 w-3 mr-1 -mt-0.5" />}
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+                {/* Custom tag input */}
+                <div className="flex items-center gap-2 mt-3">
+                  <input
+                    value={tagInput}
+                    onChange={e => setTagInput(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === "Enter" && tagInput.trim()) {
+                        setInternalTags(prev => prev.includes(tagInput.trim()) ? prev : [...prev, tagInput.trim()]);
+                        setTagInput("");
+                      }
+                    }}
+                    placeholder="Ajouter un tag personnalisé..."
+                    className="input-field flex-1"
+                  />
+                  <button
+                    onClick={() => {
+                      if (tagInput.trim()) {
+                        setInternalTags(prev => prev.includes(tagInput.trim()) ? prev : [...prev, tagInput.trim()]);
+                        setTagInput("");
+                      }
+                    }}
+                    className="h-9 rounded-lg bg-[--k-text] px-3 text-[12px] font-medium text-white hover:brightness-110 transition"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
             {/* Informations événement */}
             <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
               <div className="border-b border-[--k-border] px-5 py-3">
@@ -647,15 +852,70 @@ export default function EventCreate() {
                       placeholder="Séléctionner"
                     />
                   </Field>
-                  <Field label="Antenne(s)">
-                    <input
-                      value={form.antennes.map(id => ANTENNES.find(a => a.id === id)?.name).filter(Boolean).join(", ")}
-                      readOnly
-                      placeholder="Sélectionner une ou plusieurs antennes"
-                      className="input-field cursor-pointer"
-                      onClick={() => {/* could open a multi-select dropdown */}}
-                    />
-                  </Field>
+                  {/* Responsable(s) - Person picker */}
+                  <div className="sm:col-span-2">
+                    <Field label="Responsable(s) / Antenne">
+                      <div className="relative">
+                        <div className="flex items-center gap-2 flex-wrap mb-2">
+                          {selectedResponsables.map(id => {
+                            const p = MOCK_RESPONSABLES.find(r => r.id === id);
+                            if (!p) return null;
+                            return (
+                              <span key={id} className="inline-flex items-center gap-1.5 rounded-full bg-[--k-primary-2] pl-1 pr-2.5 py-0.5">
+                                <span className={cn("h-5 w-5 rounded-full flex items-center justify-center text-[9px] font-bold text-white", p.color)}>
+                                  {p.prenom[0]}{p.nom[0]}
+                                </span>
+                                <span className="text-[12px] font-medium text-[--k-primary]">{p.prenom} {p.nom}</span>
+                                <button onClick={() => setSelectedResponsables(prev => prev.filter(x => x !== id))} className="text-[--k-primary] hover:text-[--k-danger] ml-0.5">
+                                  <X className="h-3 w-3" />
+                                </button>
+                              </span>
+                            );
+                          })}
+                        </div>
+                        <div className="relative">
+                          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[--k-muted]" />
+                          <input
+                            value={responsableSearch}
+                            onChange={e => { setResponsableSearch(e.target.value); setShowResponsablePicker(true); }}
+                            onFocus={() => setShowResponsablePicker(true)}
+                            placeholder="Rechercher un responsable..."
+                            className="input-field pl-8"
+                          />
+                        </div>
+                        {showResponsablePicker && (
+                          <div className="absolute z-20 mt-1 w-full max-h-64 overflow-auto rounded-lg border border-[--k-border] bg-white shadow-lg">
+                            {MOCK_RESPONSABLES
+                              .filter(r => !selectedResponsables.includes(r.id))
+                              .filter(r => !responsableSearch || `${r.prenom} ${r.nom} ${r.ville}`.toLowerCase().includes(responsableSearch.toLowerCase()))
+                              .map(r => (
+                                <button
+                                  key={r.id}
+                                  onClick={() => {
+                                    setSelectedResponsables(prev => [...prev, r.id]);
+                                    setResponsableSearch("");
+                                    setShowResponsablePicker(false);
+                                  }}
+                                  className="w-full flex items-center gap-3 px-3 py-2.5 text-left hover:bg-[--k-surface-2] transition"
+                                >
+                                  <span className={cn("h-8 w-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0", r.color)}>
+                                    {r.prenom[0]}{r.nom[0]}
+                                  </span>
+                                  <div className="min-w-0">
+                                    <div className="text-[13px] font-medium text-[--k-text]">{r.prenom} {r.nom}</div>
+                                    <div className="text-[11px] text-[--k-muted]">{r.ville}</div>
+                                  </div>
+                                </button>
+                              ))}
+                            {MOCK_RESPONSABLES.filter(r => !selectedResponsables.includes(r.id)).filter(r => !responsableSearch || `${r.prenom} ${r.nom} ${r.ville}`.toLowerCase().includes(responsableSearch.toLowerCase())).length === 0 && (
+                              <div className="px-3 py-4 text-center text-[13px] text-[--k-muted]">Aucun résultat</div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </Field>
+                  </div>
+
                   <div className="sm:col-span-2">
                     <Field label="Description événement">
                       <RichTextEditor
@@ -665,15 +925,34 @@ export default function EventCreate() {
                       />
                     </Field>
                   </div>
+
+                  {/* Objectifs - Checkboxes */}
                   <div className="sm:col-span-2">
                     <Field label="Objectifs de l'événement / client">
-                      <textarea
-                        value={form.objectifs}
-                        onChange={e => update("objectifs", e.target.value)}
-                        rows={3}
-                        className="input-field w-full resize-none"
-                        placeholder="Quels sont les objectifs du client pour cet événement ?"
-                      />
+                      <div className="flex flex-wrap gap-2">
+                        {OBJECTIFS_EVENT.map(obj => (
+                          <button
+                            key={obj}
+                            onClick={() => {
+                              setForm(f => ({
+                                ...f,
+                                objectifs: f.objectifs.includes(obj)
+                                  ? f.objectifs.filter(o => o !== obj)
+                                  : [...f.objectifs, obj],
+                              }));
+                            }}
+                            className={cn(
+                              "px-3 py-2 rounded-lg text-[13px] font-medium border transition",
+                              form.objectifs.includes(obj)
+                                ? "bg-[--k-primary] text-white border-[--k-primary] shadow-sm"
+                                : "bg-white text-[--k-text] border-[--k-border] hover:border-[--k-primary] hover:text-[--k-primary]"
+                            )}
+                          >
+                            {form.objectifs.includes(obj) && <Check className="inline h-3.5 w-3.5 mr-1 -mt-0.5" />}
+                            {obj}
+                          </button>
+                        ))}
+                      </div>
                     </Field>
                   </div>
                 </div>
@@ -802,41 +1081,6 @@ export default function EventCreate() {
               </div>
             </div>
 
-            {/* Étiquettes / tags */}
-            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
-              <div className="flex items-center justify-between border-b border-[--k-border] px-5 py-3">
-                <h2 className="text-[16px] font-bold text-[--k-text]">Étiquettes / tags</h2>
-                <button
-                  onClick={addTag}
-                  className="h-9 rounded-lg bg-[--k-success] px-4 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm"
-                >
-                  Ajouter
-                </button>
-              </div>
-              <div className="p-5">
-                <div className="flex items-center gap-2 mb-3">
-                  <input
-                    value={tagInput}
-                    onChange={e => setTagInput(e.target.value)}
-                    onKeyDown={e => e.key === "Enter" && addTag()}
-                    placeholder="Saisir un tag..."
-                    className="input-field flex-1"
-                  />
-                </div>
-                {tags.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                    {tags.map(tag => (
-                      <span key={tag} className="inline-flex items-center gap-1 rounded-full bg-[--k-primary-2] px-3 py-1 text-[12px] font-medium text-[--k-primary]">
-                        {tag}
-                        <button onClick={() => removeTag(tag)} className="hover:text-[--k-danger] transition">
-                          <X className="h-3 w-3" />
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
 
             {/* Contact(s) sur place */}
             <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
@@ -951,24 +1195,65 @@ export default function EventCreate() {
             {/* Borne(s) */}
             <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
               <div className="border-b border-[--k-border] px-5 py-3">
-                <h2 className="text-[16px] font-bold text-[--k-text]">Borne(s) :</h2>
+                <h2 className="text-[16px] font-bold text-[--k-text]">Borne(s)</h2>
+                <p className="text-[12px] text-[--k-muted] mt-0.5">Sélectionnez le type et le nombre de bornes pour cet événement</p>
               </div>
-              <div className="p-5 space-y-3">
-                {BORNE_TYPES.map(bt => (
-                  <div key={bt.id} className="flex items-center gap-3">
-                    <input
-                      type="number"
-                      min="0"
-                      value={bt.id === "classik" ? form.bornesClassik : form.bornesSphrik}
-                      onChange={e => update(bt.id === "classik" ? "bornesClassik" : "bornesSphrik", parseInt(e.target.value) || 0)}
-                      className="input-field w-20 text-center"
-                    />
-                    <button className="flex items-center justify-center h-7 w-7 rounded-md bg-[--k-success] text-white hover:brightness-110 transition">
-                      <Plus className="h-4 w-4" />
-                    </button>
-                    <span className="text-[14px] font-medium text-[--k-text]">{bt.name}</span>
-                  </div>
-                ))}
+              <div className="p-5">
+                <div className="grid gap-4 sm:grid-cols-3">
+                  {BORNE_TYPES.map(bt => {
+                    const qty = form.bornes[bt.id] || 0;
+                    const isActive = qty > 0;
+                    return (
+                      <div
+                        key={bt.id}
+                        className={cn(
+                          "rounded-xl border-2 p-4 transition cursor-pointer",
+                          isActive
+                            ? "border-[--k-primary] bg-[--k-primary-2]/30 shadow-sm"
+                            : "border-[--k-border] bg-white hover:border-[--k-primary]/40"
+                        )}
+                        onClick={() => {
+                          if (!isActive) setForm(f => ({ ...f, bornes: { ...f.bornes, [bt.id]: 1 } }));
+                        }}
+                      >
+                        <div className="text-center mb-3">
+                          <span className="text-2xl">{bt.icon}</span>
+                          <h3 className="text-[14px] font-bold text-[--k-text] mt-1">{bt.name}</h3>
+                          <p className="text-[11px] text-[--k-muted]">{bt.desc}</p>
+                        </div>
+                        <div className="flex items-center justify-center gap-2">
+                          <button
+                            onClick={e => { e.stopPropagation(); setForm(f => ({ ...f, bornes: { ...f.bornes, [bt.id]: Math.max(0, (f.bornes[bt.id] || 0) - 1) } })); }}
+                            className={cn(
+                              "h-8 w-8 rounded-lg flex items-center justify-center text-[16px] font-bold transition",
+                              qty > 0 ? "bg-[--k-surface-2] text-[--k-text] hover:bg-[--k-border]" : "bg-[--k-surface-2] text-[--k-muted] opacity-40"
+                            )}
+                          >
+                            −
+                          </button>
+                          <span className={cn(
+                            "text-[18px] font-bold w-8 text-center",
+                            isActive ? "text-[--k-primary]" : "text-[--k-muted]"
+                          )}>{qty}</span>
+                          <button
+                            onClick={e => { e.stopPropagation(); setForm(f => ({ ...f, bornes: { ...f.bornes, [bt.id]: (f.bornes[bt.id] || 0) + 1 } })); }}
+                            className="h-8 w-8 rounded-lg flex items-center justify-center bg-[--k-success] text-white text-[16px] font-bold hover:brightness-110 transition"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                {(form.bornes.classik + form.bornes.spherik + form.bornes.prestige) > 0 && (
+                  <p className="mt-3 text-[12px] text-[--k-primary] font-medium">
+                    Total : {form.bornes.classik + form.bornes.spherik + form.bornes.prestige} borne(s) sélectionnée(s)
+                    {form.bornes.classik > 0 && ` — ${form.bornes.classik} Classik`}
+                    {form.bornes.spherik > 0 && ` — ${form.bornes.spherik} Spherik`}
+                    {form.bornes.prestige > 0 && ` — ${form.bornes.prestige} Prestige`}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -1017,51 +1302,144 @@ export default function EventCreate() {
         {/* ─── Step 4: Créa ─────────────────────────── */}
         {currentStep === 4 && (
           <div className="space-y-5">
+            {/* Créa / Supports graphiques */}
             <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
               <div className="border-b border-[--k-border] px-5 py-3">
-                <h2 className="text-[16px] font-bold text-[--k-text]">Personnalisation & Design</h2>
+                <h2 className="text-[16px] font-bold text-[--k-text]">Créa / Supports graphiques</h2>
+              </div>
+              <div className="p-5 space-y-5">
+                {/* Création réalisée par */}
+                <div>
+                  <p className="text-[13px] font-semibold text-[--k-text] mb-2">La création graphique de l'animation est réalisée <span className="text-[--k-danger]">*</span> :</p>
+                  <div className="flex items-center gap-6">
+                    <label className="flex items-center gap-2 text-[13px] text-[--k-text] cursor-pointer">
+                      <input type="radio" name="creaRealisee" checked={form.creaRealisee === "nous"} onChange={() => update("creaRealisee", "nous")} className="accent-[--k-primary]" />
+                      Par nos soins
+                    </label>
+                    <label className="flex items-center gap-2 text-[13px] text-[--k-text] cursor-pointer">
+                      <input type="radio" name="creaRealisee" checked={form.creaRealisee === "client"} onChange={() => update("creaRealisee", "client")} className="accent-[--k-primary]" />
+                      Par le client
+                    </label>
+                  </div>
+                </div>
+
+                {/* Supports à créer */}
+                <div>
+                  <p className="text-[13px] font-semibold text-[--k-text] mb-2">Y-a-t-il des supports à créer ? (magnet/ photocall...)</p>
+                  <div className="flex items-center gap-6">
+                    <label className="flex items-center gap-2 text-[13px] text-[--k-text] cursor-pointer">
+                      <input type="radio" name="supportsACreer" checked={form.supportsACreer === "non"} onChange={() => update("supportsACreer", "non")} className="accent-[--k-primary]" />
+                      Non
+                    </label>
+                    <label className="flex items-center gap-2 text-[13px] text-[--k-text] cursor-pointer">
+                      <input type="radio" name="supportsACreer" checked={form.supportsACreer === "oui"} onChange={() => update("supportsACreer", "oui")} className="accent-[--k-primary]" />
+                      Oui
+                    </label>
+                  </div>
+                </div>
+
+                {/* Supports à imprimer */}
+                <div>
+                  <p className="text-[13px] font-semibold text-[--k-text] mb-2">Y-a-t-il des supports à imprimer ? (magnet/ photocall...)</p>
+                  <div className="flex items-center gap-6">
+                    <label className="flex items-center gap-2 text-[13px] text-[--k-text] cursor-pointer">
+                      <input type="radio" name="supportsAImprimer" checked={form.supportsAImprimer === "non"} onChange={() => update("supportsAImprimer", "non")} className="accent-[--k-primary]" />
+                      Non
+                    </label>
+                    <label className="flex items-center gap-2 text-[13px] text-[--k-text] cursor-pointer">
+                      <input type="radio" name="supportsAImprimer" checked={form.supportsAImprimer === "oui"} onChange={() => update("supportsAImprimer", "oui")} className="accent-[--k-primary]" />
+                      Oui
+                    </label>
+                  </div>
+                </div>
+
+                {/* Informations complémentaires */}
+                <Field label="Informations complémentaires">
+                  <RichTextEditor
+                    value={form.infosComplementairesCrea}
+                    onChange={val => update("infosComplementairesCrea", val)}
+                    placeholder="Informations complémentaires sur la création graphique..."
+                  />
+                </Field>
+              </div>
+            </div>
+
+            {/* Contact(s) création graphique */}
+            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+              <div className="flex items-center justify-between border-b border-[--k-border] px-5 py-3">
+                <div>
+                  <h2 className="text-[14px] font-bold text-[--k-text]">Contact(s) création graphique</h2>
+                  <p className="text-[12px] text-[--k-muted] mt-0.5">
+                    {contactsCrea.length === 0 ? "Aucun contact" : `${contactsCrea.length} contact(s)`}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowCreaContactPicker(!showCreaContactPicker)}
+                  className="h-9 rounded-lg bg-[--k-primary] px-4 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm"
+                >
+                  Ajouter un contact
+                </button>
               </div>
               <div className="p-5">
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <Field label="Template">
-                    <select value={form.template} onChange={e => update("template", e.target.value)} className="input-field">
-                      <option value="">Choisir un template...</option>
-                      {["Template Corporate Premium", "Template Mariage Premium", "Template Festival Fun", "Template Élégant Noir", "Template Coloré Pop", "Template Minimaliste", "Sur mesure (à briefer)"].map(t => (
-                        <option key={t}>{t}</option>
+                {contactsCrea.length > 0 && (
+                  <div className="space-y-2 mb-4">
+                    {contactsCrea.map(c => (
+                      <div key={c.id} className="flex items-center justify-between rounded-lg border border-[--k-border] px-3 py-2">
+                        <div>
+                          <span className="text-[13px] font-medium text-[--k-text]">{c.nom}</span>
+                          <span className="text-[12px] text-[--k-muted] ml-2">{c.fonction}</span>
+                          <span className="text-[12px] text-[--k-muted] ml-2">{c.email}</span>
+                        </div>
+                        <button onClick={() => setContactsCrea(prev => prev.filter(x => x.id !== c.id))} className="text-[--k-muted] hover:text-[--k-danger]">
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {showCreaContactPicker && (
+                  <div className="rounded-lg border border-[--k-border] bg-[--k-surface-2] p-3 mb-4">
+                    <div className="space-y-1">
+                      {MOCK_CONTACTS.filter(c => !contactsCrea.find(x => x.id === c.id)).map(c => (
+                        <button
+                          key={c.id}
+                          onClick={() => { setContactsCrea(prev => [...prev, c]); setShowCreaContactPicker(false); }}
+                          className="w-full text-left rounded-lg px-3 py-2 text-[13px] hover:bg-white transition"
+                        >
+                          <span className="font-medium">{c.nom}</span>
+                          <span className="text-[--k-muted] ml-2">— {c.fonction}</span>
+                        </button>
                       ))}
-                    </select>
-                  </Field>
-                  <Field label="Logo client">
-                    <label className="flex h-9 cursor-pointer items-center gap-1.5 rounded-lg border border-dashed border-[--k-border] px-3 text-[12px] text-[--k-muted] hover:border-[--k-primary] hover:text-[--k-primary] transition">
-                      <Plus className="h-3.5 w-3.5" /> Uploader un logo
-                      <input type="file" className="hidden" accept="image/*" />
-                    </label>
-                  </Field>
-                  <Field label="Couleur primaire">
-                    <div className="flex items-center gap-2">
-                      <input type="color" value={form.couleur1} onChange={e => update("couleur1", e.target.value)} className="h-9 w-9 rounded-lg border border-[--k-border] p-0.5 cursor-pointer" />
-                      <input value={form.couleur1} onChange={e => update("couleur1", e.target.value)} className="input-field flex-1" />
                     </div>
-                  </Field>
-                  <Field label="Couleur secondaire">
-                    <div className="flex items-center gap-2">
-                      <input type="color" value={form.couleur2} onChange={e => update("couleur2", e.target.value)} className="h-9 w-9 rounded-lg border border-[--k-border] p-0.5 cursor-pointer" />
-                      <input value={form.couleur2} onChange={e => update("couleur2", e.target.value)} className="input-field flex-1" />
-                    </div>
-                  </Field>
-                  <Field label="Texte d'accueil" span={2}>
-                    <input value={form.texteAccueil} onChange={e => update("texteAccueil", e.target.value)} placeholder="Bienvenue ! Prenez la pose !" className="input-field" />
-                  </Field>
-                  <Field label="Texte de partage" span={2}>
-                    <input value={form.textePartage} onChange={e => update("textePartage", e.target.value)} placeholder="Retrouvez votre photo sur..." className="input-field" />
-                  </Field>
+                  </div>
+                )}
+                <Field label="Commentaire :">
+                  <RichTextEditor
+                    value={form.commentaireCrea}
+                    onChange={val => update("commentaireCrea", val)}
+                    placeholder="Commentaire sur la création graphique..."
+                  />
+                </Field>
+              </div>
+            </div>
+
+            {/* Pièces jointe */}
+            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+              <div className="border-b border-[--k-border] px-5 py-3">
+                <h2 className="text-[16px] font-bold text-[--k-text]">Pièces jointe</h2>
+              </div>
+              <div className="p-5">
+                <div className="flex items-center justify-center rounded-lg border-2 border-dashed border-[--k-border] bg-[--k-surface-2]/30 py-12 cursor-pointer hover:border-[--k-primary] hover:bg-[--k-primary-2]/20 transition">
+                  <span className="inline-flex items-center gap-2 rounded-lg border border-[--k-border] bg-white px-4 py-2 text-[13px] text-[--k-muted] shadow-sm">
+                    Cliquer ou glisser vos fichiers ici
+                  </span>
                 </div>
               </div>
             </div>
 
             {/* Navigation */}
             <div className="flex justify-between">
-              <button onClick={goPrev} className="h-10 rounded-lg border border-[--k-border] px-6 text-[13px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition flex items-center gap-1.5">
+              <button onClick={goPrev} className="h-10 rounded-lg bg-[--k-primary] px-6 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5">
                 <ChevronLeft className="h-4 w-4" /> Précédent
               </button>
               <button onClick={goNext} className="h-10 rounded-lg bg-[--k-primary] px-6 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5">
@@ -1233,22 +1611,23 @@ export default function EventCreate() {
                   {form.periode === "periode" && <RecapRow label="Date fin" value={form.dateAnimationFin || "—"} />}
                   <RecapRow label="Immobilisation" value={form.debutImmobilisation && form.finImmobilisation ? `${form.debutImmobilisation} → ${form.finImmobilisation}` : "—"} />
                   <RecapRow label="Lieu" value={[form.lieuNomAdresse, form.lieuAdresse, form.lieuCP, form.lieuVille].filter(Boolean).join(", ") || "—"} />
-                  <RecapRow label="Objectifs" value={form.objectifs || "—"} />
-                  <RecapRow label="Responsable" value={form.responsableProjet || "—"} />
-                  {tags.length > 0 && <RecapRow label="Tags" value={tags.join(", ")} />}
+                  <RecapRow label="Objectifs" value={form.objectifs.length > 0 ? form.objectifs.join(", ") : "—"} />
+                  <RecapRow label="Responsable(s)" value={selectedResponsables.map(id => { const r = MOCK_RESPONSABLES.find(x => x.id === id); return r ? `${r.prenom} ${r.nom}` : ""; }).filter(Boolean).join(", ") || "—"} />
+                  {internalTags.length > 0 && <RecapRow label="Tags" value={internalTags.join(", ")} />}
                   {contactsSurPlace.length > 0 && <RecapRow label="Contacts sur place" value={contactsSurPlace.map(c => `${c.prenom} ${c.nom}`).filter(s => s.trim()).join(", ") || "—"} />}
                 </RecapSection>
 
                 <RecapSection title="Animation(s)">
-                  <RecapRow label="Bornes Classik" value={form.bornesClassik || "0"} />
-                  <RecapRow label="Bornes Spherik" value={form.bornesSphrik || "0"} />
+                  <RecapRow label="Bornes Classik" value={form.bornes.classik || "0"} />
+                  <RecapRow label="Bornes Spherik" value={form.bornes.spherik || "0"} />
+                  <RecapRow label="Bornes Prestige" value={form.bornes.prestige || "0"} />
                   {form.animationOptions.length > 0 && <RecapRow label="Options animation" value={form.animationOptions.join(", ")} />}
                 </RecapSection>
 
                 <RecapSection title="Créa">
-                  <RecapRow label="Template" value={form.template || "—"} />
-                  <RecapRow label="Couleurs" value={`${form.couleur1} / ${form.couleur2}`} />
-                  <RecapRow label="Texte d'accueil" value={form.texteAccueil || "—"} />
+                  <RecapRow label="Création par" value={form.creaRealisee === "nous" ? "Nos soins" : "Le client"} />
+                  <RecapRow label="Supports à créer" value={form.supportsACreer === "oui" ? "Oui" : "Non"} />
+                  <RecapRow label="Supports à imprimer" value={form.supportsAImprimer === "oui" ? "Oui" : "Non"} />
                 </RecapSection>
 
                 <RecapSection title="Logistique">
