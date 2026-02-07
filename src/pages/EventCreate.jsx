@@ -1322,12 +1322,38 @@ export default function EventCreate() {
             <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
               <div className="flex items-center justify-between border-b border-[--k-border] px-5 py-3">
                 <h2 className="text-[16px] font-bold text-[--k-text]">Dispositif(s)</h2>
-                <button
-                  onClick={() => setForm(f => ({ ...f, dispositifs: [...f.dispositifs, { id: Date.now(), type: "Classik", qty: 1 }] }))}
-                  className="h-9 rounded-lg bg-[--k-success] px-4 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5"
-                >
-                  <Plus className="h-3.5 w-3.5" /> Ajouter un dispositif
-                </button>
+                {(() => {
+                  const usedTypes = form.dispositifs.map(d => d.type);
+                  const available = BORNE_TYPES.filter(t => !usedTypes.includes(t));
+                  // Always allow "__autre"
+                  if (available.length === 0) return (
+                    <button
+                      onClick={() => setForm(f => ({ ...f, dispositifs: [...f.dispositifs, { id: Date.now(), type: "__autre", qty: 1 }] }))}
+                      className="h-9 rounded-lg bg-[--k-success] px-4 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5"
+                    >
+                      <Plus className="h-3.5 w-3.5" /> Autre dispositif
+                    </button>
+                  );
+                  return (
+                    <div className="flex items-center gap-2">
+                      {available.map(t => (
+                        <button
+                          key={t}
+                          onClick={() => setForm(f => ({ ...f, dispositifs: [...f.dispositifs, { id: Date.now(), type: t, qty: 1 }] }))}
+                          className="h-9 rounded-lg border border-dashed border-[--k-border] px-3 text-[12px] font-medium text-[--k-muted] hover:border-[--k-success] hover:text-[--k-success] transition flex items-center gap-1.5"
+                        >
+                          <Plus className="h-3 w-3" /> {t}
+                        </button>
+                      ))}
+                      <button
+                        onClick={() => setForm(f => ({ ...f, dispositifs: [...f.dispositifs, { id: Date.now(), type: "__autre", qty: 1 }] }))}
+                        className="h-9 rounded-lg border border-dashed border-[--k-border] px-3 text-[12px] font-medium text-[--k-muted] hover:border-[--k-success] hover:text-[--k-success] transition flex items-center gap-1.5"
+                      >
+                        <Plus className="h-3 w-3" /> Autre...
+                      </button>
+                    </div>
+                  );
+                })()}
               </div>
               <div className="p-5">
                 <div className="space-y-3">
@@ -1340,7 +1366,10 @@ export default function EventCreate() {
                             onChange={e => setForm(f => ({ ...f, dispositifs: f.dispositifs.map(x => x.id === d.id ? { ...x, type: e.target.value } : x) }))}
                             className="input-field"
                           >
-                            {BORNE_TYPES.map(t => <option key={t}>{t}</option>)}
+                            {BORNE_TYPES.map(t => {
+                              const taken = form.dispositifs.some(x => x.id !== d.id && x.type === t);
+                              return <option key={t} value={t} disabled={taken}>{t}{taken ? " (déjà ajouté)" : ""}</option>;
+                            })}
                             <option value="__autre">Autre...</option>
                           </select>
                         </Field>

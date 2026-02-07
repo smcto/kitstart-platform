@@ -19,6 +19,8 @@ const APP_IDENTITY = {
     border: "border-blue-200",
     topStripe: "bg-blue-500",
     sidebarHover: "hover:bg-blue-500/[0.10]",
+    sidebarActive: "bg-blue-500/[0.18]",
+    sidebarActiveDot: "bg-blue-400",
   },
   "Bornes Manager": {
     icon: Monitor,
@@ -31,6 +33,8 @@ const APP_IDENTITY = {
     border: "border-indigo-200",
     topStripe: "bg-indigo-500",
     sidebarHover: "hover:bg-indigo-500/[0.10]",
+    sidebarActive: "bg-indigo-500/[0.18]",
+    sidebarActiveDot: "bg-indigo-400",
   },
   "Antennes Selfizee": {
     icon: Radio,
@@ -43,6 +47,8 @@ const APP_IDENTITY = {
     border: "border-orange-200",
     topStripe: "bg-orange-500",
     sidebarHover: "hover:bg-orange-500/[0.10]",
+    sidebarActive: "bg-orange-500/[0.18]",
+    sidebarActiveDot: "bg-orange-400",
   },
   "Stock Manager": {
     icon: Package,
@@ -55,6 +61,8 @@ const APP_IDENTITY = {
     border: "border-emerald-200",
     topStripe: "bg-emerald-500",
     sidebarHover: "hover:bg-emerald-500/[0.10]",
+    sidebarActive: "bg-emerald-500/[0.18]",
+    sidebarActiveDot: "bg-emerald-400",
   },
   "Support": {
     icon: Headphones,
@@ -67,6 +75,8 @@ const APP_IDENTITY = {
     border: "border-amber-200",
     topStripe: "bg-amber-500",
     sidebarHover: "hover:bg-amber-500/[0.10]",
+    sidebarActive: "bg-amber-500/[0.18]",
+    sidebarActiveDot: "bg-amber-400",
   },
   "Catalog IA": {
     icon: Sparkles,
@@ -79,6 +89,8 @@ const APP_IDENTITY = {
     border: "border-violet-200",
     topStripe: "bg-violet-500",
     sidebarHover: "hover:bg-violet-500/[0.10]",
+    sidebarActive: "bg-violet-500/[0.18]",
+    sidebarActiveDot: "bg-violet-400",
   },
   "Events Manager": {
     icon: CalendarDays,
@@ -91,6 +103,8 @@ const APP_IDENTITY = {
     border: "border-rose-200",
     topStripe: "bg-rose-500",
     sidebarHover: "hover:bg-rose-500/[0.10]",
+    sidebarActive: "bg-rose-500/[0.18]",
+    sidebarActiveDot: "bg-rose-400",
   },
   "Statistiques": {
     icon: BarChart3,
@@ -103,6 +117,8 @@ const APP_IDENTITY = {
     border: "border-teal-200",
     topStripe: "bg-teal-500",
     sidebarHover: "hover:bg-teal-500/[0.10]",
+    sidebarActive: "bg-teal-500/[0.18]",
+    sidebarActiveDot: "bg-teal-400",
   },
   "Abonnements": {
     icon: Users,
@@ -115,6 +131,8 @@ const APP_IDENTITY = {
     border: "border-sky-200",
     topStripe: "bg-sky-500",
     sidebarHover: "hover:bg-sky-500/[0.10]",
+    sidebarActive: "bg-sky-500/[0.18]",
+    sidebarActiveDot: "bg-sky-400",
   },
   "Admin": {
     icon: ShieldCheck,
@@ -127,6 +145,8 @@ const APP_IDENTITY = {
     border: "border-stone-200",
     topStripe: "bg-stone-500",
     sidebarHover: "hover:bg-stone-500/[0.10]",
+    sidebarActive: "bg-stone-500/[0.18]",
+    sidebarActiveDot: "bg-stone-400",
   },
 };
 
@@ -141,6 +161,8 @@ const DEFAULT_IDENTITY = {
   border: "border-[--k-border]",
   topStripe: "bg-[--k-primary]",
   sidebarHover: "hover:bg-white/[0.06]",
+  sidebarActive: "bg-white/10",
+  sidebarActiveDot: "bg-white",
 };
 
 export function getAppIdentity(appName) {

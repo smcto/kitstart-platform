@@ -175,12 +175,12 @@ export function Sidebar({ appName, collapsed, onToggle, activeKey, sections }) {
           "relative flex items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] font-medium transition-all duration-150",
           collapsed ? "justify-center px-0" : "justify-start",
           active
-            ? "bg-white/10 text-white"
+            ? cn(identity.sidebarActive, "text-white")
             : cn("text-[--k-sidebar-text] hover:text-[--k-sidebar-text-active]", identity.sidebarHover)
         )}
       >
         {active && !collapsed && (
-          <span className="absolute left-0 top-[6px] bottom-[6px] w-[2px] rounded-full bg-white" />
+          <span className={cn("absolute left-0 top-[6px] bottom-[6px] w-[2px] rounded-full", identity.sidebarActiveDot)} />
         )}
         <Icon className={cn(
           "h-[16px] w-[16px] shrink-0",
