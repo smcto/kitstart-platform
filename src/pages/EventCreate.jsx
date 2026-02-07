@@ -215,7 +215,7 @@ export default function EventCreate() {
     commentaireSurPlace: "",
     responsableProjet: "",
     // Step 3 - Animation(s)
-    dispositifs: [{ id: 1, type: "Classik", qty: 1, numeros: "" }],
+    dispositifs: [{ id: 1, type: "Classik", qty: 1 }],
     animationOptions: [],
     // Step 4 - Créa / Supports graphiques
     creaRealisee: "nous", // "nous" or "client"
@@ -384,7 +384,7 @@ export default function EventCreate() {
       </div>
 
       {/* Step Content */}
-      <div className="pb-10">
+      <div className="pb-20">
         {/* ─── Step 1: Client ─────────────────────── */}
         {currentStep === 1 && (
           <div className="space-y-5">
@@ -875,12 +875,6 @@ export default function EventCreate() {
               </div>
             </div>
 
-            {/* Navigation */}
-            <div className="flex justify-end">
-              <button onClick={goNext} className="h-10 rounded-lg bg-[--k-primary] px-6 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5">
-                Suivant <ChevronRight className="h-4 w-4" />
-              </button>
-            </div>
           </div>
         )}
 
@@ -970,13 +964,12 @@ export default function EventCreate() {
                   </div>
 
                   <div className="sm:col-span-2">
-                    <Field label="Description événement">
-                      <RichTextEditor
-                        value={form.description}
-                        onChange={val => update("description", val)}
-                        placeholder="Décrivez l'événement..."
-                      />
-                    </Field>
+                    <CollapsibleComment
+                      label="Description événement"
+                      value={form.description}
+                      onChange={val => update("description", val)}
+                      placeholder="Décrivez l'événement..."
+                    />
                   </div>
 
                   {/* Objectifs - Checkboxes */}
@@ -1268,15 +1261,6 @@ export default function EventCreate() {
               </div>
             </div>
 
-            {/* Navigation */}
-            <div className="flex justify-between">
-              <button onClick={goPrev} className="h-10 rounded-lg bg-[--k-primary] px-6 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5">
-                <ChevronLeft className="h-4 w-4" /> Précédent
-              </button>
-              <button onClick={goNext} className="h-10 rounded-lg bg-[--k-primary] px-6 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5">
-                Suivant <ChevronRight className="h-4 w-4" />
-              </button>
-            </div>
           </div>
         )}
 
@@ -1288,7 +1272,7 @@ export default function EventCreate() {
               <div className="flex items-center justify-between border-b border-[--k-border] px-5 py-3">
                 <h2 className="text-[16px] font-bold text-[--k-text]">Dispositif(s)</h2>
                 <button
-                  onClick={() => setForm(f => ({ ...f, dispositifs: [...f.dispositifs, { id: Date.now(), type: "Classik", qty: 1, numeros: "" }] }))}
+                  onClick={() => setForm(f => ({ ...f, dispositifs: [...f.dispositifs, { id: Date.now(), type: "Classik", qty: 1 }] }))}
                   className="h-9 rounded-lg bg-[--k-success] px-4 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5"
                 >
                   <Plus className="h-3.5 w-3.5" /> Ajouter un dispositif
@@ -1316,14 +1300,6 @@ export default function EventCreate() {
                             value={d.qty}
                             onChange={e => setForm(f => ({ ...f, dispositifs: f.dispositifs.map(x => x.id === d.id ? { ...x, qty: parseInt(e.target.value) || 1 } : x) }))}
                             className="input-field text-center"
-                          />
-                        </Field>
-                        <Field label={i === 0 ? "N° de borne(s)" : undefined}>
-                          <input
-                            value={d.numeros}
-                            onChange={e => setForm(f => ({ ...f, dispositifs: f.dispositifs.map(x => x.id === d.id ? { ...x, numeros: e.target.value } : x) }))}
-                            placeholder="Ex: B-001, B-002, B-003"
-                            className="input-field"
                           />
                         </Field>
                         {d.type === "__autre" && (
@@ -1388,15 +1364,6 @@ export default function EventCreate() {
               </div>
             </div>
 
-            {/* Navigation */}
-            <div className="flex justify-between">
-              <button onClick={goPrev} className="h-10 rounded-lg bg-[--k-primary] px-6 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5">
-                <ChevronLeft className="h-4 w-4" /> Précédent
-              </button>
-              <button onClick={goNext} className="h-10 rounded-lg bg-[--k-primary] px-6 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5">
-                Suivant <ChevronRight className="h-4 w-4" />
-              </button>
-            </div>
           </div>
         )}
 
@@ -1536,15 +1503,6 @@ export default function EventCreate() {
               </div>
             </div>
 
-            {/* Navigation */}
-            <div className="flex justify-between">
-              <button onClick={goPrev} className="h-10 rounded-lg bg-[--k-primary] px-6 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5">
-                <ChevronLeft className="h-4 w-4" /> Précédent
-              </button>
-              <button onClick={goNext} className="h-10 rounded-lg bg-[--k-primary] px-6 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5">
-                Suivant <ChevronRight className="h-4 w-4" />
-              </button>
-            </div>
           </div>
         )}
 
@@ -1660,15 +1618,6 @@ export default function EventCreate() {
               </div>
             </div>
 
-            {/* Navigation */}
-            <div className="flex justify-between">
-              <button onClick={goPrev} className="h-10 rounded-lg bg-[--k-primary] px-6 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5">
-                <ChevronLeft className="h-4 w-4" /> Précédent
-              </button>
-              <button onClick={goNext} className="h-10 rounded-lg bg-[--k-primary] px-6 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5">
-                Suivant <ChevronRight className="h-4 w-4" />
-              </button>
-            </div>
           </div>
         )}
 
@@ -1705,7 +1654,7 @@ export default function EventCreate() {
 
                 <RecapSection title="Animation(s)">
                   {form.dispositifs.map((d, i) => (
-                    <RecapRow key={d.id} label={d.type === "__autre" ? (d.autreNom || "Autre") : d.type} value={`×${d.qty}${d.numeros ? ` — ${d.numeros}` : ""}`} />
+                    <RecapRow key={d.id} label={d.type === "__autre" ? (d.autreNom || "Autre") : d.type} value={`×${d.qty}`} />
                   ))}
                   {form.animationOptions.length > 0 && <RecapRow label="Options animation" value={form.animationOptions.join(", ")} />}
                 </RecapSection>
@@ -1733,17 +1682,31 @@ export default function EventCreate() {
               </div>
             </div>
 
-            {/* Navigation */}
-            <div className="flex justify-between">
-              <button onClick={goPrev} className="h-10 rounded-lg border border-[--k-border] px-6 text-[13px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition flex items-center gap-1.5">
-                <ChevronLeft className="h-4 w-4" /> Précédent
-              </button>
-              <button className="h-10 rounded-lg bg-[--k-success] px-6 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5">
-                <Check className="h-4 w-4" /> Créer l'événement
-              </button>
-            </div>
           </div>
         )}
+      </div>
+
+      {/* ── Sticky Footer Navigation ──────────────────── */}
+      <div className="sticky bottom-0 z-10 -mx-3 md:-mx-5 -mb-3 md:-mb-5 border-t border-[--k-border] bg-white/90 backdrop-blur-sm px-5 py-3">
+        <div className="flex items-center justify-between">
+          {currentStep > 1 ? (
+            <button onClick={goPrev} className="h-10 rounded-lg border border-[--k-border] px-6 text-[13px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition flex items-center gap-1.5">
+              <ChevronLeft className="h-4 w-4" /> Précédent
+            </button>
+          ) : <div />}
+          <span className="text-[13px] text-[--k-muted] font-medium">
+            Étape {currentStep}/{STEPS.length} — {STEPS[currentStep - 1].label}
+          </span>
+          {currentStep < 6 ? (
+            <button onClick={goNext} className="h-10 rounded-lg bg-[--k-primary] px-6 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5">
+              Suivant <ChevronRight className="h-4 w-4" />
+            </button>
+          ) : (
+            <button className="h-10 rounded-lg bg-[--k-success] px-6 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5">
+              <Check className="h-4 w-4" /> Créer l'événement
+            </button>
+          )}
+        </div>
       </div>
     </AppShell>
   );
