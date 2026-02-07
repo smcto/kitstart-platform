@@ -1,25 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { AppShell } from "../components/AppShell";
 import { PageHeader } from "../components/PageHeader";
 import { cn } from "../components/ui/cn";
 import {
-  ChevronLeft, ChevronRight, CalendarDays, Camera, Filter, Plus
+  ChevronLeft, ChevronRight, CalendarDays, Camera, Filter, Plus,
+  ChevronDown, X, Search
 } from "lucide-react";
 
 /* ── Mock data ────────────────────────────────────── */
 
 const EVENTS_DATA = [
-  { id: "EVT-287", name: "Salon du Mariage Paris", dateStart: 8, dateEnd: 10, type: "Salon", bornes: 12, client: "Salon Expo SAS", status: "ready" },
-  { id: "EVT-291", name: "Soirée L'Oréal", dateStart: 10, dateEnd: 10, type: "Corporate", bornes: 4, client: "L'Oréal Group", status: "logistics" },
-  { id: "EVT-294", name: "Mariage Dupont", dateStart: 14, dateEnd: 14, type: "Mariage", bornes: 2, client: "Famille Dupont", status: "design" },
-  { id: "EVT-298", name: "Festival Nantes Digital", dateStart: 15, dateEnd: 17, type: "Festival", bornes: 8, client: "Nantes Métropole", status: "confirmed" },
-  { id: "EVT-302", name: "Team Building Airbus", dateStart: 18, dateEnd: 18, type: "Corporate", bornes: 3, client: "Airbus SE", status: "design" },
-  { id: "EVT-305", name: "Gala BMW Munich", dateStart: 20, dateEnd: 20, type: "Corporate", bornes: 6, client: "BMW AG", status: "confirmed" },
-  { id: "EVT-308", name: "Mariage Cohen", dateStart: 22, dateEnd: 22, type: "Mariage", bornes: 2, client: "Famille Cohen", status: "confirmed" },
-  { id: "EVT-312", name: "Salon Auto Lyon", dateStart: 25, dateEnd: 27, type: "Salon", bornes: 10, client: "Lyon Auto Events", status: "confirmed" },
-  { id: "EVT-315", name: "Anniversaire Nike", dateStart: 28, dateEnd: 28, type: "Corporate", bornes: 5, client: "Nike France", status: "confirmed" },
-  { id: "EVT-320", name: "Mariage Silva", dateStart: 1, dateEnd: 1, type: "Mariage", bornes: 1, client: "Famille Silva", status: "confirmed" },
-  { id: "EVT-322", name: "Séminaire Total", dateStart: 3, dateEnd: 4, type: "Corporate", bornes: 3, client: "TotalEnergies", status: "confirmed" },
+  { id: "EVT-287", name: "Salon du Mariage Paris", dateStart: 8, dateEnd: 10, type: "Salon", bornes: 12, borneType: "Classik", animationType: "photobooth", ville: "Paris", client: "Salon Expo SAS", status: "ready" },
+  { id: "EVT-291", name: "Soirée L'Oréal", dateStart: 10, dateEnd: 10, type: "Corporate", bornes: 4, borneType: "Prestige", animationType: "photobooth", ville: "Paris", client: "L'Oréal Group", status: "logistics" },
+  { id: "EVT-294", name: "Mariage Dupont", dateStart: 14, dateEnd: 14, type: "Mariage", bornes: 2, borneType: "Spherik", animationType: "photobooth", ville: "Rennes", client: "Famille Dupont", status: "design" },
+  { id: "EVT-298", name: "Festival Nantes Digital", dateStart: 15, dateEnd: 17, type: "Festival", bornes: 8, borneType: "Classik", animationType: "mosaique", ville: "Nantes", client: "Nantes Métropole", status: "confirmed" },
+  { id: "EVT-302", name: "Team Building Airbus", dateStart: 18, dateEnd: 18, type: "Corporate", bornes: 3, borneType: "Classik", animationType: "jeux", ville: "Toulouse", client: "Airbus SE", status: "design" },
+  { id: "EVT-305", name: "Gala BMW Munich", dateStart: 20, dateEnd: 20, type: "Corporate", bornes: 6, borneType: "Prestige", animationType: "photobooth", ville: "Munich", client: "BMW AG", status: "confirmed" },
+  { id: "EVT-308", name: "Mariage Cohen", dateStart: 22, dateEnd: 22, type: "Mariage", bornes: 2, borneType: "Spherik", animationType: "diaporama", ville: "Lyon", client: "Famille Cohen", status: "confirmed" },
+  { id: "EVT-312", name: "Salon Auto Lyon", dateStart: 25, dateEnd: 27, type: "Salon", bornes: 10, borneType: "Classik", animationType: "photobooth", ville: "Lyon", client: "Lyon Auto Events", status: "confirmed" },
+  { id: "EVT-315", name: "Anniversaire Nike", dateStart: 28, dateEnd: 28, type: "Corporate", bornes: 5, borneType: "Prestige", animationType: "social", ville: "Paris", client: "Nike France", status: "confirmed" },
+  { id: "EVT-320", name: "Mariage Silva", dateStart: 1, dateEnd: 1, type: "Mariage", bornes: 1, borneType: "Classik", animationType: "photobooth", ville: "Bordeaux", client: "Famille Silva", status: "confirmed" },
+  { id: "EVT-322", name: "Séminaire Total", dateStart: 3, dateEnd: 4, type: "Corporate", bornes: 3, borneType: "Spherik", animationType: "photobooth", ville: "Paris", client: "TotalEnergies", status: "confirmed" },
+];
+
+const BORNE_TYPES = ["Classik", "Spherik", "Prestige"];
+
+const ANIMATION_TYPES = [
+  { id: "photobooth", label: "Photobooth" },
+  { id: "diaporama", label: "Diaporama" },
+  { id: "mosaique", label: "Mosaïque" },
+  { id: "jeux", label: "Jeux" },
+  { id: "social", label: "Social Wall" },
 ];
 
 const TYPE_COLORS = {
@@ -43,11 +54,36 @@ const TODAY = 7;
 
 /* ── Page ──────────────────────────────────────────── */
 
+const ALL_VILLES = [...new Set(EVENTS_DATA.map(e => e.ville))].sort();
+
 export default function EventsPlanning() {
   const [view, setView] = useState("month");
   const [typeFilter, setTypeFilter] = useState("all");
+  const [borneFilter, setBorneFilter] = useState("all");
+  const [animFilter, setAnimFilter] = useState("all");
+  const [villeFilter, setVilleFilter] = useState("all");
+  const [villeSearch, setVilleSearch] = useState("");
+  const [villeDropdownOpen, setVilleDropdownOpen] = useState(false);
+  const villeRef = useRef(null);
 
-  const filteredEvents = EVENTS_DATA.filter(e => typeFilter === "all" || e.type === typeFilter);
+  // Close ville dropdown on outside click
+  useEffect(() => {
+    const handler = (e) => {
+      if (villeRef.current && !villeRef.current.contains(e.target)) setVilleDropdownOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const filteredEvents = EVENTS_DATA.filter(e =>
+    (typeFilter === "all" || e.type === typeFilter) &&
+    (borneFilter === "all" || e.borneType === borneFilter) &&
+    (animFilter === "all" || e.animationType === animFilter) &&
+    (villeFilter === "all" || e.ville === villeFilter)
+  );
+
+  const hasActiveFilters = borneFilter !== "all" || animFilter !== "all" || villeFilter !== "all";
+  const clearFilters = () => { setBorneFilter("all"); setAnimFilter("all"); setVilleFilter("all"); };
 
   // Build calendar grid
   const weeks = [];
@@ -131,6 +167,107 @@ export default function EventsPlanning() {
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Extra filters */}
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <Filter className="h-3.5 w-3.5 text-[--k-muted]" />
+
+        {/* Borne type filter */}
+        <div className="flex gap-1 rounded-lg bg-[--k-surface-2] p-0.5">
+          {["all", ...BORNE_TYPES].map(t => (
+            <button
+              key={t}
+              className={cn(
+                "rounded-md px-2.5 py-1.5 text-[11px] font-medium transition",
+                borneFilter === t ? "bg-white text-[--k-text] shadow-sm" : "text-[--k-muted] hover:text-[--k-text]"
+              )}
+              onClick={() => setBorneFilter(t)}
+            >
+              {t === "all" ? "Toutes bornes" : t}
+            </button>
+          ))}
+        </div>
+
+        {/* Animation type filter */}
+        <div className="flex gap-1 rounded-lg bg-[--k-surface-2] p-0.5">
+          {[{ id: "all", label: "Toutes anims" }, ...ANIMATION_TYPES].map(t => (
+            <button
+              key={t.id}
+              className={cn(
+                "rounded-md px-2.5 py-1.5 text-[11px] font-medium transition",
+                animFilter === t.id ? "bg-white text-[--k-text] shadow-sm" : "text-[--k-muted] hover:text-[--k-text]"
+              )}
+              onClick={() => setAnimFilter(t.id)}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Ville filter - searchable dropdown */}
+        <div ref={villeRef} className="relative">
+          <button
+            onClick={() => setVilleDropdownOpen(v => !v)}
+            className={cn(
+              "flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-[11px] font-medium transition",
+              villeFilter !== "all"
+                ? "bg-[--k-text] text-white border-[--k-text]"
+                : "bg-white text-[--k-muted] border-[--k-border] hover:border-[--k-text] hover:text-[--k-text]"
+            )}
+          >
+            {villeFilter === "all" ? "Ville" : villeFilter}
+            <ChevronDown className="h-3 w-3" />
+          </button>
+          {villeDropdownOpen && (
+            <div className="absolute z-20 mt-1 w-48 rounded-lg border border-[--k-border] bg-white shadow-lg">
+              <div className="p-2 border-b border-[--k-border]">
+                <div className="flex items-center gap-1.5 px-2 py-1 bg-[--k-surface-2] rounded text-[11px] text-[--k-muted]">
+                  <Search className="h-3 w-3" />
+                  <input
+                    value={villeSearch}
+                    onChange={e => setVilleSearch(e.target.value)}
+                    placeholder="Filtrer..."
+                    className="bg-transparent border-none outline-none flex-1 text-[--k-text] text-[11px]"
+                    autoFocus
+                  />
+                </div>
+              </div>
+              <div className="max-h-48 overflow-auto py-1">
+                <button
+                  onClick={() => { setVilleFilter("all"); setVilleDropdownOpen(false); setVilleSearch(""); }}
+                  className={cn(
+                    "w-full text-left px-3 py-1.5 text-[11px] hover:bg-[--k-surface-2] transition",
+                    villeFilter === "all" && "font-semibold text-[--k-primary]"
+                  )}
+                >
+                  Toutes les villes
+                </button>
+                {ALL_VILLES
+                  .filter(v => !villeSearch || v.toLowerCase().includes(villeSearch.toLowerCase()))
+                  .map(v => (
+                    <button
+                      key={v}
+                      onClick={() => { setVilleFilter(v); setVilleDropdownOpen(false); setVilleSearch(""); }}
+                      className={cn(
+                        "w-full text-left px-3 py-1.5 text-[11px] hover:bg-[--k-surface-2] transition",
+                        villeFilter === v && "font-semibold text-[--k-primary]"
+                      )}
+                    >
+                      {v}
+                    </button>
+                  ))
+                }
+              </div>
+            </div>
+          )}
+        </div>
+
+        {hasActiveFilters && (
+          <button onClick={clearFilters} className="flex items-center gap-1 text-[11px] text-[--k-muted] hover:text-[--k-danger] transition">
+            <X className="h-3 w-3" /> Effacer filtres
+          </button>
+        )}
       </div>
 
       {/* Calendar grid */}
