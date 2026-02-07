@@ -95,6 +95,9 @@ export default function EventCreate() {
   const [villeManuelle, setVilleManuelle] = useState(false);
   const [contacts, setContacts] = useState([]);
   const [showContactPicker, setShowContactPicker] = useState(false);
+  const [contactsSurPlace, setContactsSurPlace] = useState([]);
+  const [tags, setTags] = useState([]);
+  const [tagInput, setTagInput] = useState("");
   const clientSearchRef = useRef(null);
 
   const [form, setForm] = useState({
@@ -120,6 +123,27 @@ export default function EventCreate() {
     antennes: [],
     description: "",
     objectifs: "",
+    // Step 2 - Dates événement
+    periode: "jour", // "jour" or "periode"
+    dateAnimation: "",
+    dateAnimationFin: "",
+    horaireEvent: "",
+    debutImmobilisation: "",
+    finImmobilisation: "",
+    commentaireDates: "",
+    // Step 2 - Lieu d'événement
+    lieuNomAdresse: "",
+    lieuSociete: "",
+    lieuAdresse: "",
+    lieuAdresse2: "",
+    lieuCP: "",
+    lieuVille: "",
+    lieuPays: "",
+    infoPratiques: "",
+    modalitesAcces: "",
+    // Step 2 - Documents & Suivi
+    commentaireSurPlace: "",
+    responsableProjet: "",
     // Step 3 - Animation(s)
     bornesSelection: [{ model: "pro360", qty: 1 }],
     options: { impressions: true, gif: false, video: false, galerieEnLigne: true },
@@ -178,6 +202,33 @@ export default function EventCreate() {
 
   const removeContact = (id) => {
     setContacts(contacts.filter(c => c.id !== id));
+  };
+
+  // Contacts sur place (Step 2)
+  const addContactSurPlace = () => {
+    setContactsSurPlace([...contactsSurPlace, {
+      id: Date.now(), prenom: "", nom: "", fonction: "", email: "", telPortable: "", telFixe: "", type: "",
+    }]);
+  };
+
+  const updateContactSurPlace = (id, key, val) => {
+    setContactsSurPlace(contactsSurPlace.map(c => c.id === id ? { ...c, [key]: val } : c));
+  };
+
+  const removeContactSurPlace = (id) => {
+    setContactsSurPlace(contactsSurPlace.filter(c => c.id !== id));
+  };
+
+  // Tags
+  const addTag = () => {
+    if (tagInput.trim() && !tags.includes(tagInput.trim())) {
+      setTags([...tags, tagInput.trim()]);
+      setTagInput("");
+    }
+  };
+
+  const removeTag = (tag) => {
+    setTags(tags.filter(t => t !== tag));
   };
 
   const goNext = () => setCurrentStep(s => Math.min(s + 1, 6));
@@ -530,6 +581,7 @@ export default function EventCreate() {
         {/* ─── Step 2: Événement ────────────────────── */}
         {currentStep === 2 && (
           <div className="space-y-5">
+            {/* Informations événement */}
             <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
               <div className="border-b border-[--k-border] px-5 py-3">
                 <h2 className="text-[16px] font-bold text-[--k-text]">Informations événement</h2>
@@ -593,27 +645,257 @@ export default function EventCreate() {
               <div className="border-b border-[--k-border] px-5 py-3">
                 <h2 className="text-[16px] font-bold text-[--k-text]">Dates événement</h2>
               </div>
-              <div className="p-5">
+              <div className="p-5 space-y-4">
+                <Field label="Periode">
+                  <select value={form.periode} onChange={e => update("periode", e.target.value)} className="input-field w-auto">
+                    <option value="jour">Le jour du</option>
+                    <option value="periode">Période du</option>
+                  </select>
+                </Field>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <Field label="Date de début">
-                    <input type="date" value={form.dateStart} onChange={e => update("dateStart", e.target.value)} className="input-field" />
+                  <Field label="Date de l'animation" required>
+                    <input type="date" value={form.dateAnimation} onChange={e => update("dateAnimation", e.target.value)} className="input-field" />
                   </Field>
-                  <Field label="Date de fin">
-                    <input type="date" value={form.dateEnd} onChange={e => update("dateEnd", e.target.value)} className="input-field" />
+                  {form.periode === "periode" && (
+                    <Field label="Date de fin">
+                      <input type="date" value={form.dateAnimationFin} onChange={e => update("dateAnimationFin", e.target.value)} className="input-field" />
+                    </Field>
+                  )}
+                </div>
+                <Field label="Horaire de l'événement">
+                  <RichTextEditor
+                    value={form.horaireEvent}
+                    onChange={val => update("horaireEvent", val)}
+                    placeholder="Précisez les horaires..."
+                  />
+                </Field>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <Field label="Début de l'immobilisation du matériel">
+                    <input type="date" value={form.debutImmobilisation} onChange={e => update("debutImmobilisation", e.target.value)} className="input-field" />
                   </Field>
-                  <Field label="Lieu de l'événement" span={2}>
-                    <input value={form.lieuEvent} onChange={e => update("lieuEvent", e.target.value)} placeholder="Ex: Paris Expo — Porte de Versailles" className="input-field" />
+                  <Field label="Fin de l'immobilisation du matériel">
+                    <input type="date" value={form.finImmobilisation} onChange={e => update("finImmobilisation", e.target.value)} className="input-field" />
                   </Field>
-                  <Field label="Adresse de l'événement" span={2}>
-                    <input value={form.adresseEvent} onChange={e => update("adresseEvent", e.target.value)} placeholder="1 Place de la Porte de Versailles, 75015 Paris" className="input-field" />
+                </div>
+                <Field label="Commentaire">
+                  <RichTextEditor
+                    value={form.commentaireDates}
+                    onChange={val => update("commentaireDates", val)}
+                    placeholder="Commentaire sur les dates..."
+                  />
+                </Field>
+              </div>
+            </div>
+
+            {/* Lieu d'événement */}
+            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+              <div className="border-b border-[--k-border] px-5 py-3">
+                <h2 className="text-[16px] font-bold text-[--k-text]">Lieu d'événement</h2>
+              </div>
+              <div className="p-5 space-y-4">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <Field label="Nom de l'adresse (Usage interne)">
+                    <input value={form.lieuNomAdresse} onChange={e => update("lieuNomAdresse", e.target.value)} className="input-field" />
+                  </Field>
+                  <Field label="Société (facultatif)">
+                    <input value={form.lieuSociete} onChange={e => update("lieuSociete", e.target.value)} className="input-field" />
+                  </Field>
+                  <Field label="Adresse">
+                    <input value={form.lieuAdresse} onChange={e => update("lieuAdresse", e.target.value)} placeholder="Indiquez un lieu" className="input-field" />
+                  </Field>
+                  <Field label="Adresse 2">
+                    <input value={form.lieuAdresse2} onChange={e => update("lieuAdresse2", e.target.value)} className="input-field" />
+                  </Field>
+                  <Field label="CP">
+                    <input value={form.lieuCP} onChange={e => update("lieuCP", e.target.value)} className="input-field" />
+                  </Field>
+                  <Field label="Ville">
+                    <input value={form.lieuVille} onChange={e => update("lieuVille", e.target.value)} className="input-field" />
+                  </Field>
+                  <Field label="Pays">
+                    <input value={form.lieuPays} onChange={e => update("lieuPays", e.target.value)} className="input-field" />
+                  </Field>
+                </div>
+
+                {/* Google Map placeholder */}
+                <div className="w-full h-64 rounded-lg bg-blue-100 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-b from-blue-200/60 to-blue-300/40" />
+                  <div className="absolute top-2 left-2 z-10 flex rounded overflow-hidden border border-[--k-border] bg-white shadow-sm">
+                    <button className="px-3 py-1.5 text-[12px] font-semibold text-[--k-text] bg-white">Plan</button>
+                    <button className="px-3 py-1.5 text-[12px] text-[--k-muted] bg-[--k-surface-2]">Satellite</button>
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <MapPin className="h-8 w-8 text-red-500" />
+                  </div>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <Field label="Information pratiques">
+                    <RichTextEditor
+                      value={form.infoPratiques}
+                      onChange={val => update("infoPratiques", val)}
+                      placeholder="Informations pratiques sur le lieu..."
+                    />
+                  </Field>
+                  <Field label="Modalités d'accès">
+                    <RichTextEditor
+                      value={form.modalitesAcces}
+                      onChange={val => update("modalitesAcces", val)}
+                      placeholder="Modalités d'accès au lieu..."
+                    />
                   </Field>
                 </div>
               </div>
             </div>
 
+            {/* Documents */}
+            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+              <div className="border-b border-[--k-border] px-5 py-3">
+                <h2 className="text-[16px] font-bold text-[--k-text]">Documents</h2>
+              </div>
+              <div className="p-5">
+                <div className="flex items-center justify-center rounded-lg border-2 border-dashed border-[--k-border] bg-[--k-surface-2]/30 py-12 cursor-pointer hover:border-[--k-primary] hover:bg-[--k-primary-2]/20 transition">
+                  <span className="inline-flex items-center gap-2 rounded-lg border border-[--k-border] bg-white px-4 py-2 text-[13px] text-[--k-muted] shadow-sm">
+                    Cliquer ou glisser vos fichiers ici
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Étiquettes / tags */}
+            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+              <div className="flex items-center justify-between border-b border-[--k-border] px-5 py-3">
+                <h2 className="text-[16px] font-bold text-[--k-text]">Étiquettes / tags</h2>
+                <button
+                  onClick={addTag}
+                  className="h-9 rounded-lg bg-[--k-success] px-4 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm"
+                >
+                  Ajouter
+                </button>
+              </div>
+              <div className="p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <input
+                    value={tagInput}
+                    onChange={e => setTagInput(e.target.value)}
+                    onKeyDown={e => e.key === "Enter" && addTag()}
+                    placeholder="Saisir un tag..."
+                    className="input-field flex-1"
+                  />
+                </div>
+                {tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {tags.map(tag => (
+                      <span key={tag} className="inline-flex items-center gap-1 rounded-full bg-[--k-primary-2] px-3 py-1 text-[12px] font-medium text-[--k-primary]">
+                        {tag}
+                        <button onClick={() => removeTag(tag)} className="hover:text-[--k-danger] transition">
+                          <X className="h-3 w-3" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Contact(s) sur place */}
+            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+              <div className="flex items-center justify-between border-b border-[--k-border] px-5 py-3">
+                <h2 className="text-[16px] font-bold text-[--k-text]">Contact(s) sur place</h2>
+                <button
+                  onClick={addContactSurPlace}
+                  className="h-9 rounded-lg bg-[--k-success] px-4 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5"
+                >
+                  Ajouter un contact
+                </button>
+              </div>
+              <div className="p-5">
+                {contactsSurPlace.length > 0 && (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-[13px]">
+                      <thead>
+                        <tr className="border-b border-[--k-border]">
+                          <th className="text-left py-2 px-2 text-[12px] font-semibold text-[--k-muted]">Prénom (*)</th>
+                          <th className="text-left py-2 px-2 text-[12px] font-semibold text-[--k-muted]">Nom (*)</th>
+                          <th className="text-left py-2 px-2 text-[12px] font-semibold text-[--k-muted]">Fonction</th>
+                          <th className="text-left py-2 px-2 text-[12px] font-semibold text-[--k-muted]">Email (*)</th>
+                          <th className="text-left py-2 px-2 text-[12px] font-semibold text-[--k-muted]">Téléphone Portable</th>
+                          <th className="text-left py-2 px-2 text-[12px] font-semibold text-[--k-muted]">Téléphone Fixe</th>
+                          <th className="text-left py-2 px-2 text-[12px] font-semibold text-[--k-muted]">Type</th>
+                          <th className="w-10"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {contactsSurPlace.map(c => (
+                          <tr key={c.id} className="border-b border-[--k-border] last:border-0">
+                            <td className="py-2 px-2">
+                              <input value={c.prenom} onChange={e => updateContactSurPlace(c.id, "prenom", e.target.value)} className="input-field" />
+                            </td>
+                            <td className="py-2 px-2">
+                              <input value={c.nom} onChange={e => updateContactSurPlace(c.id, "nom", e.target.value)} className="input-field" />
+                            </td>
+                            <td className="py-2 px-2">
+                              <input value={c.fonction} onChange={e => updateContactSurPlace(c.id, "fonction", e.target.value)} className="input-field" />
+                            </td>
+                            <td className="py-2 px-2">
+                              <input type="email" value={c.email} onChange={e => updateContactSurPlace(c.id, "email", e.target.value)} className="input-field" />
+                            </td>
+                            <td className="py-2 px-2">
+                              <input value={c.telPortable} onChange={e => updateContactSurPlace(c.id, "telPortable", e.target.value)} className="input-field" />
+                            </td>
+                            <td className="py-2 px-2">
+                              <input value={c.telFixe} onChange={e => updateContactSurPlace(c.id, "telFixe", e.target.value)} className="input-field" />
+                            </td>
+                            <td className="py-2 px-2">
+                              <select value={c.type} onChange={e => updateContactSurPlace(c.id, "type", e.target.value)} className="input-field">
+                                <option value="">Sélectionner</option>
+                                <option value="principal">Principal</option>
+                                <option value="technique">Technique</option>
+                                <option value="commercial">Commercial</option>
+                                <option value="logistique">Logistique</option>
+                              </select>
+                            </td>
+                            <td className="py-2 px-2">
+                              <button onClick={() => removeContactSurPlace(c.id)} className="text-[--k-muted] hover:text-[--k-danger] transition">
+                                <X className="h-4 w-4" />
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+                {contactsSurPlace.length === 0 && (
+                  <p className="text-[13px] text-[--k-muted]">Aucun contact sur place</p>
+                )}
+                <div className="mt-4">
+                  <Field label="Commentaire :">
+                    <RichTextEditor
+                      value={form.commentaireSurPlace}
+                      onChange={val => update("commentaireSurPlace", val)}
+                      placeholder="Commentaire sur les contacts..."
+                    />
+                  </Field>
+                </div>
+              </div>
+            </div>
+
+            {/* Suivi interne */}
+            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+              <div className="border-b border-[--k-border] px-5 py-3">
+                <h2 className="text-[16px] font-bold text-[--k-text]">Suivi interne</h2>
+              </div>
+              <div className="p-5">
+                <Field label="Responsable(s) de projet">
+                  <input value={form.responsableProjet} onChange={e => update("responsableProjet", e.target.value)} className="input-field w-full sm:w-1/2" />
+                </Field>
+              </div>
+            </div>
+
             {/* Navigation */}
             <div className="flex justify-between">
-              <button onClick={goPrev} className="h-10 rounded-lg border border-[--k-border] px-6 text-[13px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition flex items-center gap-1.5">
+              <button onClick={goPrev} className="h-10 rounded-lg bg-[--k-primary] px-6 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5">
                 <ChevronLeft className="h-4 w-4" /> Précédent
               </button>
               <button onClick={goNext} className="h-10 rounded-lg bg-[--k-primary] px-6 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5">
@@ -865,9 +1147,14 @@ export default function EventCreate() {
                   <RecapRow label="Nom" value={form.eventName || "—"} />
                   <RecapRow label="Type" value={form.eventType || "—"} />
                   <RecapRow label="Animation" value={form.animationType || "—"} />
-                  <RecapRow label="Dates" value={form.dateStart && form.dateEnd ? `${form.dateStart} → ${form.dateEnd}` : "—"} />
-                  <RecapRow label="Lieu" value={form.lieuEvent || "—"} />
+                  <RecapRow label="Date animation" value={form.dateAnimation || "—"} />
+                  {form.periode === "periode" && <RecapRow label="Date fin" value={form.dateAnimationFin || "—"} />}
+                  <RecapRow label="Immobilisation" value={form.debutImmobilisation && form.finImmobilisation ? `${form.debutImmobilisation} → ${form.finImmobilisation}` : "—"} />
+                  <RecapRow label="Lieu" value={[form.lieuNomAdresse, form.lieuAdresse, form.lieuCP, form.lieuVille].filter(Boolean).join(", ") || "—"} />
                   <RecapRow label="Objectifs" value={form.objectifs || "—"} />
+                  <RecapRow label="Responsable" value={form.responsableProjet || "—"} />
+                  {tags.length > 0 && <RecapRow label="Tags" value={tags.join(", ")} />}
+                  {contactsSurPlace.length > 0 && <RecapRow label="Contacts sur place" value={contactsSurPlace.map(c => `${c.prenom} ${c.nom}`).filter(s => s.trim()).join(", ") || "—"} />}
                 </RecapSection>
 
                 <RecapSection title="Animation(s)">
