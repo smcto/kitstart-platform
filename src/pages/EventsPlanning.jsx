@@ -82,8 +82,8 @@ export default function EventsPlanning() {
     (villeFilter === "all" || e.ville === villeFilter)
   );
 
-  const hasActiveFilters = borneFilter !== "all" || animFilter !== "all" || villeFilter !== "all";
-  const clearFilters = () => { setBorneFilter("all"); setAnimFilter("all"); setVilleFilter("all"); };
+  const hasActiveFilters = typeFilter !== "all" || borneFilter !== "all" || animFilter !== "all" || villeFilter !== "all";
+  const clearFilters = () => { setTypeFilter("all"); setBorneFilter("all"); setAnimFilter("all"); setVilleFilter("all"); };
 
   // Build calendar grid
   const weeks = [];
@@ -136,21 +136,90 @@ export default function EventsPlanning() {
 
         <div className="flex-1" />
 
-        {/* Type filter */}
-        <div className="flex gap-1 rounded-lg bg-[--k-surface-2] p-0.5">
-          {["all", "Corporate", "Mariage", "Salon", "Festival"].map(t => (
-            <button
-              key={t}
-              className={cn(
-                "rounded-md px-2.5 py-1.5 text-[11px] font-medium transition",
-                typeFilter === t ? "bg-white text-[--k-text] shadow-sm" : "text-[--k-muted] hover:text-[--k-text]"
-              )}
-              onClick={() => setTypeFilter(t)}
-            >
-              {t === "all" ? "Tous" : t}
-            </button>
-          ))}
+        {/* Filters */}
+        <Filter className="h-3.5 w-3.5 text-[--k-muted]" />
+
+        <select
+          value={typeFilter}
+          onChange={e => setTypeFilter(e.target.value)}
+          className={cn("h-8 rounded-lg border border-[--k-border] bg-white px-2 text-[12px] font-medium text-[--k-text] outline-none transition", typeFilter !== "all" && "border-[--k-primary] text-[--k-primary]")}
+        >
+          <option value="all">Type : Tous</option>
+          {["Corporate", "Mariage", "Salon", "Festival"].map(t => <option key={t} value={t}>{t}</option>)}
+        </select>
+
+        <select
+          value={borneFilter}
+          onChange={e => setBorneFilter(e.target.value)}
+          className={cn("h-8 rounded-lg border border-[--k-border] bg-white px-2 text-[12px] font-medium text-[--k-text] outline-none transition", borneFilter !== "all" && "border-[--k-primary] text-[--k-primary]")}
+        >
+          <option value="all">Borne : Toutes</option>
+          {BORNE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+        </select>
+
+        <select
+          value={animFilter}
+          onChange={e => setAnimFilter(e.target.value)}
+          className={cn("h-8 rounded-lg border border-[--k-border] bg-white px-2 text-[12px] font-medium text-[--k-text] outline-none transition", animFilter !== "all" && "border-[--k-primary] text-[--k-primary]")}
+        >
+          <option value="all">Animation : Toutes</option>
+          {ANIMATION_TYPES.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
+        </select>
+
+        {/* Ville - searchable dropdown */}
+        <div ref={villeRef} className="relative">
+          <button
+            onClick={() => setVilleDropdownOpen(v => !v)}
+            className={cn(
+              "flex items-center gap-1.5 h-8 rounded-lg border px-2 text-[12px] font-medium transition",
+              villeFilter !== "all"
+                ? "border-[--k-primary] text-[--k-primary]"
+                : "border-[--k-border] text-[--k-text]"
+            )}
+          >
+            {villeFilter === "all" ? "Ville : Toutes" : villeFilter}
+            <ChevronDown className="h-3 w-3" />
+          </button>
+          {villeDropdownOpen && (
+            <div className="absolute z-20 mt-1 w-48 rounded-lg border border-[--k-border] bg-white shadow-lg">
+              <div className="p-2 border-b border-[--k-border]">
+                <div className="flex items-center gap-1.5 px-2 py-1 bg-[--k-surface-2] rounded text-[12px] text-[--k-muted]">
+                  <Search className="h-3 w-3" />
+                  <input
+                    value={villeSearch}
+                    onChange={e => setVilleSearch(e.target.value)}
+                    placeholder="Filtrer..."
+                    className="bg-transparent border-none outline-none flex-1 text-[--k-text] text-[12px]"
+                    autoFocus
+                  />
+                </div>
+              </div>
+              <div className="max-h-48 overflow-auto py-1">
+                <button
+                  onClick={() => { setVilleFilter("all"); setVilleDropdownOpen(false); setVilleSearch(""); }}
+                  className={cn("w-full text-left px-3 py-1.5 text-[12px] hover:bg-[--k-surface-2] transition", villeFilter === "all" && "font-semibold text-[--k-primary]")}
+                >
+                  Toutes les villes
+                </button>
+                {ALL_VILLES.filter(v => !villeSearch || v.toLowerCase().includes(villeSearch.toLowerCase())).map(v => (
+                  <button
+                    key={v}
+                    onClick={() => { setVilleFilter(v); setVilleDropdownOpen(false); setVilleSearch(""); }}
+                    className={cn("w-full text-left px-3 py-1.5 text-[12px] hover:bg-[--k-surface-2] transition", villeFilter === v && "font-semibold text-[--k-primary]")}
+                  >
+                    {v}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
+
+        {hasActiveFilters && (
+          <button onClick={clearFilters} className="flex items-center gap-1 text-[12px] text-[--k-muted] hover:text-[--k-danger] transition">
+            <X className="h-3 w-3" /> Effacer
+          </button>
+        )}
 
         {/* View toggle */}
         <div className="flex gap-1 rounded-lg bg-[--k-surface-2] p-0.5">
@@ -167,107 +236,6 @@ export default function EventsPlanning() {
             </button>
           ))}
         </div>
-      </div>
-
-      {/* Extra filters */}
-      <div className="mb-4 flex flex-wrap items-center gap-2">
-        <Filter className="h-3.5 w-3.5 text-[--k-muted]" />
-
-        {/* Borne type filter */}
-        <div className="flex gap-1 rounded-lg bg-[--k-surface-2] p-0.5">
-          {["all", ...BORNE_TYPES].map(t => (
-            <button
-              key={t}
-              className={cn(
-                "rounded-md px-2.5 py-1.5 text-[11px] font-medium transition",
-                borneFilter === t ? "bg-white text-[--k-text] shadow-sm" : "text-[--k-muted] hover:text-[--k-text]"
-              )}
-              onClick={() => setBorneFilter(t)}
-            >
-              {t === "all" ? "Toutes bornes" : t}
-            </button>
-          ))}
-        </div>
-
-        {/* Animation type filter */}
-        <div className="flex gap-1 rounded-lg bg-[--k-surface-2] p-0.5">
-          {[{ id: "all", label: "Toutes anims" }, ...ANIMATION_TYPES].map(t => (
-            <button
-              key={t.id}
-              className={cn(
-                "rounded-md px-2.5 py-1.5 text-[11px] font-medium transition",
-                animFilter === t.id ? "bg-white text-[--k-text] shadow-sm" : "text-[--k-muted] hover:text-[--k-text]"
-              )}
-              onClick={() => setAnimFilter(t.id)}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Ville filter - searchable dropdown */}
-        <div ref={villeRef} className="relative">
-          <button
-            onClick={() => setVilleDropdownOpen(v => !v)}
-            className={cn(
-              "flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-[11px] font-medium transition",
-              villeFilter !== "all"
-                ? "bg-[--k-text] text-white border-[--k-text]"
-                : "bg-white text-[--k-muted] border-[--k-border] hover:border-[--k-text] hover:text-[--k-text]"
-            )}
-          >
-            {villeFilter === "all" ? "Ville" : villeFilter}
-            <ChevronDown className="h-3 w-3" />
-          </button>
-          {villeDropdownOpen && (
-            <div className="absolute z-20 mt-1 w-48 rounded-lg border border-[--k-border] bg-white shadow-lg">
-              <div className="p-2 border-b border-[--k-border]">
-                <div className="flex items-center gap-1.5 px-2 py-1 bg-[--k-surface-2] rounded text-[11px] text-[--k-muted]">
-                  <Search className="h-3 w-3" />
-                  <input
-                    value={villeSearch}
-                    onChange={e => setVilleSearch(e.target.value)}
-                    placeholder="Filtrer..."
-                    className="bg-transparent border-none outline-none flex-1 text-[--k-text] text-[11px]"
-                    autoFocus
-                  />
-                </div>
-              </div>
-              <div className="max-h-48 overflow-auto py-1">
-                <button
-                  onClick={() => { setVilleFilter("all"); setVilleDropdownOpen(false); setVilleSearch(""); }}
-                  className={cn(
-                    "w-full text-left px-3 py-1.5 text-[11px] hover:bg-[--k-surface-2] transition",
-                    villeFilter === "all" && "font-semibold text-[--k-primary]"
-                  )}
-                >
-                  Toutes les villes
-                </button>
-                {ALL_VILLES
-                  .filter(v => !villeSearch || v.toLowerCase().includes(villeSearch.toLowerCase()))
-                  .map(v => (
-                    <button
-                      key={v}
-                      onClick={() => { setVilleFilter(v); setVilleDropdownOpen(false); setVilleSearch(""); }}
-                      className={cn(
-                        "w-full text-left px-3 py-1.5 text-[11px] hover:bg-[--k-surface-2] transition",
-                        villeFilter === v && "font-semibold text-[--k-primary]"
-                      )}
-                    >
-                      {v}
-                    </button>
-                  ))
-                }
-              </div>
-            </div>
-          )}
-        </div>
-
-        {hasActiveFilters && (
-          <button onClick={clearFilters} className="flex items-center gap-1 text-[11px] text-[--k-muted] hover:text-[--k-danger] transition">
-            <X className="h-3 w-3" /> Effacer filtres
-          </button>
-        )}
       </div>
 
       {/* Calendar grid */}
