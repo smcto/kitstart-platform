@@ -8,10 +8,12 @@ export function KonitysSwitcher({
   apps,
   onSelectApp,
   onGoHub,
+  hubMode,
 }) {
   const [open, setOpen] = useState(false);
   const identity = getAppIdentity(currentApp);
   const AppIcon = identity.icon;
+  const isHub = hubMode || currentApp === "Konitys Hub";
 
   return (
     <div className="relative">
@@ -39,11 +41,19 @@ export function KonitysSwitcher({
 
             {/* Hub link */}
             <button
-              className="flex w-full items-center gap-2.5 px-3 py-2 text-[13px] font-medium text-[--k-muted] hover:bg-[--k-surface-2] hover:text-[--k-text] transition"
+              className={cn(
+                "flex w-full items-center gap-2.5 px-3 py-2 text-[13px] font-medium transition",
+                isHub
+                  ? "bg-[--k-surface-2] font-semibold text-[--k-text]"
+                  : "text-[--k-muted] hover:bg-[--k-surface-2] hover:text-[--k-text]"
+              )}
               onClick={() => { onGoHub?.(); setOpen(false); }}
             >
-              <Home className="h-4 w-4" />
-              Konitys Hub
+              <span className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded-md", isHub ? "bg-blue-50" : "")}>
+                <Home className={cn("h-4 w-4", isHub ? "text-blue-600" : "")} />
+              </span>
+              <span className="flex-1">Konitys Hub</span>
+              {isHub && <Check className="h-3.5 w-3.5 text-[--k-primary] shrink-0" />}
             </button>
 
             <div className="mx-3 my-1 border-t border-[--k-border]" />
@@ -52,8 +62,8 @@ export function KonitysSwitcher({
             <div className="py-0.5">
               {apps.map((a) => {
                 const ident = getAppIdentity(a.name);
-                const AppIcon = ident.icon;
-                const isCurrent = a.name === currentApp;
+                const AIcon = ident.icon;
+                const isCurrent = a.name === currentApp && !isHub;
                 return (
                   <button
                     key={a.name}
@@ -66,8 +76,8 @@ export function KonitysSwitcher({
                     onClick={() => { onSelectApp?.(a.name); setOpen(false); }}
                   >
                     <span className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded-md", ident.bg)}>
-                      {AppIcon
-                        ? <AppIcon className={cn("h-3.5 w-3.5", ident.text)} />
+                      {AIcon
+                        ? <AIcon className={cn("h-3.5 w-3.5", ident.text)} />
                         : <span className={cn("text-[10px] font-bold", ident.text)}>{a.name.slice(0, 2)}</span>
                       }
                     </span>
