@@ -54,14 +54,13 @@ const MOCK_RESPONSABLES = [
 ];
 
 const OBJECTIFS_EVENT = [
-  "Collecte de data", "Animation", "Marque employeur", "Communication",
-  "Engagement réseaux sociaux", "Divertissement", "Activation de marque",
-  "Lancement produit", "Remerciement clients", "Team building",
+  "Collecte data", "Animation", "Marque employeur", "Communication",
+  "Engagement réseaux sociaux", "Lancement produit", "Remerciement clients",
 ];
 
 const INTERNAL_TAGS = [
-  "Client important", "VIP", "Récurrent", "Première commande",
-  "Urgent", "Partenaire", "À surveiller", "Premium",
+  "Client important", "Récurrent", "Première commande",
+  "Urgent", "Partenaire", "À surveiller",
 ];
 
 const PAYS = ["France", "Belgique", "Suisse", "Luxembourg", "Espagne", "Italie", "Allemagne", "Royaume-Uni", "Portugal", "Pays-Bas"];
@@ -1150,56 +1149,62 @@ export default function EventCreate() {
               <div className="border-b border-[--k-border] px-5 py-3">
                 <h2 className="text-[16px] font-bold text-[--k-text]">Lieu d'événement</h2>
               </div>
-              <div className="p-5 space-y-4">
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <Field label="Nom de l'adresse (Usage interne)">
-                    <input value={form.lieuNomAdresse} onChange={e => update("lieuNomAdresse", e.target.value)} className="input-field" />
-                  </Field>
-                  <Field label="Société (facultatif)">
-                    <input value={form.lieuSociete} onChange={e => update("lieuSociete", e.target.value)} className="input-field" />
-                  </Field>
-                  <Field label="Adresse">
-                    <input value={form.lieuAdresse} onChange={e => update("lieuAdresse", e.target.value)} placeholder="Indiquez un lieu" className="input-field" />
-                  </Field>
-                  <Field label="Adresse 2">
-                    <input value={form.lieuAdresse2} onChange={e => update("lieuAdresse2", e.target.value)} className="input-field" />
-                  </Field>
-                  <Field label="CP">
-                    <input value={form.lieuCP} onChange={e => update("lieuCP", e.target.value)} className="input-field" />
-                  </Field>
-                  <Field label="Ville">
-                    <input value={form.lieuVille} onChange={e => update("lieuVille", e.target.value)} className="input-field" />
-                  </Field>
-                  <Field label="Pays">
-                    <input value={form.lieuPays} onChange={e => update("lieuPays", e.target.value)} className="input-field" />
-                  </Field>
-                </div>
-
-                {/* Google Map placeholder */}
-                <div className="w-full h-32 rounded-lg bg-blue-100 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-b from-blue-200/60 to-blue-300/40" />
-                  <div className="absolute top-1.5 left-1.5 z-10 flex rounded overflow-hidden border border-[--k-border] bg-white shadow-sm">
-                    <button className="px-2 py-1 text-[11px] font-semibold text-[--k-text] bg-white">Plan</button>
-                    <button className="px-2 py-1 text-[11px] text-[--k-muted] bg-[--k-surface-2]">Satellite</button>
+              <div className="p-5">
+                <div className="flex gap-5">
+                  {/* Left: form fields */}
+                  <div className="flex-1 min-w-0 space-y-4">
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <Field label="Nom de l'adresse (Usage interne)">
+                        <input value={form.lieuNomAdresse} onChange={e => update("lieuNomAdresse", e.target.value)} className="input-field" />
+                      </Field>
+                      <Field label="Société (facultatif)">
+                        <input value={form.lieuSociete} onChange={e => update("lieuSociete", e.target.value)} className="input-field" />
+                      </Field>
+                      <Field label="Adresse">
+                        <input value={form.lieuAdresse} onChange={e => update("lieuAdresse", e.target.value)} placeholder="Indiquez un lieu" className="input-field" />
+                      </Field>
+                      <Field label="Adresse 2">
+                        <input value={form.lieuAdresse2} onChange={e => update("lieuAdresse2", e.target.value)} className="input-field" />
+                      </Field>
+                      <Field label="CP">
+                        <input value={form.lieuCP} onChange={e => update("lieuCP", e.target.value)} className="input-field" />
+                      </Field>
+                      <Field label="Ville">
+                        <input value={form.lieuVille} onChange={e => update("lieuVille", e.target.value)} className="input-field" />
+                      </Field>
+                      <Field label="Pays">
+                        <input value={form.lieuPays} onChange={e => update("lieuPays", e.target.value)} className="input-field" />
+                      </Field>
+                    </div>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <CollapsibleComment
+                        label="Ajouter des infos pratiques..."
+                        value={form.infoPratiques}
+                        onChange={val => update("infoPratiques", val)}
+                        placeholder="Informations pratiques sur le lieu..."
+                      />
+                      <CollapsibleComment
+                        label="Ajouter les modalités d'accès..."
+                        value={form.modalitesAcces}
+                        onChange={val => update("modalitesAcces", val)}
+                        placeholder="Modalités d'accès au lieu..."
+                      />
+                    </div>
                   </div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <MapPin className="h-6 w-6 text-red-500" />
-                  </div>
-                </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <CollapsibleComment
-                    label="Ajouter des infos pratiques..."
-                    value={form.infoPratiques}
-                    onChange={val => update("infoPratiques", val)}
-                    placeholder="Informations pratiques sur le lieu..."
-                  />
-                  <CollapsibleComment
-                    label="Ajouter les modalités d'accès..."
-                    value={form.modalitesAcces}
-                    onChange={val => update("modalitesAcces", val)}
-                    placeholder="Modalités d'accès au lieu..."
-                  />
+                  {/* Right: Google Map */}
+                  <div className="hidden lg:block w-64 shrink-0">
+                    <div className="w-full h-full min-h-[200px] rounded-lg bg-blue-100 relative overflow-hidden sticky top-4">
+                      <div className="absolute inset-0 bg-gradient-to-b from-blue-200/60 to-blue-300/40" />
+                      <div className="absolute top-1.5 left-1.5 z-10 flex rounded overflow-hidden border border-[--k-border] bg-white shadow-sm">
+                        <button className="px-2 py-1 text-[11px] font-semibold text-[--k-text] bg-white">Plan</button>
+                        <button className="px-2 py-1 text-[11px] text-[--k-muted] bg-[--k-surface-2]">Satellite</button>
+                      </div>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <MapPin className="h-6 w-6 text-red-500" />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1348,6 +1353,15 @@ export default function EventCreate() {
                             className="input-field text-center"
                           />
                         </Field>
+                        <div className={i === 0 ? "pt-[22px]" : ""}>
+                          <button
+                            onClick={() => alert("Recherche de bornes à venir")}
+                            className="h-9 rounded-lg border border-dashed border-[--k-border] px-3 text-[12px] text-[--k-muted] hover:border-[--k-primary] hover:text-[--k-primary] transition flex items-center gap-1.5 whitespace-nowrap"
+                          >
+                            <Search className="h-3.5 w-3.5" />
+                            {d.bornes?.length > 0 ? `${d.bornes.length} borne(s)` : "Affecter des bornes"}
+                          </button>
+                        </div>
                         {d.type === "__autre" && (
                           <div className="sm:col-span-3">
                             <Field label="Nom du dispositif">

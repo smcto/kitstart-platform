@@ -18,6 +18,7 @@ const APP_IDENTITY = {
     dot: "bg-blue-500",
     border: "border-blue-200",
     topStripe: "bg-blue-500",
+    sidebarHover: "hover:bg-blue-500/[0.10]",
   },
   "Bornes Manager": {
     icon: Monitor,
@@ -29,6 +30,7 @@ const APP_IDENTITY = {
     dot: "bg-indigo-500",
     border: "border-indigo-200",
     topStripe: "bg-indigo-500",
+    sidebarHover: "hover:bg-indigo-500/[0.10]",
   },
   "Antennes Selfizee": {
     icon: Radio,
@@ -40,6 +42,7 @@ const APP_IDENTITY = {
     dot: "bg-orange-500",
     border: "border-orange-200",
     topStripe: "bg-orange-500",
+    sidebarHover: "hover:bg-orange-500/[0.10]",
   },
   "Stock Manager": {
     icon: Package,
@@ -51,6 +54,7 @@ const APP_IDENTITY = {
     dot: "bg-emerald-500",
     border: "border-emerald-200",
     topStripe: "bg-emerald-500",
+    sidebarHover: "hover:bg-emerald-500/[0.10]",
   },
   "Support": {
     icon: Headphones,
@@ -62,6 +66,7 @@ const APP_IDENTITY = {
     dot: "bg-amber-500",
     border: "border-amber-200",
     topStripe: "bg-amber-500",
+    sidebarHover: "hover:bg-amber-500/[0.10]",
   },
   "Catalog IA": {
     icon: Sparkles,
@@ -73,6 +78,7 @@ const APP_IDENTITY = {
     dot: "bg-violet-500",
     border: "border-violet-200",
     topStripe: "bg-violet-500",
+    sidebarHover: "hover:bg-violet-500/[0.10]",
   },
   "Events Manager": {
     icon: CalendarDays,
@@ -84,6 +90,7 @@ const APP_IDENTITY = {
     dot: "bg-rose-500",
     border: "border-rose-200",
     topStripe: "bg-rose-500",
+    sidebarHover: "hover:bg-rose-500/[0.10]",
   },
   "Statistiques": {
     icon: BarChart3,
@@ -95,6 +102,7 @@ const APP_IDENTITY = {
     dot: "bg-teal-500",
     border: "border-teal-200",
     topStripe: "bg-teal-500",
+    sidebarHover: "hover:bg-teal-500/[0.10]",
   },
   "Abonnements": {
     icon: Users,
@@ -106,6 +114,7 @@ const APP_IDENTITY = {
     dot: "bg-sky-500",
     border: "border-sky-200",
     topStripe: "bg-sky-500",
+    sidebarHover: "hover:bg-sky-500/[0.10]",
   },
   "Admin": {
     icon: ShieldCheck,
@@ -117,6 +126,7 @@ const APP_IDENTITY = {
     dot: "bg-stone-500",
     border: "border-stone-200",
     topStripe: "bg-stone-500",
+    sidebarHover: "hover:bg-stone-500/[0.10]",
   },
 };
 
@@ -130,6 +140,7 @@ const DEFAULT_IDENTITY = {
   dot: "bg-[--k-primary]",
   border: "border-[--k-border]",
   topStripe: "bg-[--k-primary]",
+  sidebarHover: "hover:bg-white/[0.06]",
 };
 
 export function getAppIdentity(appName) {
