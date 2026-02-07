@@ -1,6 +1,6 @@
 import {
   Monitor, Radio, Package, Headphones, Sparkles,
-  CalendarDays, Users, BarChart3, ShieldCheck
+  CalendarDays, Users, BarChart3, ShieldCheck, Home
 } from "lucide-react";
 
 /**
@@ -8,6 +8,17 @@ import {
  * Used by Topbar, Sidebar, KonitysSwitcher, and Hub.
  */
 const APP_IDENTITY = {
+  "Konitys Hub": {
+    icon: Home,
+    bg: "bg-blue-50",
+    text: "text-blue-600",
+    accent: "blue",
+    activeBg: "bg-blue-500/[0.08]",
+    activeText: "text-blue-600",
+    dot: "bg-blue-500",
+    border: "border-blue-200",
+    topStripe: "bg-blue-500",
+  },
   "Bornes Manager": {
     icon: Monitor,
     bg: "bg-indigo-50",
@@ -63,7 +74,7 @@ const APP_IDENTITY = {
     border: "border-violet-200",
     topStripe: "bg-violet-500",
   },
-  "Events": {
+  "Events Manager": {
     icon: CalendarDays,
     bg: "bg-rose-50",
     text: "text-rose-500",

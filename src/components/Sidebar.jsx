@@ -6,7 +6,8 @@ import {
   ChevronsLeft, ChevronsRight, HelpCircle, BarChart3, AlertTriangle,
   Wifi, WifiOff, Map, RefreshCw, FileText, Bug,
   Radio, Users, Building, Package, ShoppingCart, ArrowLeftRight,
-  Upload, Layers, Truck, Warehouse
+  Upload, Layers, Truck, Warehouse,
+  Kanban, ClipboardList, Send, MapPin, PlusCircle
 } from "lucide-react";
 
 const APP_SIDEBARS = {
@@ -57,6 +58,37 @@ const APP_SIDEBARS = {
       items: [
         { key: "contacts", label: "Contacts", icon: Users, to: "/antennes/list" },
         { key: "sites", label: "Sites", icon: Building, to: "/antennes/list" },
+      ],
+    },
+    {
+      label: "Configuration",
+      items: [
+        { key: "settings", label: "Paramètres", icon: Settings, to: "/settings" },
+      ],
+    },
+  ],
+  "Events Manager": [
+    {
+      label: "Général",
+      items: [
+        { key: "dashboard", label: "Tableau de bord", icon: LayoutDashboard, to: "/events" },
+        { key: "events-list", label: "Événements", icon: CalendarDays, to: "/events/list" },
+        { key: "planning", label: "Planning", icon: CalendarDays, to: "/events/planning" },
+        { key: "create", label: "Créer un événement", icon: PlusCircle, to: "/events/create" },
+      ],
+    },
+    {
+      label: "Pipeline",
+      items: [
+        { key: "pipeline", label: "Vue pipeline", icon: Kanban, to: "/events/pipeline" },
+        { key: "antennes", label: "Recap antennes", icon: MapPin, to: "/events/antennes" },
+      ],
+    },
+    {
+      label: "Logistique",
+      items: [
+        { key: "logistics", label: "Expéditions", icon: Truck, to: "/events/logistics" },
+        { key: "briefings", label: "Briefings clients", icon: ClipboardList, to: "/events/list" },
       ],
     },
     {

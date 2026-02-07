@@ -48,19 +48,13 @@ export function Topbar({
             <Menu className="h-[18px] w-[18px]" />
           </button>
         )}
-        {hubMode ? (
-          <div className="flex items-center gap-2">
-            <span className="text-[15px] font-bold tracking-tight text-[--k-text]">KONITYS</span>
-            <span className="hidden sm:inline text-[13px] text-[--k-muted]">Platform Hub</span>
-          </div>
-        ) : (
-          <KonitysSwitcher
-            currentApp={currentApp}
-            apps={apps}
-            onSelectApp={onSelectApp}
-            onGoHub={onGoHub}
-          />
-        )}
+        <KonitysSwitcher
+          currentApp={currentApp}
+          apps={apps}
+          onSelectApp={onSelectApp}
+          onGoHub={onGoHub}
+          hubMode={hubMode}
+        />
 
         <div className="flex-1" />
 
