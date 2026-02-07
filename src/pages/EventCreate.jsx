@@ -601,17 +601,13 @@ export default function EventCreate() {
             </div>
 
             {/* Commentaire */}
-            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
-              <div className="border-b border-[--k-border] px-5 py-3">
-                <h2 className="text-[14px] font-bold text-[--k-text]">Commentaire :</h2>
-              </div>
-              <div className="p-5">
-                <RichTextEditor
-                  value={form.commentaire}
-                  onChange={val => update("commentaire", val)}
-                  placeholder="Ajouter un commentaire..."
-                />
-              </div>
+            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm p-5">
+              <CollapsibleComment
+                label="Ajouter un commentaire client..."
+                value={form.commentaire}
+                onChange={val => update("commentaire", val)}
+                placeholder="Ajouter un commentaire..."
+              />
             </div>
 
             {/* Localisation Google Map */}
@@ -991,13 +987,12 @@ export default function EventCreate() {
                     <input type="date" value={form.finImmobilisation} onChange={e => update("finImmobilisation", e.target.value)} className="input-field" />
                   </Field>
                 </div>
-                <Field label="Commentaire">
-                  <RichTextEditor
-                    value={form.commentaireDates}
-                    onChange={val => update("commentaireDates", val)}
-                    placeholder="Commentaire sur les dates..."
-                  />
-                </Field>
+                <CollapsibleComment
+                  label="Ajouter un commentaire sur les dates..."
+                  value={form.commentaireDates}
+                  onChange={val => update("commentaireDates", val)}
+                  placeholder="Commentaire sur les dates..."
+                />
               </div>
             </div>
 
@@ -1044,20 +1039,18 @@ export default function EventCreate() {
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <Field label="Information pratiques">
-                    <RichTextEditor
-                      value={form.infoPratiques}
-                      onChange={val => update("infoPratiques", val)}
-                      placeholder="Informations pratiques sur le lieu..."
-                    />
-                  </Field>
-                  <Field label="Modalités d'accès">
-                    <RichTextEditor
-                      value={form.modalitesAcces}
-                      onChange={val => update("modalitesAcces", val)}
-                      placeholder="Modalités d'accès au lieu..."
-                    />
-                  </Field>
+                  <CollapsibleComment
+                    label="Ajouter des infos pratiques..."
+                    value={form.infoPratiques}
+                    onChange={val => update("infoPratiques", val)}
+                    placeholder="Informations pratiques sur le lieu..."
+                  />
+                  <CollapsibleComment
+                    label="Ajouter les modalités d'accès..."
+                    value={form.modalitesAcces}
+                    onChange={val => update("modalitesAcces", val)}
+                    placeholder="Modalités d'accès au lieu..."
+                  />
                 </div>
               </div>
             </div>
@@ -1149,13 +1142,12 @@ export default function EventCreate() {
                   <p className="text-[13px] text-[--k-muted]">Aucun contact sur place</p>
                 )}
                 <div className="mt-4">
-                  <Field label="Commentaire :">
-                    <RichTextEditor
-                      value={form.commentaireSurPlace}
-                      onChange={val => update("commentaireSurPlace", val)}
-                      placeholder="Commentaire sur les contacts..."
-                    />
-                  </Field>
+                  <CollapsibleComment
+                    label="Ajouter un commentaire..."
+                    value={form.commentaireSurPlace}
+                    onChange={val => update("commentaireSurPlace", val)}
+                    placeholder="Commentaire sur les contacts..."
+                  />
                 </div>
               </div>
             </div>
@@ -1349,13 +1341,12 @@ export default function EventCreate() {
                 </div>
 
                 {/* Informations complémentaires */}
-                <Field label="Informations complémentaires">
-                  <RichTextEditor
-                    value={form.infosComplementairesCrea}
-                    onChange={val => update("infosComplementairesCrea", val)}
-                    placeholder="Informations complémentaires sur la création graphique..."
-                  />
-                </Field>
+                <CollapsibleComment
+                  label="Ajouter des informations complémentaires..."
+                  value={form.infosComplementairesCrea}
+                  onChange={val => update("infosComplementairesCrea", val)}
+                  placeholder="Informations complémentaires sur la création graphique..."
+                />
               </div>
             </div>
 
@@ -1408,13 +1399,12 @@ export default function EventCreate() {
                     </div>
                   </div>
                 )}
-                <Field label="Commentaire :">
-                  <RichTextEditor
-                    value={form.commentaireCrea}
-                    onChange={val => update("commentaireCrea", val)}
-                    placeholder="Commentaire sur la création graphique..."
-                  />
-                </Field>
+                <CollapsibleComment
+                  label="Ajouter un commentaire..."
+                  value={form.commentaireCrea}
+                  onChange={val => update("commentaireCrea", val)}
+                  placeholder="Commentaire sur la création graphique..."
+                />
               </div>
             </div>
 
@@ -1475,20 +1465,18 @@ export default function EventCreate() {
                 <button className="h-9 rounded-lg bg-[--k-primary] px-4 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm">
                   Ajouter un colis transporteur
                 </button>
-                <Field label="Commentaire à usage interne">
-                  <RichTextEditor
-                    value={form.commentaireAllerInterne}
-                    onChange={val => update("commentaireAllerInterne", val)}
-                    placeholder="Commentaire interne..."
-                  />
-                </Field>
-                <Field label="Note pour le client">
-                  <RichTextEditor
-                    value={form.noteAllerClient}
-                    onChange={val => update("noteAllerClient", val)}
-                    placeholder="Note visible par le client..."
-                  />
-                </Field>
+                <CollapsibleComment
+                  label="Ajouter un commentaire interne..."
+                  value={form.commentaireAllerInterne}
+                  onChange={val => update("commentaireAllerInterne", val)}
+                  placeholder="Commentaire interne..."
+                />
+                <CollapsibleComment
+                  label="Ajouter une note pour le client..."
+                  value={form.noteAllerClient}
+                  onChange={val => update("noteAllerClient", val)}
+                  placeholder="Note visible par le client..."
+                />
               </div>
             </div>
 
@@ -1552,20 +1540,18 @@ export default function EventCreate() {
                 <button className="h-9 rounded-lg bg-[--k-primary] px-4 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm">
                   Ajouter un colis transporteur
                 </button>
-                <Field label="Commentaire à usage interne">
-                  <RichTextEditor
-                    value={form.commentaireRetourInterne}
-                    onChange={val => update("commentaireRetourInterne", val)}
-                    placeholder="Commentaire interne..."
-                  />
-                </Field>
-                <Field label="Note pour le client">
-                  <RichTextEditor
-                    value={form.noteRetourClient}
-                    onChange={val => update("noteRetourClient", val)}
-                    placeholder="Note visible par le client..."
-                  />
-                </Field>
+                <CollapsibleComment
+                  label="Ajouter un commentaire interne..."
+                  value={form.commentaireRetourInterne}
+                  onChange={val => update("commentaireRetourInterne", val)}
+                  placeholder="Commentaire interne..."
+                />
+                <CollapsibleComment
+                  label="Ajouter une note pour le client..."
+                  value={form.noteRetourClient}
+                  onChange={val => update("noteRetourClient", val)}
+                  placeholder="Note visible par le client..."
+                />
               </div>
             </div>
 
@@ -1744,6 +1730,23 @@ function ToolbarBtn({ children, title }) {
       className="flex items-center gap-0.5 rounded px-1.5 py-1 text-[--k-muted] hover:bg-[--k-surface-2] hover:text-[--k-text] transition"
     >
       {children}
+    </button>
+  );
+}
+
+function CollapsibleComment({ label, value, onChange, placeholder }) {
+  const [open, setOpen] = useState(!!value);
+  return open ? (
+    <Field label={label}>
+      <RichTextEditor value={value} onChange={onChange} placeholder={placeholder} />
+    </Field>
+  ) : (
+    <button
+      onClick={() => setOpen(true)}
+      className="flex items-center gap-2 rounded-lg border border-dashed border-[--k-border] px-3 py-2 text-[12px] text-[--k-muted] hover:border-[--k-primary] hover:text-[--k-primary] transition w-full"
+    >
+      <Plus className="h-3.5 w-3.5" />
+      {label || "Ajouter un commentaire..."}
     </button>
   );
 }
