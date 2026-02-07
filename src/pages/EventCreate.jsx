@@ -2,12 +2,9 @@ import React, { useState, useRef, useEffect } from "react";
 import { AppShell } from "../components/AppShell";
 import { cn } from "../components/ui/cn";
 import {
-  ArrowLeft, CalendarDays, Building2, Palette, Camera, Truck,
-  FileText, Plus, X, Search, Check, ChevronDown, MapPin,
-  Image, Printer, Wifi, Box, Star, Upload
-  Plus, X, Search, ChevronDown, ChevronUp, MapPin, Save, Eye, LogOut,
-  Users, Bold, Italic, Underline, Strikethrough, List, ListOrdered,
-  Link2, Type, Camera, Truck, Palette, FileText, Check, ChevronRight, ChevronLeft
+  Plus, X, Search, ChevronDown, MapPin,
+  Bold, Italic, Underline, Strikethrough, List, ListOrdered,
+  Link2, Type, Check, ChevronRight, ChevronLeft
 } from "lucide-react";
 
 /* ── Data ────────────────────────────────────── */
@@ -78,13 +75,30 @@ const MOCK_CONTACTS = [
   { id: 3, nom: "Sophie Bernard", fonction: "Responsable communication", email: "sophie.bernard@client.fr", tel: "06 55 44 33 22" },
 ];
 
-const SECTIONS = [
-  { key: "general", label: "Informations générales", icon: CalendarDays },
-  { key: "client", label: "Client & Briefing", icon: Building2 },
-  { key: "design", label: "Personnalisation", icon: Palette },
-  { key: "bornes", label: "Affectation bornes", icon: Camera },
-  { key: "logistics", label: "Logistique", icon: Truck },
-  { key: "notes", label: "Notes internes", icon: FileText },
+const BORNE_TYPES = [
+  { id: "classik", name: "Classik" },
+  { id: "spherik", name: "Spherik" },
+];
+
+const ANIMATION_OPTIONS = [
+  "Impression d'un photocall",
+  "Magnets personnalisés",
+  "Prise de data",
+  "Option fond vert",
+  "Envoi de mail",
+  "Animation Snapchat",
+  "Animation photo",
+  "Animation vidéo",
+  "Animation GIF",
+  "Animation Boomerang",
+  "Galerie en ligne",
+  "Mur de photos",
+];
+
+const TYPES_INSTALLATION = ["Envoi transporteur", "Pick-up", "Livraison & installation", "Livraison seulement", "Installation seulement"];
+
+const TYPES_RETOUR = ["Retour Pick-up", "Retour transporteur", "Désinstallation & retour", "Désinstallation seulement", "Retour seulement"];
+
 const BORNE_MODELS = [
   { id: "pro360", name: "Selfizee Pro 360", available: 312 },
   { id: "mirror", name: "Selfizee Mirror XL", available: 124 },
@@ -192,7 +206,6 @@ export default function EventCreate() {
     // Step 6 - Récap
     notes: "",
   });
-  const [borneRows, setBorneRows] = useState([{ model: "pro360", qty: 1 }]);
 
   const update = (key, val) => setForm(f => ({ ...f, [key]: val }));
 
@@ -1046,18 +1059,6 @@ export default function EventCreate() {
               </div>
             </div>
 
-          {/* Notes */}
-          <FormSection id="notes" title="Notes internes" icon={FileText}>
-            <textarea
-              value={form.notes}
-              onChange={e => update("notes", e.target.value)}
-              rows={4}
-              placeholder="Notes internes, instructions particulières, accès, horaires montage..."
-              className="input-field w-full resize-none"
-            />
-          </FormSection>
-        </div>
-      </div>
             {/* Navigation */}
             <div className="flex justify-between">
               <button onClick={goPrev} className="h-10 rounded-lg border border-[--k-border] px-6 text-[13px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition flex items-center gap-1.5">
