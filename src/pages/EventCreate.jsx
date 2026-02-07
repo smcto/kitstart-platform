@@ -773,59 +773,6 @@ export default function EventCreate() {
         {/* ─── Step 2: Événement ────────────────────── */}
         {currentStep === 2 && (
           <div className="space-y-5">
-            {/* Informations / Tags internes */}
-            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
-              <div className="border-b border-[--k-border] px-5 py-3">
-                <h2 className="text-[16px] font-bold text-[--k-text]">Informations</h2>
-                <p className="text-[12px] text-[--k-muted] mt-0.5">Tags internes pour qualifier cet événement</p>
-              </div>
-              <div className="p-5">
-                <div className="flex flex-wrap gap-2">
-                  {INTERNAL_TAGS.map(tag => (
-                    <button
-                      key={tag}
-                      onClick={() => setInternalTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag])}
-                      className={cn(
-                        "px-3 py-1.5 rounded-full text-[12px] font-medium border transition",
-                        internalTags.includes(tag)
-                          ? "bg-[--k-text] text-white border-[--k-text]"
-                          : "bg-white text-[--k-muted] border-[--k-border] hover:border-[--k-text] hover:text-[--k-text]"
-                      )}
-                    >
-                      {internalTags.includes(tag) && <Check className="inline h-3 w-3 mr-1 -mt-0.5" />}
-                      {tag}
-                    </button>
-                  ))}
-                </div>
-                {/* Custom tag input */}
-                <div className="flex items-center gap-2 mt-3">
-                  <input
-                    value={tagInput}
-                    onChange={e => setTagInput(e.target.value)}
-                    onKeyDown={e => {
-                      if (e.key === "Enter" && tagInput.trim()) {
-                        setInternalTags(prev => prev.includes(tagInput.trim()) ? prev : [...prev, tagInput.trim()]);
-                        setTagInput("");
-                      }
-                    }}
-                    placeholder="Ajouter un tag personnalisé..."
-                    className="input-field flex-1"
-                  />
-                  <button
-                    onClick={() => {
-                      if (tagInput.trim()) {
-                        setInternalTags(prev => prev.includes(tagInput.trim()) ? prev : [...prev, tagInput.trim()]);
-                        setTagInput("");
-                      }
-                    }}
-                    className="h-9 rounded-lg bg-[--k-text] px-3 text-[12px] font-medium text-white hover:brightness-110 transition"
-                  >
-                    <Plus className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              </div>
-            </div>
-
             {/* Informations événement */}
             <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
               <div className="border-b border-[--k-border] px-5 py-3">
@@ -952,6 +899,54 @@ export default function EventCreate() {
                             {obj}
                           </button>
                         ))}
+                      </div>
+                    </Field>
+                  </div>
+
+                  {/* Étiquettes / Tags internes */}
+                  <div className="sm:col-span-2">
+                    <Field label="Étiquettes / tags">
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {INTERNAL_TAGS.map(tag => (
+                          <button
+                            key={tag}
+                            onClick={() => setInternalTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag])}
+                            className={cn(
+                              "px-3 py-1.5 rounded-full text-[12px] font-medium border transition",
+                              internalTags.includes(tag)
+                                ? "bg-[--k-text] text-white border-[--k-text]"
+                                : "bg-white text-[--k-muted] border-[--k-border] hover:border-[--k-text] hover:text-[--k-text]"
+                            )}
+                          >
+                            {internalTags.includes(tag) && <Check className="inline h-3 w-3 mr-1 -mt-0.5" />}
+                            {tag}
+                          </button>
+                        ))}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <input
+                          value={tagInput}
+                          onChange={e => setTagInput(e.target.value)}
+                          onKeyDown={e => {
+                            if (e.key === "Enter" && tagInput.trim()) {
+                              setInternalTags(prev => prev.includes(tagInput.trim()) ? prev : [...prev, tagInput.trim()]);
+                              setTagInput("");
+                            }
+                          }}
+                          placeholder="Ajouter un tag personnalisé..."
+                          className="input-field flex-1"
+                        />
+                        <button
+                          onClick={() => {
+                            if (tagInput.trim()) {
+                              setInternalTags(prev => prev.includes(tagInput.trim()) ? prev : [...prev, tagInput.trim()]);
+                              setTagInput("");
+                            }
+                          }}
+                          className="h-9 rounded-lg bg-[--k-text] px-3 text-[12px] font-medium text-white hover:brightness-110 transition"
+                        >
+                          <Plus className="h-3.5 w-3.5" />
+                        </button>
                       </div>
                     </Field>
                   </div>
