@@ -38,7 +38,8 @@ const MOCK_CLIENTS = [
   { id: 22456, name: "FESTIV'ALL", created: "28/09/19", cp: "33000", ville: "BORDEAUX", devis: 3, factures: 1, raisonSociale: "FESTIV'ALL ÉVÉNEMENTS", adresse: "5 Place de la Bourse", email: "contact@festivall.fr", tel: "05 56 78 90 12" },
 ];
 
-const EVENT_TYPES = ["Corporate", "Mariage", "Salon", "Festival", "Anniversaire", "Team Building", "Lancement produit", "Gala", "Soirée", "Inauguration", "Séminaire", "Congrès"];
+const EVENT_TYPES_PRO = ["Corporate", "Salon", "Festival", "Gala", "Soirée", "Inauguration", "Séminaire", "Congrès", "Team Building"];
+const EVENT_TYPES_PARTICULIER = ["Mariage", "Anniversaire", "Bar-Mitzvah", "Événement privé", "Soirée privée"];
 
 const ANIMATION_TYPES = ["Selfizee", "Selfizee 360", "Selfizee Mirror", "Selfizee Mini", "Photobooth classique", "Borne tactile", "Mur digital", "Mosaïque photo", "Animation sur-mesure"];
 
@@ -974,7 +975,7 @@ export default function EventCreate() {
                     <SelectWithClear
                       value={form.eventType}
                       onChange={val => update("eventType", val)}
-                      options={EVENT_TYPES}
+                      options={form.clientType === "Particulier" ? EVENT_TYPES_PARTICULIER : EVENT_TYPES_PRO}
                       placeholder="Séléctionner"
                     />
                   </Field>
@@ -1123,20 +1124,23 @@ export default function EventCreate() {
                 <h2 className="text-[16px] font-bold text-[--k-text]">Dates événement</h2>
               </div>
               <div className="p-5 space-y-4">
-                <Field label="Periode">
-                  <select value={form.periode} onChange={e => update("periode", e.target.value)} className="input-field w-auto">
-                    <option value="jour">Le jour du</option>
-                    <option value="periode">Période du</option>
-                  </select>
-                </Field>
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="flex flex-wrap items-end gap-3">
+                  <Field label="Période">
+                    <select value={form.periode} onChange={e => update("periode", e.target.value)} className="input-field w-auto">
+                      <option value="jour">Le jour du</option>
+                      <option value="periode">Du</option>
+                    </select>
+                  </Field>
                   <Field label="Date de l'animation" required>
                     <input type="date" value={form.dateAnimation} onChange={e => update("dateAnimation", e.target.value)} className="input-field" />
                   </Field>
                   {form.periode === "periode" && (
-                    <Field label="Date de fin">
-                      <input type="date" value={form.dateAnimationFin} onChange={e => update("dateAnimationFin", e.target.value)} className="input-field" />
-                    </Field>
+                    <>
+                      <span className="pb-2 text-[13px] text-[--k-muted]">au</span>
+                      <Field label="Date de fin">
+                        <input type="date" value={form.dateAnimationFin} onChange={e => update("dateAnimationFin", e.target.value)} className="input-field" />
+                      </Field>
+                    </>
                   )}
                 </div>
                 <Field label="Horaire de l'événement">

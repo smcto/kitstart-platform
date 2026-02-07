@@ -73,7 +73,7 @@ const APP_SIDEBARS = {
       items: [
         { key: "dashboard", label: "Tableau de bord", icon: LayoutDashboard, to: "/events" },
         { key: "events-list", label: "Événements", icon: CalendarDays, to: "/events/list" },
-        { key: "planning", label: "Planning", icon: CalendarDays, to: "/events/planning" },
+        { key: "planning", label: "Calendrier", icon: CalendarDays, to: "/events/planning" },
         { key: "create", label: "Créer un événement", icon: PlusCircle, to: "/events/create" },
       ],
     },
