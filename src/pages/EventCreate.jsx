@@ -105,11 +105,7 @@ const MODALITES_FACTURATION = [
   { id: "autre", label: "Autre" },
 ];
 
-const BORNE_TYPES = [
-  { id: "classik", name: "Classik", icon: "📷", desc: "Borne photo classique" },
-  { id: "spherik", name: "Spherik", icon: "🔮", desc: "Borne sphérique 360°" },
-  { id: "prestige", name: "Prestige", icon: "✨", desc: "Borne haut de gamme" },
-];
+const BORNE_TYPES = ["Classik", "Spherik", "Prestige"];
 
 const ANIMATION_OPTIONS = [
   "Impression d'un photocall",
@@ -219,7 +215,7 @@ export default function EventCreate() {
     commentaireSurPlace: "",
     responsableProjet: "",
     // Step 3 - Animation(s)
-    bornes: { classik: 0, spherik: 0, prestige: 0 },
+    dispositifs: [{ id: 1, type: "Classik", qty: 1, numeros: "" }],
     animationOptions: [],
     // Step 4 - Créa / Supports graphiques
     creaRealisee: "nous", // "nous" or "client"
@@ -1287,66 +1283,76 @@ export default function EventCreate() {
         {/* ─── Step 3: Animation(s) ────────────────── */}
         {currentStep === 3 && (
           <div className="space-y-5">
-            {/* Borne(s) */}
+            {/* Dispositif(s) */}
             <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
-              <div className="border-b border-[--k-border] px-5 py-3">
-                <h2 className="text-[16px] font-bold text-[--k-text]">Borne(s)</h2>
-                <p className="text-[12px] text-[--k-muted] mt-0.5">Sélectionnez le type et le nombre de bornes pour cet événement</p>
+              <div className="flex items-center justify-between border-b border-[--k-border] px-5 py-3">
+                <h2 className="text-[16px] font-bold text-[--k-text]">Dispositif(s)</h2>
+                <button
+                  onClick={() => setForm(f => ({ ...f, dispositifs: [...f.dispositifs, { id: Date.now(), type: "Classik", qty: 1, numeros: "" }] }))}
+                  className="h-9 rounded-lg bg-[--k-success] px-4 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5"
+                >
+                  <Plus className="h-3.5 w-3.5" /> Ajouter un dispositif
+                </button>
               </div>
               <div className="p-5">
-                <div className="grid gap-4 sm:grid-cols-3">
-                  {BORNE_TYPES.map(bt => {
-                    const qty = form.bornes[bt.id] || 0;
-                    const isActive = qty > 0;
-                    return (
-                      <div
-                        key={bt.id}
-                        className={cn(
-                          "rounded-xl border-2 p-4 transition cursor-pointer",
-                          isActive
-                            ? "border-[--k-primary] bg-[--k-primary-2]/30 shadow-sm"
-                            : "border-[--k-border] bg-white hover:border-[--k-primary]/40"
+                <div className="space-y-3">
+                  {form.dispositifs.map((d, i) => (
+                    <div key={d.id} className="flex items-start gap-3 rounded-lg border border-[--k-border] p-3">
+                      <div className="flex-1 grid gap-3 sm:grid-cols-[180px_80px_1fr]">
+                        <Field label={i === 0 ? "Type" : undefined}>
+                          <select
+                            value={d.type}
+                            onChange={e => setForm(f => ({ ...f, dispositifs: f.dispositifs.map(x => x.id === d.id ? { ...x, type: e.target.value } : x) }))}
+                            className="input-field"
+                          >
+                            {BORNE_TYPES.map(t => <option key={t}>{t}</option>)}
+                            <option value="__autre">Autre...</option>
+                          </select>
+                        </Field>
+                        <Field label={i === 0 ? "Qté" : undefined}>
+                          <input
+                            type="number"
+                            min="1"
+                            value={d.qty}
+                            onChange={e => setForm(f => ({ ...f, dispositifs: f.dispositifs.map(x => x.id === d.id ? { ...x, qty: parseInt(e.target.value) || 1 } : x) }))}
+                            className="input-field text-center"
+                          />
+                        </Field>
+                        <Field label={i === 0 ? "N° de borne(s)" : undefined}>
+                          <input
+                            value={d.numeros}
+                            onChange={e => setForm(f => ({ ...f, dispositifs: f.dispositifs.map(x => x.id === d.id ? { ...x, numeros: e.target.value } : x) }))}
+                            placeholder="Ex: B-001, B-002, B-003"
+                            className="input-field"
+                          />
+                        </Field>
+                        {d.type === "__autre" && (
+                          <div className="sm:col-span-3">
+                            <Field label="Nom du dispositif">
+                              <input
+                                value={d.autreNom || ""}
+                                onChange={e => setForm(f => ({ ...f, dispositifs: f.dispositifs.map(x => x.id === d.id ? { ...x, autreNom: e.target.value } : x) }))}
+                                placeholder="Ex: Mur digital, Borne tactile..."
+                                className="input-field"
+                              />
+                            </Field>
+                          </div>
                         )}
-                        onClick={() => {
-                          if (!isActive) setForm(f => ({ ...f, bornes: { ...f.bornes, [bt.id]: 1 } }));
-                        }}
-                      >
-                        <div className="text-center mb-3">
-                          <span className="text-2xl">{bt.icon}</span>
-                          <h3 className="text-[14px] font-bold text-[--k-text] mt-1">{bt.name}</h3>
-                          <p className="text-[11px] text-[--k-muted]">{bt.desc}</p>
-                        </div>
-                        <div className="flex items-center justify-center gap-2">
-                          <button
-                            onClick={e => { e.stopPropagation(); setForm(f => ({ ...f, bornes: { ...f.bornes, [bt.id]: Math.max(0, (f.bornes[bt.id] || 0) - 1) } })); }}
-                            className={cn(
-                              "h-8 w-8 rounded-lg flex items-center justify-center text-[16px] font-bold transition",
-                              qty > 0 ? "bg-[--k-surface-2] text-[--k-text] hover:bg-[--k-border]" : "bg-[--k-surface-2] text-[--k-muted] opacity-40"
-                            )}
-                          >
-                            −
-                          </button>
-                          <span className={cn(
-                            "text-[18px] font-bold w-8 text-center",
-                            isActive ? "text-[--k-primary]" : "text-[--k-muted]"
-                          )}>{qty}</span>
-                          <button
-                            onClick={e => { e.stopPropagation(); setForm(f => ({ ...f, bornes: { ...f.bornes, [bt.id]: (f.bornes[bt.id] || 0) + 1 } })); }}
-                            className="h-8 w-8 rounded-lg flex items-center justify-center bg-[--k-success] text-white text-[16px] font-bold hover:brightness-110 transition"
-                          >
-                            +
-                          </button>
-                        </div>
                       </div>
-                    );
-                  })}
+                      {form.dispositifs.length > 1 && (
+                        <button
+                          onClick={() => setForm(f => ({ ...f, dispositifs: f.dispositifs.filter(x => x.id !== d.id) }))}
+                          className="mt-6 text-[--k-muted] hover:text-[--k-danger] transition shrink-0"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
                 </div>
-                {(form.bornes.classik + form.bornes.spherik + form.bornes.prestige) > 0 && (
-                  <p className="mt-3 text-[12px] text-[--k-primary] font-medium">
-                    Total : {form.bornes.classik + form.bornes.spherik + form.bornes.prestige} borne(s) sélectionnée(s)
-                    {form.bornes.classik > 0 && ` — ${form.bornes.classik} Classik`}
-                    {form.bornes.spherik > 0 && ` — ${form.bornes.spherik} Spherik`}
-                    {form.bornes.prestige > 0 && ` — ${form.bornes.prestige} Prestige`}
+                {form.dispositifs.length > 0 && (
+                  <p className="mt-3 text-[12px] text-[--k-muted]">
+                    Total : {form.dispositifs.reduce((sum, d) => sum + d.qty, 0)} dispositif(s)
                   </p>
                 )}
               </div>
@@ -1556,110 +1562,101 @@ export default function EventCreate() {
               </div>
             </div>
 
-            {/* Logistique aller */}
-            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
-              <div className="border-b border-[--k-border] px-5 py-3">
-                <h2 className="text-[16px] font-bold text-[--k-text]">Logistique aller</h2>
-              </div>
-              <div className="p-5 space-y-4">
-                <Field label="Type d'installation / envoi" required>
-                  <SelectWithClear
-                    value={form.typeInstallation}
-                    onChange={val => update("typeInstallation", val)}
-                    options={TYPES_INSTALLATION}
-                    placeholder="Séléctionner"
+            {/* Logistique aller / retour — 50/50 */}
+            <div className="grid gap-5 lg:grid-cols-2">
+              {/* Aller */}
+              <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+                <div className="border-b border-[--k-border] px-5 py-3">
+                  <h2 className="text-[16px] font-bold text-[--k-text]">Logistique aller</h2>
+                </div>
+                <div className="p-5 space-y-4">
+                  <Field label="Type d'installation / envoi" required>
+                    <SelectWithClear
+                      value={form.typeInstallation}
+                      onChange={val => update("typeInstallation", val)}
+                      options={TYPES_INSTALLATION}
+                      placeholder="Séléctionner"
+                    />
+                  </Field>
+                  <button className="h-8 rounded-lg bg-[--k-primary] px-3 text-[12px] font-medium text-white hover:brightness-110 transition shadow-sm">
+                    Ajouter un colis transporteur
+                  </button>
+                  <CollapsibleComment
+                    label="Commentaire interne..."
+                    value={form.commentaireAllerInterne}
+                    onChange={val => update("commentaireAllerInterne", val)}
+                    placeholder="Commentaire interne..."
                   />
-                </Field>
-                <button className="h-9 rounded-lg bg-[--k-primary] px-4 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm">
-                  Ajouter un colis transporteur
-                </button>
-                <CollapsibleComment
-                  label="Ajouter un commentaire interne..."
-                  value={form.commentaireAllerInterne}
-                  onChange={val => update("commentaireAllerInterne", val)}
-                  placeholder="Commentaire interne..."
-                />
-                <CollapsibleComment
-                  label="Ajouter une note pour le client..."
-                  value={form.noteAllerClient}
-                  onChange={val => update("noteAllerClient", val)}
-                  placeholder="Note visible par le client..."
-                />
+                  <CollapsibleComment
+                    label="Note pour le client..."
+                    value={form.noteAllerClient}
+                    onChange={val => update("noteAllerClient", val)}
+                    placeholder="Note visible par le client..."
+                  />
+                </div>
               </div>
-            </div>
 
-            {/* Logistique retour */}
-            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
-              <div className="border-b border-[--k-border] px-5 py-3">
-                <h2 className="text-[16px] font-bold text-[--k-text]">Logistique retour</h2>
-              </div>
-              <div className="p-5 space-y-4">
-                <Field label="Type de désinstallation / retour" required>
-                  <SelectWithClear
-                    value={form.typeRetour}
-                    onChange={val => update("typeRetour", val)}
-                    options={TYPES_RETOUR}
-                    placeholder="Séléctionner"
-                  />
-                </Field>
-                {form.typeRetour && (
-                  <>
-                    <Field label="Jour retour">
-                      <input type="date" value={form.jourRetour} onChange={e => update("jourRetour", e.target.value)} className="input-field" />
-                    </Field>
-                    <div className="flex items-center gap-4">
-                      <label className="flex items-center gap-1.5 text-[13px] text-[--k-text] cursor-pointer">
-                        <input
-                          type="radio"
-                          name="heureRetourMode"
-                          checked={form.heureRetourMode === "precise"}
-                          onChange={() => update("heureRetourMode", "precise")}
-                          className="accent-[--k-primary]"
-                        />
-                        Heure précise
-                      </label>
-                      <label className="flex items-center gap-1.5 text-[13px] text-[--k-text] cursor-pointer">
-                        <input
-                          type="radio"
-                          name="heureRetourMode"
-                          checked={form.heureRetourMode === "tranche"}
-                          onChange={() => update("heureRetourMode", "tranche")}
-                          className="accent-[--k-primary]"
-                        />
-                        Tranche horaire
-                      </label>
-                    </div>
-                    {form.heureRetourMode === "precise" ? (
-                      <Field label="Heure retour">
-                        <input type="time" value={form.heureRetour} onChange={e => update("heureRetour", e.target.value)} className="input-field" />
+              {/* Retour */}
+              <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+                <div className="border-b border-[--k-border] px-5 py-3">
+                  <h2 className="text-[16px] font-bold text-[--k-text]">Logistique retour</h2>
+                </div>
+                <div className="p-5 space-y-4">
+                  <Field label="Type de désinstallation / retour" required>
+                    <SelectWithClear
+                      value={form.typeRetour}
+                      onChange={val => update("typeRetour", val)}
+                      options={TYPES_RETOUR}
+                      placeholder="Séléctionner"
+                    />
+                  </Field>
+                  {form.typeRetour && (
+                    <>
+                      <Field label="Jour retour">
+                        <input type="date" value={form.jourRetour} onChange={e => update("jourRetour", e.target.value)} className="input-field" />
                       </Field>
-                    ) : (
-                      <div className="grid gap-4 sm:grid-cols-2">
-                        <Field label="Heure début">
-                          <input type="time" value={form.heureRetourDebut} onChange={e => update("heureRetourDebut", e.target.value)} className="input-field" />
-                        </Field>
-                        <Field label="Heure fin">
-                          <input type="time" value={form.heureRetourFin} onChange={e => update("heureRetourFin", e.target.value)} className="input-field" />
-                        </Field>
+                      <div className="flex items-center gap-3">
+                        <label className="flex items-center gap-1.5 text-[12px] text-[--k-text] cursor-pointer">
+                          <input type="radio" name="heureRetourMode" checked={form.heureRetourMode === "precise"} onChange={() => update("heureRetourMode", "precise")} className="accent-[--k-primary]" />
+                          Heure précise
+                        </label>
+                        <label className="flex items-center gap-1.5 text-[12px] text-[--k-text] cursor-pointer">
+                          <input type="radio" name="heureRetourMode" checked={form.heureRetourMode === "tranche"} onChange={() => update("heureRetourMode", "tranche")} className="accent-[--k-primary]" />
+                          Tranche horaire
+                        </label>
                       </div>
-                    )}
-                  </>
-                )}
-                <button className="h-9 rounded-lg bg-[--k-primary] px-4 text-[13px] font-medium text-white hover:brightness-110 transition shadow-sm">
-                  Ajouter un colis transporteur
-                </button>
-                <CollapsibleComment
-                  label="Ajouter un commentaire interne..."
-                  value={form.commentaireRetourInterne}
-                  onChange={val => update("commentaireRetourInterne", val)}
-                  placeholder="Commentaire interne..."
-                />
-                <CollapsibleComment
-                  label="Ajouter une note pour le client..."
-                  value={form.noteRetourClient}
-                  onChange={val => update("noteRetourClient", val)}
-                  placeholder="Note visible par le client..."
-                />
+                      {form.heureRetourMode === "precise" ? (
+                        <Field label="Heure retour">
+                          <input type="time" value={form.heureRetour} onChange={e => update("heureRetour", e.target.value)} className="input-field" />
+                        </Field>
+                      ) : (
+                        <div className="grid gap-3 grid-cols-2">
+                          <Field label="Début">
+                            <input type="time" value={form.heureRetourDebut} onChange={e => update("heureRetourDebut", e.target.value)} className="input-field" />
+                          </Field>
+                          <Field label="Fin">
+                            <input type="time" value={form.heureRetourFin} onChange={e => update("heureRetourFin", e.target.value)} className="input-field" />
+                          </Field>
+                        </div>
+                      )}
+                    </>
+                  )}
+                  <button className="h-8 rounded-lg bg-[--k-primary] px-3 text-[12px] font-medium text-white hover:brightness-110 transition shadow-sm">
+                    Ajouter un colis transporteur
+                  </button>
+                  <CollapsibleComment
+                    label="Commentaire interne..."
+                    value={form.commentaireRetourInterne}
+                    onChange={val => update("commentaireRetourInterne", val)}
+                    placeholder="Commentaire interne..."
+                  />
+                  <CollapsibleComment
+                    label="Note pour le client..."
+                    value={form.noteRetourClient}
+                    onChange={val => update("noteRetourClient", val)}
+                    placeholder="Note visible par le client..."
+                  />
+                </div>
               </div>
             </div>
 
@@ -1707,9 +1704,9 @@ export default function EventCreate() {
                 </RecapSection>
 
                 <RecapSection title="Animation(s)">
-                  <RecapRow label="Bornes Classik" value={form.bornes.classik || "0"} />
-                  <RecapRow label="Bornes Spherik" value={form.bornes.spherik || "0"} />
-                  <RecapRow label="Bornes Prestige" value={form.bornes.prestige || "0"} />
+                  {form.dispositifs.map((d, i) => (
+                    <RecapRow key={d.id} label={d.type === "__autre" ? (d.autreNom || "Autre") : d.type} value={`×${d.qty}${d.numeros ? ` — ${d.numeros}` : ""}`} />
+                  ))}
                   {form.animationOptions.length > 0 && <RecapRow label="Options animation" value={form.animationOptions.join(", ")} />}
                 </RecapSection>
 
@@ -1733,22 +1730,6 @@ export default function EventCreate() {
                     ))}
                   </RecapSection>
                 )}
-              </div>
-            </div>
-
-            {/* Notes internes */}
-            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
-              <div className="border-b border-[--k-border] px-5 py-3">
-                <h2 className="text-[16px] font-bold text-[--k-text]">Notes internes</h2>
-              </div>
-              <div className="p-5">
-                <textarea
-                  value={form.notes}
-                  onChange={e => update("notes", e.target.value)}
-                  rows={4}
-                  placeholder="Notes internes, instructions particulières, accès, horaires montage..."
-                  className="input-field w-full resize-none"
-                />
               </div>
             </div>
 
