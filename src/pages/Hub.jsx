@@ -3,22 +3,39 @@ import { AppShell } from "../components/AppShell";
 import {
   Monitor, Radio, Package, Headphones, Sparkles,
   CalendarDays, Settings, Users, BarChart3, ShieldCheck,
-  Plus, Check, Cake, ChevronRight, Pin, Megaphone, ArrowRight
+  Plus, Check, Cake, ChevronRight, Pin, Megaphone, ArrowRight,
+  Briefcase, Wrench, Mail, MessageSquare, Scissors, Tag, QrCode, ImageDown, FileOutput, Calculator, StickyNote
 } from "lucide-react";
 import { cn } from "../components/ui/cn";
 
 /* ── Apps ─────────────────────────────────────────── */
 
 const APPS = [
-  { name: "Bornes Manager", desc: "Bornes, downloads, retry",       to: "/bornes",   icon: Monitor,      color: "bg-indigo-100/70 text-indigo-600" },
-  { name: "Events",         desc: "Gestion des événements",         to: "/events",   icon: CalendarDays, color: "bg-rose-100/70 text-rose-600" },
-  { name: "Antennes Selfizee", desc: "Réseau & supervision",         to: "/antennes", icon: Radio,        color: "bg-orange-100/70 text-orange-600" },
-  { name: "Stock Manager",    desc: "Consommables & alertes",       to: "/stocks",   icon: Package,      color: "bg-emerald-100/70 text-emerald-600" },
-  { name: "Abonnements",    desc: "Gestion des abonnements",        to: "/support",  icon: Users,        color: "bg-sky-100/70 text-sky-600" },
-  { name: "Support",        desc: "Support & Knowledge base",       to: "/support",  icon: Headphones,   color: "bg-amber-100/70 text-amber-600" },
-  { name: "Catalog IA",     desc: "Contenus & visuels",             to: "/catalog",  icon: Sparkles,     color: "bg-violet-100/70 text-violet-600" },
-  { name: "Statistiques",   desc: "Rapports & analytics",           to: "/stats",    icon: BarChart3,    color: "bg-teal-100/70 text-teal-600" },
-  { name: "Admin",          desc: "Administration système",          to: "/settings", icon: ShieldCheck,  color: "bg-stone-100/70 text-stone-600" },
+  /* ── Métiers ── */
+  { name: "Bornes Manager",    desc: "Bornes, downloads, retry",      to: "/bornes",   icon: Monitor,      color: "bg-indigo-100/70 text-indigo-600",  category: "metier" },
+  { name: "Events",            desc: "Gestion des événements",        to: "/events",   icon: CalendarDays, color: "bg-rose-100/70 text-rose-600",      category: "metier" },
+  { name: "Antennes Selfizee", desc: "Réseau & supervision",          to: "/antennes", icon: Radio,        color: "bg-orange-100/70 text-orange-600",  category: "metier" },
+  { name: "Stock Manager",     desc: "Consommables & alertes",        to: "/stocks",   icon: Package,      color: "bg-emerald-100/70 text-emerald-600", category: "metier" },
+  { name: "Abonnements",       desc: "Gestion des abonnements",       to: "/support",  icon: Users,        color: "bg-sky-100/70 text-sky-600",        category: "metier" },
+  { name: "Support",           desc: "Support & Knowledge base",      to: "/support",  icon: Headphones,   color: "bg-amber-100/70 text-amber-600",    category: "metier" },
+  { name: "Catalog IA",        desc: "Contenus & visuels",            to: "/catalog",  icon: Sparkles,     color: "bg-violet-100/70 text-violet-600",  category: "metier" },
+  { name: "Statistiques",      desc: "Rapports & analytics",          to: "/stats",    icon: BarChart3,    color: "bg-teal-100/70 text-teal-600",      category: "metier" },
+  { name: "Admin",             desc: "Administration système",         to: "/settings", icon: ShieldCheck,  color: "bg-stone-100/70 text-stone-600",    category: "metier" },
+  /* ── Utilitaires ── */
+  { name: "Emailing",          desc: "Campagnes email & templates",           to: "#", icon: Mail,          color: "bg-cyan-100/70 text-cyan-600",      category: "utilitaire" },
+  { name: "Envoi SMS",         desc: "Notifications & rappels SMS",           to: "#", icon: MessageSquare, color: "bg-lime-100/70 text-lime-600",      category: "utilitaire" },
+  { name: "Détourage Image",   desc: "Suppression de fond automatique",       to: "#", icon: Scissors,      color: "bg-fuchsia-100/70 text-fuchsia-600", category: "utilitaire" },
+  { name: "Étiquettes UPS",    desc: "Génération de bordereaux d'envoi",      to: "#", icon: Tag,           color: "bg-yellow-100/70 text-yellow-600",  category: "utilitaire" },
+  { name: "QR Codes",          desc: "QR codes personnalisés",                to: "#", icon: QrCode,        color: "bg-slate-100/70 text-slate-600",    category: "utilitaire" },
+  { name: "Compresseur",       desc: "Compression & redim. d'images",         to: "#", icon: ImageDown,     color: "bg-pink-100/70 text-pink-600",      category: "utilitaire" },
+  { name: "Convertisseur PDF", desc: "Conversion de fichiers en PDF",         to: "#", icon: FileOutput,    color: "bg-red-100/70 text-red-600",        category: "utilitaire" },
+  { name: "Calculatrice Devis", desc: "Calcul rapide HT / TTC / marges",     to: "#", icon: Calculator,    color: "bg-teal-100/70 text-teal-600",      category: "utilitaire" },
+  { name: "Notes",             desc: "Prise de notes & mémos rapides",        to: "#", icon: StickyNote,    color: "bg-amber-100/70 text-amber-600",    category: "utilitaire" },
+];
+
+const APP_TABS = [
+  { key: "metier", label: "Apps métiers", icon: Briefcase },
+  { key: "utilitaire", label: "Utilitaires", icon: Wrench },
 ];
 
 /* ── Mock data ────────────────────────────────────── */
@@ -74,6 +91,8 @@ function getEmoji() {
 export default function Hub() {
   const [todos, setTodos] = useState(INITIAL_TODOS);
   const [newTodo, setNewTodo] = useState("");
+  const [appTab, setAppTab] = useState("metier");
+  const visibleApps = APPS.filter(a => a.category === appTab);
 
   function toggleTodo(id) {
     setTodos(t => t.map(x => x.id === id ? { ...x, done: !x.done } : x));
@@ -104,11 +123,33 @@ export default function Hub() {
         </div>
 
         {/* ── Apps grid ── */}
-        <div className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-[--k-muted]/60">
-          Applications
+        <div className="mb-3 flex items-center gap-4">
+          <span className="text-[11px] font-semibold uppercase tracking-widest text-[--k-muted]/60">
+            Applications
+          </span>
+          <div className="flex gap-1 rounded-lg bg-[--k-surface-2] p-0.5">
+            {APP_TABS.map(t => {
+              const TIcon = t.icon;
+              return (
+                <button
+                  key={t.key}
+                  onClick={() => setAppTab(t.key)}
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[11px] font-semibold transition",
+                    appTab === t.key
+                      ? "bg-white text-[--k-text] shadow-sm"
+                      : "text-[--k-muted] hover:text-[--k-text]"
+                  )}
+                >
+                  <TIcon className="h-3 w-3" />
+                  {t.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
         <div className="mb-8 grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
-          {APPS.map((app) => {
+          {visibleApps.map((app) => {
             const Icon = app.icon;
             return (
               <a

@@ -977,7 +977,7 @@ export default function EventCreate() {
                               {/* N° avec infobulle objet */}
                               <div className="group/tip relative inline-block">
                                 <span className="font-medium text-[--k-text] cursor-help border-b border-dashed border-[--k-muted]/40">{d.id}</span>
-                                <div className="pointer-events-none absolute bottom-full left-0 z-50 mb-2 w-72 opacity-0 group-hover/tip:opacity-100 transition-opacity">
+                                <div className="pointer-events-none absolute top-full left-0 z-50 mt-2 w-72 opacity-0 group-hover/tip:opacity-100 transition-opacity">
                                   <div className="rounded-lg bg-slate-900 px-3 py-2.5 text-[11px] text-white shadow-xl leading-relaxed">
                                     <div className="text-white/50 text-[10px] font-medium mb-1">Objet du devis</div>
                                     {d.objet}
