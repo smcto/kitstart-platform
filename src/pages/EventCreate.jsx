@@ -938,6 +938,7 @@ export default function EventCreate() {
                   </div>
                 ) : (
                   <>
+                  {selectedClient ? (
                   <div className="overflow-x-auto">
                     <table className="w-full text-[13px]">
                       <thead>
@@ -955,7 +956,7 @@ export default function EventCreate() {
                         </tr>
                       </thead>
                       <tbody>
-                        {selectedClient ? MOCK_DEVIS.map(d => (
+                        {MOCK_DEVIS.map(d => (
                           <tr
                             key={d.id}
                             onClick={() => setSelectedDevis(prev => prev.includes(d.id) ? prev.filter(x => x !== d.id) : [...prev, d.id])}
@@ -1019,13 +1020,7 @@ export default function EventCreate() {
                               </button>
                             </td>
                           </tr>
-                        )) : (
-                          <tr>
-                            <td colSpan={10} className="py-6 text-center text-[13px] text-[--k-muted]">
-                              Sélectionnez un client pour voir les devis associés
-                            </td>
-                          </tr>
-                        )}
+                        ))}
                       </tbody>
                     </table>
                     {selectedDevis.length > 0 && (
@@ -1034,6 +1029,9 @@ export default function EventCreate() {
                       </p>
                     )}
                   </div>
+                  ) : (
+                    <p className="text-[13px] text-[--k-muted] italic">Sélectionnez un client pour voir les devis associés</p>
+                  )}
 
                   {/* Popup aperçu devis */}
                   {previewDevis && (
