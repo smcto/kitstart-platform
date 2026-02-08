@@ -562,26 +562,28 @@ export default function EventCreate() {
                     <Field label="Code postal">
                       <input value={form.codePostal} onChange={e => update("codePostal", e.target.value)} className="input-field" />
                     </Field>
-                    <Field label="Ville">
-                      <div className="flex items-center gap-3">
-                        <label className="flex items-center gap-1.5 text-[12px] text-[--k-muted] cursor-pointer whitespace-nowrap">
+                    <Field label={
+                      <span className="flex items-center gap-2">
+                        Ville
+                        <label className="flex items-center gap-1 text-[11px] text-[--k-muted] cursor-pointer font-normal">
                           <input
                             type="checkbox"
                             checked={villeManuelle}
                             onChange={() => setVilleManuelle(!villeManuelle)}
-                            className="rounded border-[--k-border]"
+                            className="rounded border-[--k-border] h-3 w-3"
                           />
-                          Manuel
+                          manuel
                         </label>
-                        {villeManuelle ? (
-                          <input value={form.ville} onChange={e => update("ville", e.target.value)} className="input-field flex-1" />
-                        ) : (
-                          <select value={form.ville} onChange={e => update("ville", e.target.value)} className="input-field flex-1">
-                            <option value="">Selon CP</option>
-                            {form.codePostal && form.ville && <option value={form.ville}>{form.ville}</option>}
-                          </select>
-                        )}
-                      </div>
+                      </span>
+                    }>
+                      {villeManuelle ? (
+                        <input value={form.ville} onChange={e => update("ville", e.target.value)} className="input-field" />
+                      ) : (
+                        <select value={form.ville} onChange={e => update("ville", e.target.value)} className="input-field">
+                          <option value="">Selon CP</option>
+                          {form.codePostal && form.ville && <option value={form.ville}>{form.ville}</option>}
+                        </select>
+                      )}
                     </Field>
 
                     <Field label="Pays">
@@ -881,15 +883,6 @@ export default function EventCreate() {
               </div>
             </div>
 
-            {/* Commentaire */}
-            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm p-5">
-              <CollapsibleComment
-                label="Ajouter un commentaire client..."
-                value={form.commentaire}
-                onChange={val => update("commentaire", val)}
-                placeholder="Ajouter un commentaire..."
-              />
-            </div>
 
             {/* Opportunité & Devis */}
             <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
