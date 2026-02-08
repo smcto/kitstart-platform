@@ -989,6 +989,17 @@ function ActionPill({ icon: Icon, label }) {
   );
 }
 
+function Field({ label, children, required }) {
+  return (
+    <div>
+      <label className="block text-[12px] font-semibold text-[--k-muted] mb-1.5">
+        {label}{required && <span className="text-[--k-danger] ml-0.5">*</span>}
+      </label>
+      {children}
+    </div>
+  );
+}
+
 function PhaseStatus({ checks, checklist }) {
   const items = checks.map(ck => checklist.find(c => c.key === ck)).filter(Boolean);
   const allDone = items.every(c => c.done);
