@@ -5,7 +5,8 @@ import {
   Plus, X, Search, ChevronDown, MapPin,
   Bold, Italic, Underline, Strikethrough, List, ListOrdered,
   Link2, Type, Check, ChevronRight, ChevronLeft,
-  Camera, Monitor, LayoutGrid, Gamepad2, Share2, Sparkles
+  Camera, Monitor, LayoutGrid, Gamepad2, Share2, Sparkles,
+  ExternalLink, Eye, Info
 } from "lucide-react";
 
 /* ── Data ────────────────────────────────────── */
@@ -75,10 +76,10 @@ const MOCK_OPPORTUNITIES = [
 ];
 
 const MOCK_DEVIS = [
-  { id: "D-2026-0142", borne: "Selfizee Pro 360", event: "Salon du Mariage Paris", eventType: "Salon", animationType: "Selfizee", dateEvent: "2026-03-15", contact: "Marie Dupont", date: "15/01/2026", ht: "2 450,00 €", ttc: "2 940,00 €", etat: "Accepté" },
-  { id: "D-2026-0156", borne: "Selfizee Mirror XL", event: "Gala Entreprise", eventType: "Gala", animationType: "Selfizee Mirror", dateEvent: "2026-04-22", contact: "Pierre Martin", date: "22/01/2026", ht: "3 800,00 €", ttc: "4 560,00 €", etat: "Accepté" },
-  { id: "D-2026-0163", borne: "Selfizee 360 Spin", event: "Festival Nantes", eventType: "Festival", animationType: "Selfizee 360", dateEvent: "2026-06-10", contact: "Sophie Bernard", date: "28/01/2026", ht: "1 950,00 €", ttc: "2 340,00 €", etat: "En attente" },
-  { id: "D-2026-0178", borne: "Selfizee Mini", event: "Team Building Rennes", eventType: "Team Building", animationType: "Selfizee Mini", dateEvent: "2026-05-05", contact: "Marie Dupont", date: "03/02/2026", ht: "1 200,00 €", ttc: "1 440,00 €", etat: "Brouillon" },
+  { id: "D-2026-0142", objet: "Location 2x Selfizee Pro 360 — Salon du Mariage Paris, stand B42, 3 jours avec impression photo + magnets personnalisés", borne: "Selfizee Pro 360", event: "Salon du Mariage Paris", eventType: "Salon", animationType: "Selfizee", dateEvent: "2026-03-15", date: "15/01/2026", ht: "2 450,00 €", ttc: "2 940,00 €", etat: "Accepté", commercial: { name: "Seb Martin", initials: "SM", color: "bg-indigo-500" } },
+  { id: "D-2026-0156", objet: "Location 1x Selfizee Mirror XL — Gala annuel entreprise, animation photo + vidéo + GIF, galerie en ligne", borne: "Selfizee Mirror XL", event: "Gala Entreprise", eventType: "Gala", animationType: "Selfizee Mirror", dateEvent: "2026-04-22", date: "22/01/2026", ht: "3 800,00 €", ttc: "4 560,00 €", etat: "Accepté", commercial: { name: "Julie Martin", initials: "JM", color: "bg-pink-500" } },
+  { id: "D-2026-0163", objet: "Location 1x Selfizee 360 Spin — Festival Nantes, animation 360° avec fond vert + mosaïque live", borne: "Selfizee 360 Spin", event: "Festival Nantes", eventType: "Festival", animationType: "Selfizee 360", dateEvent: "2026-06-10", date: "28/01/2026", ht: "1 950,00 €", ttc: "2 340,00 €", etat: "En attente", commercial: { name: "Seb Martin", initials: "SM", color: "bg-indigo-500" } },
+  { id: "D-2026-0178", objet: "Location 1x Selfizee Mini — Team building Rennes, demi-journée, animation photo simple", borne: "Selfizee Mini", event: "Team Building Rennes", eventType: "Team Building", animationType: "Selfizee Mini", dateEvent: "2026-05-05", date: "03/02/2026", ht: "1 200,00 €", ttc: "1 440,00 €", etat: "Brouillon", commercial: { name: "Thomas Lefebvre", initials: "TL", color: "bg-emerald-500" } },
 ];
 
 const SKIP_DEVIS_REASONS = [
@@ -92,13 +93,12 @@ const SKIP_DEVIS_REASONS = [
 ];
 
 const MOCK_CONTACTS = [
-  { id: 1, nom: "Marie Dupont", fonction: "Directrice événementiel", email: "marie.dupont@client.fr", tel: "06 12 34 56 78" },
-  { id: 2, nom: "Pierre Martin", fonction: "Chef de projet", email: "pierre.martin@client.fr", tel: "06 98 76 54 32" },
-  { id: 3, nom: "Sophie Bernard", fonction: "Responsable communication", email: "sophie.bernard@client.fr", tel: "06 55 44 33 22" },
+  { id: 1, nom: "Marie Dupont", fonction: "Directrice événementiel", email: "marie.dupont@client.fr", tel: "06 12 34 56 78", majDate: "02/02/2026" },
+  { id: 2, nom: "Pierre Martin", fonction: "Chef de projet", email: "pierre.martin@client.fr", tel: "06 98 76 54 32", majDate: "15/01/2026" },
+  { id: 3, nom: "Sophie Bernard", fonction: "Responsable communication", email: "sophie.bernard@client.fr", tel: "06 55 44 33 22", majDate: "10/09/2025" },
 ];
 
 const MODALITES_FACTURATION = [
-  { id: "email", label: "Envoi par email" },
   { id: "chorus", label: "Chorus Pro (collectivité / établissement public)" },
   { id: "courrier", label: "Envoi par courrier" },
   { id: "plateforme", label: "Plateforme client (Coupa, Ariba, Ivalua...)" },
@@ -228,6 +228,7 @@ export default function EventCreate() {
   const [skipDevis, setSkipDevis] = useState(false);
   const [skipDevisReason, setSkipDevisReason] = useState("");
   const [skipDevisCustomReason, setSkipDevisCustomReason] = useState("");
+  const [previewDevis, setPreviewDevis] = useState(null);
   const [responsableSearch, setResponsableSearch] = useState("");
   const [showResponsablePicker, setShowResponsablePicker] = useState(false);
   const [selectedResponsables, setSelectedResponsables] = useState([]);
@@ -301,12 +302,17 @@ export default function EventCreate() {
     commentaireCrea: "",
     // Step 5 - Logistique aller
     typeInstallation: "",
+    jourAller: "",
+    heureAllerMode: "precise",
+    heureAller: "",
+    heureAllerDebut: "",
+    heureAllerFin: "",
     commentaireAllerInterne: "",
     noteAllerClient: "",
     // Step 5 - Logistique retour
     typeRetour: "",
     jourRetour: "",
-    heureRetourMode: "precise", // "precise" or "tranche"
+    heureRetourMode: "precise",
     heureRetour: "",
     heureRetourDebut: "",
     heureRetourFin: "",
@@ -470,7 +476,7 @@ export default function EventCreate() {
                 <h2 className="text-[16px] font-bold text-[--k-text]">Client</h2>
               </div>
               <div className="p-5">
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className={cn("grid gap-4", form.clientType !== "Particulier" ? "sm:grid-cols-3" : "sm:grid-cols-2")}>
                   <Field label="Type Client" required>
                     <select value={form.clientType} onChange={e => update("clientType", e.target.value)} className="input-field">
                       {CLIENT_TYPES.map(t => <option key={t}>{t}</option>)}
@@ -522,7 +528,7 @@ export default function EventCreate() {
                   </Field>
 
                   {form.clientType !== "Particulier" && (
-                    <Field label="Groupe de client">
+                    <Field label="Groupe">
                       <select value={form.clientGroup} onChange={e => update("clientGroup", e.target.value)} className="input-field">
                         <option value="">Séléctionner</option>
                         {CLIENT_GROUPS.map(g => <option key={g}>{g}</option>)}
@@ -530,64 +536,82 @@ export default function EventCreate() {
                     </Field>
                   )}
 
-                  {form.clientType !== "Particulier" && (
-                    <div className="sm:col-span-2 grid gap-4 sm:grid-cols-2">
-                      <Field label="Raison sociale" required>
-                        <input value={form.raisonSociale} onChange={e => update("raisonSociale", e.target.value)} className="input-field" />
+                </div>
+
+                {/* Two-column layout: left = infos, right = adresse + map */}
+                <div className="mt-4 flex gap-5">
+                  {/* Left: coordonnées */}
+                  <div className="flex-1 min-w-0 space-y-4">
+                    {form.clientType !== "Particulier" && (
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <Field label="Raison sociale" required>
+                          <input value={form.raisonSociale} onChange={e => update("raisonSociale", e.target.value)} className="input-field" />
+                        </Field>
+                        <Field label="Enseigne">
+                          <input value={form.enseigne} onChange={e => update("enseigne", e.target.value)} className="input-field" />
+                        </Field>
+                      </div>
+                    )}
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <Field label={form.clientType === "Particulier" ? "Téléphone" : "Tél entreprise"}>
+                        <input value={form.telEntreprise} onChange={e => update("telEntreprise", e.target.value)} className="input-field" />
                       </Field>
-                      <Field label="Enseigne">
-                        <input value={form.enseigne} onChange={e => update("enseigne", e.target.value)} className="input-field" />
+                      <Field label="2ème Téléphone">
+                        <input value={form.tel2} onChange={e => update("tel2", e.target.value)} className="input-field" />
+                      </Field>
+                      <Field label="Email général">
+                        <input type="email" value={form.emailGeneral} onChange={e => update("emailGeneral", e.target.value)} className="input-field" />
                       </Field>
                     </div>
-                  )}
+                  </div>
 
-                  <Field label="Adresse" span={1}>
-                    <input value={form.adresse} onChange={e => update("adresse", e.target.value)} placeholder="Indiquez un lieu" className="input-field" />
-                  </Field>
-                  <Field label="Adresse complémentaire">
-                    <input value={form.adresseComp} onChange={e => update("adresseComp", e.target.value)} className="input-field" />
-                  </Field>
-
-                  <Field label="Code postal">
-                    <input value={form.codePostal} onChange={e => update("codePostal", e.target.value)} className="input-field" />
-                  </Field>
-                  <Field label="Ville">
-                    <div className="flex items-center gap-3">
-                      <label className="flex items-center gap-1.5 text-[12px] text-[--k-muted] cursor-pointer whitespace-nowrap">
-                        <input
-                          type="checkbox"
-                          checked={villeManuelle}
-                          onChange={() => setVilleManuelle(!villeManuelle)}
-                          className="rounded border-[--k-border]"
-                        />
-                        Saisir manuellement
-                      </label>
-                      {villeManuelle ? (
-                        <input value={form.ville} onChange={e => update("ville", e.target.value)} className="input-field flex-1" />
-                      ) : (
-                        <select value={form.ville} onChange={e => update("ville", e.target.value)} className="input-field flex-1">
-                          <option value="">Sélectionner par rapport au code postal</option>
-                          {form.codePostal && form.ville && <option value={form.ville}>{form.ville}</option>}
+                  {/* Right: adresse + mini map */}
+                  <div className="flex-1 min-w-0 space-y-3">
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <Field label="Adresse">
+                        <input value={form.adresse} onChange={e => update("adresse", e.target.value)} placeholder="Indiquez un lieu" className="input-field" />
+                      </Field>
+                      <Field label="Adresse complémentaire">
+                        <input value={form.adresseComp} onChange={e => update("adresseComp", e.target.value)} className="input-field" />
+                      </Field>
+                      <Field label="Code postal">
+                        <input value={form.codePostal} onChange={e => update("codePostal", e.target.value)} className="input-field" />
+                      </Field>
+                      <Field label="Ville">
+                        <div className="flex items-center gap-3">
+                          <label className="flex items-center gap-1.5 text-[12px] text-[--k-muted] cursor-pointer whitespace-nowrap">
+                            <input
+                              type="checkbox"
+                              checked={villeManuelle}
+                              onChange={() => setVilleManuelle(!villeManuelle)}
+                              className="rounded border-[--k-border]"
+                            />
+                            Manuel
+                          </label>
+                          {villeManuelle ? (
+                            <input value={form.ville} onChange={e => update("ville", e.target.value)} className="input-field flex-1" />
+                          ) : (
+                            <select value={form.ville} onChange={e => update("ville", e.target.value)} className="input-field flex-1">
+                              <option value="">Selon CP</option>
+                              {form.codePostal && form.ville && <option value={form.ville}>{form.ville}</option>}
+                            </select>
+                          )}
+                        </div>
+                      </Field>
+                      <Field label="Pays">
+                        <select value={form.pays} onChange={e => update("pays", e.target.value)} className="input-field">
+                          {PAYS.map(p => <option key={p}>{p}</option>)}
                         </select>
-                      )}
+                      </Field>
                     </div>
-                  </Field>
-
-                  <Field label="Pays">
-                    <select value={form.pays} onChange={e => update("pays", e.target.value)} className="input-field">
-                      {PAYS.map(p => <option key={p}>{p}</option>)}
-                    </select>
-                  </Field>
-                  <Field label={form.clientType === "Particulier" ? "Téléphone" : "Tél entreprise"}>
-                    <input value={form.telEntreprise} onChange={e => update("telEntreprise", e.target.value)} className="input-field" />
-                  </Field>
-
-                  <Field label="2ème Téléphone">
-                    <input value={form.tel2} onChange={e => update("tel2", e.target.value)} className="input-field" />
-                  </Field>
-                  <Field label="Email général">
-                    <input type="email" value={form.emailGeneral} onChange={e => update("emailGeneral", e.target.value)} className="input-field" />
-                  </Field>
+                    {/* Mini map placeholder */}
+                    <div className="h-[100px] rounded-lg bg-blue-50 relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-b from-blue-100/60 to-blue-200/40" />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <MapPin className="h-5 w-5 text-red-400" />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -613,13 +637,20 @@ export default function EventCreate() {
                   <div className="space-y-2">
                     {contacts.map(c => (
                       <div key={c.id} className="flex items-center justify-between rounded-lg border border-[--k-border] px-3 py-2">
-                        <div>
-                          <span className="text-[13px] font-medium text-[--k-text]">{c.nom}</span>
-                          <span className="text-[12px] text-[--k-muted] ml-2">{c.fonction}</span>
-                          <span className="text-[12px] text-[--k-muted] ml-2">{c.email}</span>
-                          <span className="text-[12px] text-[--k-muted] ml-2">{c.tel}</span>
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[13px] font-medium text-[--k-text]">{c.nom}</span>
+                              {c.fonction && <span className="text-[11px] text-[--k-muted] bg-[--k-surface-2] rounded px-1.5 py-0.5">{c.fonction}</span>}
+                            </div>
+                            <div className="flex items-center gap-2 mt-0.5 text-[11px] text-[--k-muted]">
+                              <span>{c.email}</span>
+                              {c.tel && <><span>•</span><span>{c.tel}</span></>}
+                              {c.majDate && <><span>•</span><span className="text-[10px]">MAJ {c.majDate}</span></>}
+                            </div>
+                          </div>
                         </div>
-                        <button onClick={() => removeContact(c.id)} className="text-[--k-muted] hover:text-[--k-danger]">
+                        <button onClick={() => removeContact(c.id)} className="shrink-0 text-[--k-muted] hover:text-[--k-danger]">
                           <X className="h-4 w-4" />
                         </button>
                       </div>
@@ -634,11 +665,17 @@ export default function EventCreate() {
                         <button
                           key={c.id}
                           onClick={() => addContact(c)}
-                          className="w-full text-left rounded-lg px-3 py-2 text-[13px] hover:bg-white transition"
+                          className="w-full text-left rounded-lg px-3 py-2 hover:bg-white transition"
                         >
-                          <span className="font-medium">{c.nom}</span>
-                          <span className="text-[--k-muted] ml-2">— {c.fonction}</span>
-                          <span className="text-[--k-muted] ml-2">— {c.email}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[13px] font-medium text-[--k-text]">{c.nom}</span>
+                            {c.fonction && <span className="text-[11px] text-[--k-muted] bg-white/60 rounded px-1.5 py-0.5">{c.fonction}</span>}
+                          </div>
+                          <div className="flex items-center gap-2 mt-0.5 text-[11px] text-[--k-muted]">
+                            <span>{c.email}</span>
+                            {c.tel && <><span>•</span><span>{c.tel}</span></>}
+                            {c.majDate && <><span>•</span><span className="text-[10px]">MAJ {c.majDate}</span></>}
+                          </div>
                         </button>
                       ))}
                     </div>
@@ -703,13 +740,18 @@ export default function EventCreate() {
                 <Field label="Contact facturation">
                   {contactFacturation ? (
                     <div className="flex items-center justify-between rounded-lg border border-[--k-border] px-3 py-2">
-                      <div>
-                        <span className="text-[13px] font-medium text-[--k-text]">{contactFacturation.nom}</span>
-                        {contactFacturation.fonction && <span className="text-[12px] text-[--k-muted] ml-2">{contactFacturation.fonction}</span>}
-                        <span className="text-[12px] text-[--k-muted] ml-2">{contactFacturation.email}</span>
-                        {contactFacturation.tel && <span className="text-[12px] text-[--k-muted] ml-2">{contactFacturation.tel}</span>}
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[13px] font-medium text-[--k-text]">{contactFacturation.nom}</span>
+                          {contactFacturation.fonction && <span className="text-[11px] text-[--k-muted] bg-[--k-surface-2] rounded px-1.5 py-0.5">{contactFacturation.fonction}</span>}
+                        </div>
+                        <div className="flex items-center gap-2 mt-0.5 text-[11px] text-[--k-muted]">
+                          <span>{contactFacturation.email}</span>
+                          {contactFacturation.tel && <><span>•</span><span>{contactFacturation.tel}</span></>}
+                          {contactFacturation.majDate && <><span>•</span><span className="text-[10px]">MAJ {contactFacturation.majDate}</span></>}
+                        </div>
                       </div>
-                      <button onClick={() => setContactFacturation(null)} className="text-[--k-muted] hover:text-[--k-danger]">
+                      <button onClick={() => setContactFacturation(null)} className="shrink-0 text-[--k-muted] hover:text-[--k-danger]">
                         <X className="h-4 w-4" />
                       </button>
                     </div>
@@ -729,10 +771,16 @@ export default function EventCreate() {
                               <button
                                 key={c.id}
                                 onClick={() => { setContactFacturation(c); setShowFacturationContactPicker(false); }}
-                                className="w-full text-left rounded-lg px-3 py-2 text-[13px] hover:bg-white transition"
+                                className="w-full text-left rounded-lg px-3 py-2 hover:bg-white transition"
                               >
-                                <span className="font-medium">{c.nom}</span>
-                                <span className="text-[--k-muted] ml-2">— {c.email}</span>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-[13px] font-medium text-[--k-text]">{c.nom}</span>
+                                  {c.fonction && <span className="text-[11px] text-[--k-muted] bg-white/60 rounded px-1.5 py-0.5">{c.fonction}</span>}
+                                </div>
+                                <div className="flex items-center gap-2 mt-0.5 text-[11px] text-[--k-muted]">
+                                  <span>{c.email}</span>
+                                  {c.majDate && <><span>•</span><span className="text-[10px]">MAJ {c.majDate}</span></>}
+                                </div>
                               </button>
                             ))}
                           </div>
@@ -745,55 +793,76 @@ export default function EventCreate() {
                   )}
                 </Field>
 
-                {/* Modalité de dépôt */}
-                <Field label="Modalité de dépôt des factures" required>
-                  <select value={form.modaliteFacturation} onChange={e => update("modaliteFacturation", e.target.value)} className="input-field">
-                    <option value="">Séléctionner</option>
-                    {MODALITES_FACTURATION.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
-                  </select>
-                </Field>
-
-                {/* Chorus-specific fields */}
-                {form.modaliteFacturation === "chorus" && (
-                  <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 space-y-3">
-                    <p className="text-[12px] font-semibold text-blue-800">Informations Chorus Pro</p>
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <Field label="N° SIRET">
-                        <input value={form.refFacturation} onChange={e => update("refFacturation", e.target.value)} placeholder="Ex: 123 456 789 00012" className="input-field" />
-                      </Field>
-                      <Field label="Code service (si applicable)">
-                        <input value={form.infoFacturation} onChange={e => update("infoFacturation", e.target.value)} placeholder="Ex: COMPTA-01" className="input-field" />
-                      </Field>
+                {/* Modalité de dépôt — par défaut = envoi par email, masqué */}
+                <div className="rounded-lg border border-[--k-border] bg-[--k-surface-2]/30 px-4 py-3">
+                  <label className="flex items-center gap-2.5 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={form.modaliteFacturation !== "" && form.modaliteFacturation !== "email"}
+                      onChange={e => {
+                        if (!e.target.checked) { update("modaliteFacturation", ""); update("refFacturation", ""); update("infoFacturation", ""); }
+                        else { update("modaliteFacturation", "chorus"); }
+                      }}
+                      className="h-4 w-4 rounded border-[--k-border] text-[--k-primary] accent-[--k-primary]"
+                    />
+                    <div>
+                      <span className="text-[12px] font-medium text-[--k-text]">Conditions particulières de facturation</span>
+                      <span className="text-[11px] text-[--k-muted] ml-1.5">(par défaut : envoi par email)</span>
                     </div>
-                  </div>
-                )}
+                  </label>
 
-                {/* Plateforme-specific fields */}
-                {form.modaliteFacturation === "plateforme" && (
-                  <div className="rounded-lg border border-purple-200 bg-purple-50 p-4 space-y-3">
-                    <p className="text-[12px] font-semibold text-purple-800">Informations plateforme</p>
-                    <Field label="Nom de la plateforme / URL">
-                      <input value={form.refFacturation} onChange={e => update("refFacturation", e.target.value)} placeholder="Ex: Coupa, https://..." className="input-field" />
-                    </Field>
-                  </div>
-                )}
+                  {form.modaliteFacturation !== "" && form.modaliteFacturation !== "email" && (
+                    <div className="mt-3 space-y-3">
+                      <Field label="Type de dépôt">
+                        <select value={form.modaliteFacturation} onChange={e => update("modaliteFacturation", e.target.value)} className="input-field">
+                          {MODALITES_FACTURATION.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
+                        </select>
+                      </Field>
 
-                {/* Portail-specific fields */}
-                {form.modaliteFacturation === "portail" && (
-                  <div className="rounded-lg border border-purple-200 bg-purple-50 p-4 space-y-3">
-                    <p className="text-[12px] font-semibold text-purple-800">Informations portail fournisseur</p>
-                    <Field label="URL / identifiants du portail">
-                      <input value={form.refFacturation} onChange={e => update("refFacturation", e.target.value)} placeholder="Ex: https://portail.client.fr" className="input-field" />
-                    </Field>
-                  </div>
-                )}
+                      {/* Chorus-specific fields */}
+                      {form.modaliteFacturation === "chorus" && (
+                        <div className="rounded-lg border border-blue-200 bg-blue-50 p-3 space-y-3">
+                          <p className="text-[12px] font-semibold text-blue-800">Informations Chorus Pro</p>
+                          <div className="grid gap-3 sm:grid-cols-2">
+                            <Field label="N° SIRET">
+                              <input value={form.refFacturation} onChange={e => update("refFacturation", e.target.value)} placeholder="Ex: 123 456 789 00012" className="input-field" />
+                            </Field>
+                            <Field label="Code service (si applicable)">
+                              <input value={form.infoFacturation} onChange={e => update("infoFacturation", e.target.value)} placeholder="Ex: COMPTA-01" className="input-field" />
+                            </Field>
+                          </div>
+                        </div>
+                      )}
 
-                {/* Autre */}
-                {form.modaliteFacturation === "autre" && (
-                  <Field label="Précisez">
-                    <input value={form.refFacturation} onChange={e => update("refFacturation", e.target.value)} placeholder="Modalité de dépôt..." className="input-field" />
-                  </Field>
-                )}
+                      {/* Plateforme-specific fields */}
+                      {form.modaliteFacturation === "plateforme" && (
+                        <div className="rounded-lg border border-purple-200 bg-purple-50 p-3 space-y-3">
+                          <p className="text-[12px] font-semibold text-purple-800">Informations plateforme</p>
+                          <Field label="Nom de la plateforme / URL">
+                            <input value={form.refFacturation} onChange={e => update("refFacturation", e.target.value)} placeholder="Ex: Coupa, https://..." className="input-field" />
+                          </Field>
+                        </div>
+                      )}
+
+                      {/* Portail-specific fields */}
+                      {form.modaliteFacturation === "portail" && (
+                        <div className="rounded-lg border border-purple-200 bg-purple-50 p-3 space-y-3">
+                          <p className="text-[12px] font-semibold text-purple-800">Informations portail fournisseur</p>
+                          <Field label="URL / identifiants du portail">
+                            <input value={form.refFacturation} onChange={e => update("refFacturation", e.target.value)} placeholder="Ex: https://portail.client.fr" className="input-field" />
+                          </Field>
+                        </div>
+                      )}
+
+                      {/* Autre */}
+                      {form.modaliteFacturation === "autre" && (
+                        <Field label="Précisez">
+                          <input value={form.refFacturation} onChange={e => update("refFacturation", e.target.value)} placeholder="Modalité de dépôt..." className="input-field" />
+                        </Field>
+                      )}
+                    </div>
+                  )}
+                </div>
 
                 {/* Note facturation collapsible */}
                 <CollapsibleComment
@@ -887,19 +956,21 @@ export default function EventCreate() {
                     )}
                   </div>
                 ) : (
+                  <>
                   <div className="overflow-x-auto">
                     <table className="w-full text-[13px]">
                       <thead>
                         <tr className="border-b border-[--k-border]">
                           <th className="w-10 py-2 px-3"></th>
                           <th className="text-left py-2 px-3 text-[12px] font-semibold text-[--k-muted]">N°</th>
+                          <th className="w-8 py-2 px-1"></th>
                           <th className="text-left py-2 px-3 text-[12px] font-semibold text-[--k-muted]">Borne</th>
                           <th className="text-left py-2 px-3 text-[12px] font-semibold text-[--k-muted]">Event</th>
-                          <th className="text-left py-2 px-3 text-[12px] font-semibold text-[--k-muted]">Contact</th>
-                          <th className="text-left py-2 px-3 text-[12px] font-semibold text-[--k-muted]">Date devis</th>
+                          <th className="text-left py-2 px-3 text-[12px] font-semibold text-[--k-muted]">Date</th>
                           <th className="text-right py-2 px-3 text-[12px] font-semibold text-[--k-muted]">HT</th>
                           <th className="text-right py-2 px-3 text-[12px] font-semibold text-[--k-muted]">TTC</th>
-                          <th className="text-left py-2 px-3 text-[12px] font-semibold text-[--k-muted]">Etat</th>
+                          <th className="text-left py-2 px-3 text-[12px] font-semibold text-[--k-muted]">État</th>
+                          <th className="w-8 py-2 px-1"></th>
                         </tr>
                       </thead>
                       <tbody>
@@ -908,7 +979,7 @@ export default function EventCreate() {
                             key={d.id}
                             onClick={() => setSelectedDevis(prev => prev.includes(d.id) ? prev.filter(x => x !== d.id) : [...prev, d.id])}
                             className={cn(
-                              "border-b border-[--k-border] last:border-0 cursor-pointer transition",
+                              "border-b border-[--k-border] last:border-0 cursor-pointer transition group",
                               selectedDevis.includes(d.id) ? "bg-[--k-primary-2]" : "hover:bg-[--k-surface-2]"
                             )}
                           >
@@ -920,13 +991,34 @@ export default function EventCreate() {
                                 className="rounded border-[--k-border] h-4 w-4 accent-[--k-primary]"
                               />
                             </td>
-                            <td className="py-2.5 px-3 font-medium">{d.id}</td>
-                            <td className="py-2.5 px-3">{d.borne}</td>
-                            <td className="py-2.5 px-3">{d.event}</td>
-                            <td className="py-2.5 px-3">{d.contact}</td>
-                            <td className="py-2.5 px-3">{d.date}</td>
-                            <td className="py-2.5 px-3 text-right">{d.ht}</td>
-                            <td className="py-2.5 px-3 text-right">{d.ttc}</td>
+                            <td className="py-2.5 px-3">
+                              {/* N° avec infobulle objet */}
+                              <div className="group/tip relative inline-block">
+                                <span className="font-medium text-[--k-text] cursor-help border-b border-dashed border-[--k-muted]/40">{d.id}</span>
+                                <div className="pointer-events-none absolute bottom-full left-0 z-50 mb-2 w-72 opacity-0 group-hover/tip:opacity-100 transition-opacity">
+                                  <div className="rounded-lg bg-slate-900 px-3 py-2.5 text-[11px] text-white shadow-xl leading-relaxed">
+                                    <div className="text-white/50 text-[10px] font-medium mb-1">Objet du devis</div>
+                                    {d.objet}
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="py-2.5 px-1">
+                              {/* Avatar commercial */}
+                              <div className="group/av relative">
+                                <div className={cn("flex h-6 w-6 items-center justify-center rounded-full text-[8px] font-bold text-white", d.commercial.color)}>
+                                  {d.commercial.initials}
+                                </div>
+                                <div className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 z-50 opacity-0 group-hover/av:opacity-100 transition-opacity">
+                                  <div className="whitespace-nowrap rounded-md bg-slate-900 px-2 py-1 text-[10px] text-white shadow-lg">{d.commercial.name}</div>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="py-2.5 px-3 text-[--k-text]">{d.borne}</td>
+                            <td className="py-2.5 px-3 text-[--k-muted]">{d.event}</td>
+                            <td className="py-2.5 px-3 text-[--k-muted]">{d.date}</td>
+                            <td className="py-2.5 px-3 text-right font-medium">{d.ht}</td>
+                            <td className="py-2.5 px-3 text-right text-[--k-muted]">{d.ttc}</td>
                             <td className="py-2.5 px-3">
                               <span className={cn(
                                 "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium",
@@ -935,10 +1027,20 @@ export default function EventCreate() {
                                 d.etat === "Brouillon" && "bg-gray-100 text-gray-600",
                               )}>{d.etat}</span>
                             </td>
+                            <td className="py-2.5 px-1">
+                              {/* Aperçu devis */}
+                              <button
+                                onClick={e => { e.stopPropagation(); setPreviewDevis(d); }}
+                                className="flex h-6 w-6 items-center justify-center rounded-md text-[--k-muted] opacity-0 group-hover:opacity-100 hover:bg-white hover:text-[--k-primary] transition"
+                                title="Aperçu du devis"
+                              >
+                                <Eye className="h-3.5 w-3.5" />
+                              </button>
+                            </td>
                           </tr>
                         )) : (
                           <tr>
-                            <td colSpan={9} className="py-6 text-center text-[13px] text-[--k-muted]">
+                            <td colSpan={10} className="py-6 text-center text-[13px] text-[--k-muted]">
                               Sélectionnez un client pour voir les devis associés
                             </td>
                           </tr>
@@ -951,6 +1053,85 @@ export default function EventCreate() {
                       </p>
                     )}
                   </div>
+
+                  {/* Popup aperçu devis */}
+                  {previewDevis && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setPreviewDevis(null)}>
+                      <div className="relative w-full max-w-md rounded-2xl border border-[--k-border] bg-white shadow-2xl" onClick={e => e.stopPropagation()}>
+                        <div className="flex items-center justify-between border-b border-[--k-border] px-5 py-3">
+                          <div className="flex items-center gap-2">
+                            <span className="text-[14px] font-bold text-[--k-text]">{previewDevis.id}</span>
+                            <span className={cn(
+                              "rounded-full px-2 py-0.5 text-[10px] font-bold",
+                              previewDevis.etat === "Accepté" && "bg-green-100 text-green-700",
+                              previewDevis.etat === "En attente" && "bg-amber-100 text-amber-700",
+                              previewDevis.etat === "Brouillon" && "bg-gray-100 text-gray-600",
+                            )}>{previewDevis.etat}</span>
+                          </div>
+                          <button onClick={() => setPreviewDevis(null)} className="flex h-7 w-7 items-center justify-center rounded-lg text-[--k-muted] hover:bg-[--k-surface-2] hover:text-[--k-text] transition">
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                        <div className="p-5 space-y-4">
+                          {/* Objet */}
+                          <div>
+                            <div className="text-[11px] font-medium text-[--k-muted] mb-1">Objet</div>
+                            <div className="text-[13px] text-[--k-text] leading-relaxed">{previewDevis.objet}</div>
+                          </div>
+                          {/* Infos grid */}
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <div className="text-[10px] font-medium text-[--k-muted] mb-0.5">Borne</div>
+                              <div className="text-[12px] font-medium text-[--k-text]">{previewDevis.borne}</div>
+                            </div>
+                            <div>
+                              <div className="text-[10px] font-medium text-[--k-muted] mb-0.5">Événement</div>
+                              <div className="text-[12px] font-medium text-[--k-text]">{previewDevis.event}</div>
+                            </div>
+                            <div>
+                              <div className="text-[10px] font-medium text-[--k-muted] mb-0.5">Type</div>
+                              <div className="text-[12px] text-[--k-text]">{previewDevis.eventType} — {previewDevis.animationType}</div>
+                            </div>
+                            <div>
+                              <div className="text-[10px] font-medium text-[--k-muted] mb-0.5">Date événement</div>
+                              <div className="text-[12px] text-[--k-text]">{previewDevis.dateEvent}</div>
+                            </div>
+                            <div>
+                              <div className="text-[10px] font-medium text-[--k-muted] mb-0.5">Montant HT</div>
+                              <div className="text-[13px] font-bold text-[--k-text]">{previewDevis.ht}</div>
+                            </div>
+                            <div>
+                              <div className="text-[10px] font-medium text-[--k-muted] mb-0.5">Montant TTC</div>
+                              <div className="text-[13px] font-bold text-[--k-text]">{previewDevis.ttc}</div>
+                            </div>
+                          </div>
+                          {/* Commercial */}
+                          <div className="flex items-center gap-2.5 rounded-lg bg-[--k-surface-2]/50 px-3 py-2">
+                            <div className={cn("flex h-7 w-7 items-center justify-center rounded-full text-[9px] font-bold text-white", previewDevis.commercial.color)}>
+                              {previewDevis.commercial.initials}
+                            </div>
+                            <div>
+                              <div className="text-[11px] font-medium text-[--k-text]">{previewDevis.commercial.name}</div>
+                              <div className="text-[10px] text-[--k-muted]">Commercial</div>
+                            </div>
+                          </div>
+                        </div>
+                        {/* Footer with external link */}
+                        <div className="border-t border-[--k-border] px-5 py-3 flex items-center justify-between">
+                          <span className="text-[11px] text-[--k-muted]">Créé le {previewDevis.date}</span>
+                          <a
+                            href={`/devis/${previewDevis.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 rounded-lg bg-[--k-primary] px-4 py-1.5 text-[12px] font-semibold text-white hover:brightness-110 transition shadow-sm"
+                          >
+                            <ExternalLink className="h-3.5 w-3.5" /> Ouvrir le devis
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  </>
                 )}
               </div>
             </div>
@@ -1737,14 +1918,58 @@ export default function EventCreate() {
                   <Field label="Type d'installation / envoi" required>
                     <SelectWithClear
                       value={form.typeInstallation}
-                      onChange={val => update("typeInstallation", val)}
+                      onChange={val => {
+                        update("typeInstallation", val);
+                        // Auto-mirror to retour
+                        const mirror = {
+                          "Envoi transporteur": "Retour transporteur",
+                          "Pick-up": "Retour Pick-up",
+                          "Livraison & installation": "Désinstallation & retour",
+                          "Livraison seulement": "Retour seulement",
+                          "Installation seulement": "Désinstallation seulement",
+                        };
+                        if (mirror[val] && !form.typeRetour) update("typeRetour", mirror[val]);
+                      }}
                       options={TYPES_INSTALLATION}
                       placeholder="Séléctionner"
                     />
                   </Field>
-                  <button className="h-8 rounded-lg bg-[--k-primary] px-3 text-[12px] font-medium text-white hover:brightness-110 transition shadow-sm">
-                    Ajouter un colis transporteur
-                  </button>
+                  {(form.typeInstallation === "Pick-up" || form.typeInstallation === "Livraison & installation" || form.typeInstallation === "Livraison seulement") && (
+                    <>
+                      <Field label="Jour de retrait / livraison">
+                        <input type="date" value={form.jourAller} onChange={e => update("jourAller", e.target.value)} className="input-field" />
+                      </Field>
+                      <div className="flex items-center gap-3">
+                        <label className="flex items-center gap-1.5 text-[12px] text-[--k-text] cursor-pointer">
+                          <input type="radio" name="heureAllerMode" checked={form.heureAllerMode === "precise"} onChange={() => update("heureAllerMode", "precise")} className="accent-[--k-primary]" />
+                          Heure précise
+                        </label>
+                        <label className="flex items-center gap-1.5 text-[12px] text-[--k-text] cursor-pointer">
+                          <input type="radio" name="heureAllerMode" checked={form.heureAllerMode === "tranche"} onChange={() => update("heureAllerMode", "tranche")} className="accent-[--k-primary]" />
+                          Tranche horaire
+                        </label>
+                      </div>
+                      {form.heureAllerMode === "precise" ? (
+                        <Field label={form.typeInstallation === "Pick-up" ? "Heure de retrait" : "Heure de livraison"}>
+                          <input type="time" value={form.heureAller} onChange={e => update("heureAller", e.target.value)} className="input-field" />
+                        </Field>
+                      ) : (
+                        <div className="grid gap-3 grid-cols-2">
+                          <Field label="Début">
+                            <input type="time" value={form.heureAllerDebut} onChange={e => update("heureAllerDebut", e.target.value)} className="input-field" />
+                          </Field>
+                          <Field label="Fin">
+                            <input type="time" value={form.heureAllerFin} onChange={e => update("heureAllerFin", e.target.value)} className="input-field" />
+                          </Field>
+                        </div>
+                      )}
+                    </>
+                  )}
+                  {form.typeInstallation === "Envoi transporteur" && (
+                    <button className="h-8 rounded-lg bg-[--k-primary] px-3 text-[12px] font-medium text-white hover:brightness-110 transition shadow-sm">
+                      Ajouter un colis transporteur
+                    </button>
+                  )}
                   <CollapsibleComment
                     label="Commentaire interne..."
                     value={form.commentaireAllerInterne}
@@ -1805,9 +2030,11 @@ export default function EventCreate() {
                       )}
                     </>
                   )}
-                  <button className="h-8 rounded-lg bg-[--k-primary] px-3 text-[12px] font-medium text-white hover:brightness-110 transition shadow-sm">
-                    Ajouter un colis transporteur
-                  </button>
+                  {form.typeRetour === "Retour transporteur" && (
+                    <button className="h-8 rounded-lg bg-[--k-primary] px-3 text-[12px] font-medium text-white hover:brightness-110 transition shadow-sm">
+                      Ajouter un colis transporteur
+                    </button>
+                  )}
                   <CollapsibleComment
                     label="Commentaire interne..."
                     value={form.commentaireRetourInterne}
