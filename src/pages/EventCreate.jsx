@@ -127,7 +127,7 @@ const ANIMATION_CATALOG = [
       {
         key: "partage",
         label: "Partage & diffusion",
-        options: ["Envoi de mail", "Galerie en ligne", "Mur de photos", "Prise de data"],
+        options: ["Envoi de mail", "Prise de data", "Instants gagnants"],
       },
     ],
   },
