@@ -303,7 +303,7 @@ export default function EventCreate() {
     // Step 5 - Logistique aller
     typeInstallation: "",
     jourAller: "",
-    heureAllerMode: "precise",
+    heureAllerMode: "aDefinir",
     heureAller: "",
     heureAllerDebut: "",
     heureAllerFin: "",
@@ -312,7 +312,7 @@ export default function EventCreate() {
     // Step 5 - Logistique retour
     typeRetour: "",
     jourRetour: "",
-    heureRetourMode: "precise",
+    heureRetourMode: "aDefinir",
     heureRetour: "",
     heureRetourDebut: "",
     heureRetourFin: "",
@@ -538,78 +538,85 @@ export default function EventCreate() {
 
                 </div>
 
-                {/* Two-column layout: left = infos, right = adresse + map */}
+                {/* Champs client — 2 colonnes + map à droite */}
                 <div className="mt-4 flex gap-5">
-                  {/* Left: coordonnées */}
-                  <div className="flex-1 min-w-0 space-y-4">
+                  <div className="flex-1 min-w-0 grid gap-4 sm:grid-cols-2">
                     {form.clientType !== "Particulier" && (
-                      <div className="grid gap-4 sm:grid-cols-2">
+                      <>
                         <Field label="Raison sociale" required>
                           <input value={form.raisonSociale} onChange={e => update("raisonSociale", e.target.value)} className="input-field" />
                         </Field>
                         <Field label="Enseigne">
                           <input value={form.enseigne} onChange={e => update("enseigne", e.target.value)} className="input-field" />
                         </Field>
-                      </div>
+                      </>
                     )}
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <Field label={form.clientType === "Particulier" ? "Téléphone" : "Tél entreprise"}>
-                        <input value={form.telEntreprise} onChange={e => update("telEntreprise", e.target.value)} className="input-field" />
-                      </Field>
-                      <Field label="2ème Téléphone">
-                        <input value={form.tel2} onChange={e => update("tel2", e.target.value)} className="input-field" />
-                      </Field>
-                      <Field label="Email général">
-                        <input type="email" value={form.emailGeneral} onChange={e => update("emailGeneral", e.target.value)} className="input-field" />
-                      </Field>
-                    </div>
+
+                    <Field label="Adresse">
+                      <input value={form.adresse} onChange={e => update("adresse", e.target.value)} placeholder="Indiquez un lieu" className="input-field" />
+                    </Field>
+                    <Field label="Adresse complémentaire">
+                      <input value={form.adresseComp} onChange={e => update("adresseComp", e.target.value)} className="input-field" />
+                    </Field>
+
+                    <Field label="Code postal">
+                      <input value={form.codePostal} onChange={e => update("codePostal", e.target.value)} className="input-field" />
+                    </Field>
+                    <Field label="Ville">
+                      <div className="flex items-center gap-3">
+                        <label className="flex items-center gap-1.5 text-[12px] text-[--k-muted] cursor-pointer whitespace-nowrap">
+                          <input
+                            type="checkbox"
+                            checked={villeManuelle}
+                            onChange={() => setVilleManuelle(!villeManuelle)}
+                            className="rounded border-[--k-border]"
+                          />
+                          Manuel
+                        </label>
+                        {villeManuelle ? (
+                          <input value={form.ville} onChange={e => update("ville", e.target.value)} className="input-field flex-1" />
+                        ) : (
+                          <select value={form.ville} onChange={e => update("ville", e.target.value)} className="input-field flex-1">
+                            <option value="">Selon CP</option>
+                            {form.codePostal && form.ville && <option value={form.ville}>{form.ville}</option>}
+                          </select>
+                        )}
+                      </div>
+                    </Field>
+
+                    <Field label="Pays">
+                      <select value={form.pays} onChange={e => update("pays", e.target.value)} className="input-field">
+                        {PAYS.map(p => <option key={p}>{p}</option>)}
+                      </select>
+                    </Field>
+                    <Field label={form.clientType === "Particulier" ? "Téléphone" : "Tél entreprise"}>
+                      <input value={form.telEntreprise} onChange={e => update("telEntreprise", e.target.value)} className="input-field" />
+                    </Field>
+
+                    <Field label="2ème Téléphone">
+                      <input value={form.tel2} onChange={e => update("tel2", e.target.value)} className="input-field" />
+                    </Field>
+                    <Field label="Email général">
+                      <input type="email" value={form.emailGeneral} onChange={e => update("emailGeneral", e.target.value)} className="input-field" />
+                    </Field>
                   </div>
 
-                  {/* Right: adresse + mini map */}
-                  <div className="flex-1 min-w-0 space-y-3">
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <Field label="Adresse">
-                        <input value={form.adresse} onChange={e => update("adresse", e.target.value)} placeholder="Indiquez un lieu" className="input-field" />
-                      </Field>
-                      <Field label="Adresse complémentaire">
-                        <input value={form.adresseComp} onChange={e => update("adresseComp", e.target.value)} className="input-field" />
-                      </Field>
-                      <Field label="Code postal">
-                        <input value={form.codePostal} onChange={e => update("codePostal", e.target.value)} className="input-field" />
-                      </Field>
-                      <Field label="Ville">
-                        <div className="flex items-center gap-3">
-                          <label className="flex items-center gap-1.5 text-[12px] text-[--k-muted] cursor-pointer whitespace-nowrap">
-                            <input
-                              type="checkbox"
-                              checked={villeManuelle}
-                              onChange={() => setVilleManuelle(!villeManuelle)}
-                              className="rounded border-[--k-border]"
-                            />
-                            Manuel
-                          </label>
-                          {villeManuelle ? (
-                            <input value={form.ville} onChange={e => update("ville", e.target.value)} className="input-field flex-1" />
-                          ) : (
-                            <select value={form.ville} onChange={e => update("ville", e.target.value)} className="input-field flex-1">
-                              <option value="">Selon CP</option>
-                              {form.codePostal && form.ville && <option value={form.ville}>{form.ville}</option>}
-                            </select>
-                          )}
-                        </div>
-                      </Field>
-                      <Field label="Pays">
-                        <select value={form.pays} onChange={e => update("pays", e.target.value)} className="input-field">
-                          {PAYS.map(p => <option key={p}>{p}</option>)}
-                        </select>
-                      </Field>
-                    </div>
-                    {/* Mini map placeholder */}
-                    <div className="h-[100px] rounded-lg bg-blue-50 relative overflow-hidden">
+                  {/* Map à droite */}
+                  <div className="hidden lg:block w-52 shrink-0">
+                    <div className="w-full h-full min-h-[180px] rounded-lg bg-blue-50 relative overflow-hidden sticky top-4">
                       <div className="absolute inset-0 bg-gradient-to-b from-blue-100/60 to-blue-200/40" />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <MapPin className="h-5 w-5 text-red-400" />
+                      <div className="absolute top-1.5 left-1.5 z-10 flex rounded overflow-hidden border border-[--k-border] bg-white shadow-sm">
+                        <button className="px-2 py-1 text-[10px] font-semibold text-[--k-text] bg-white">Plan</button>
+                        <button className="px-2 py-1 text-[10px] text-[--k-muted] bg-[--k-surface-2]">Satellite</button>
                       </div>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <MapPin className="h-6 w-6 text-red-500" />
+                      </div>
+                      {(form.adresse || form.ville) && (
+                        <div className="absolute bottom-1.5 left-1.5 right-1.5 z-10 rounded bg-white/90 px-2 py-1">
+                          <p className="text-[9px] text-[--k-muted] leading-snug truncate">{form.adresse}{form.ville ? `, ${form.ville}` : ""}</p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -883,25 +890,6 @@ export default function EventCreate() {
                 placeholder="Ajouter un commentaire..."
               />
             </div>
-
-            {/* Localisation Google Map */}
-            {selectedClient && (
-              <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
-                <div className="flex items-center justify-between border-b border-[--k-border] px-5 py-3">
-                  <h2 className="text-[14px] font-bold text-[--k-text]">Localisation du client</h2>
-                  <span className="text-[12px] text-[--k-muted]">{form.adresse}, {form.codePostal} {form.ville}</span>
-                </div>
-                <div className="p-5">
-                  <div className="w-full h-36 rounded-lg bg-blue-100 flex items-center justify-center relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-b from-blue-200/60 to-blue-300/40" />
-                    <div className="relative z-10 flex flex-col items-center gap-1">
-                      <MapPin className="h-6 w-6 text-red-500" />
-                      <span className="text-[11px] text-[--k-muted]">{form.adresse}, {form.codePostal} {form.ville}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
 
             {/* Opportunité & Devis */}
             <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
@@ -1876,10 +1864,10 @@ export default function EventCreate() {
               </div>
             </div>
 
-            {/* Pièces jointe */}
+            {/* Pièce(s) jointe(s) */}
             <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
               <div className="border-b border-[--k-border] px-5 py-3">
-                <h2 className="text-[16px] font-bold text-[--k-text]">Pièces jointe</h2>
+                <h2 className="text-[16px] font-bold text-[--k-text]">Pièce(s) jointe(s)</h2>
               </div>
               <div className="p-5">
                 <div className="flex items-center justify-center rounded-lg border-2 border-dashed border-[--k-border] bg-[--k-surface-2]/30 py-12 cursor-pointer hover:border-[--k-primary] hover:bg-[--k-primary-2]/20 transition">
@@ -1941,6 +1929,10 @@ export default function EventCreate() {
                       </Field>
                       <div className="flex items-center gap-3">
                         <label className="flex items-center gap-1.5 text-[12px] text-[--k-text] cursor-pointer">
+                          <input type="radio" name="heureAllerMode" checked={form.heureAllerMode === "aDefinir"} onChange={() => update("heureAllerMode", "aDefinir")} className="accent-[--k-primary]" />
+                          À définir
+                        </label>
+                        <label className="flex items-center gap-1.5 text-[12px] text-[--k-text] cursor-pointer">
                           <input type="radio" name="heureAllerMode" checked={form.heureAllerMode === "precise"} onChange={() => update("heureAllerMode", "precise")} className="accent-[--k-primary]" />
                           Heure précise
                         </label>
@@ -1949,11 +1941,12 @@ export default function EventCreate() {
                           Tranche horaire
                         </label>
                       </div>
-                      {form.heureAllerMode === "precise" ? (
+                      {form.heureAllerMode === "precise" && (
                         <Field label={form.typeInstallation === "Pick-up" ? "Heure de retrait" : "Heure de livraison"}>
                           <input type="time" value={form.heureAller} onChange={e => update("heureAller", e.target.value)} className="input-field" />
                         </Field>
-                      ) : (
+                      )}
+                      {form.heureAllerMode === "tranche" && (
                         <div className="grid gap-3 grid-cols-2">
                           <Field label="Début">
                             <input type="time" value={form.heureAllerDebut} onChange={e => update("heureAllerDebut", e.target.value)} className="input-field" />
@@ -2006,6 +1999,10 @@ export default function EventCreate() {
                       </Field>
                       <div className="flex items-center gap-3">
                         <label className="flex items-center gap-1.5 text-[12px] text-[--k-text] cursor-pointer">
+                          <input type="radio" name="heureRetourMode" checked={form.heureRetourMode === "aDefinir"} onChange={() => update("heureRetourMode", "aDefinir")} className="accent-[--k-primary]" />
+                          À définir
+                        </label>
+                        <label className="flex items-center gap-1.5 text-[12px] text-[--k-text] cursor-pointer">
                           <input type="radio" name="heureRetourMode" checked={form.heureRetourMode === "precise"} onChange={() => update("heureRetourMode", "precise")} className="accent-[--k-primary]" />
                           Heure précise
                         </label>
@@ -2014,11 +2011,12 @@ export default function EventCreate() {
                           Tranche horaire
                         </label>
                       </div>
-                      {form.heureRetourMode === "precise" ? (
+                      {form.heureRetourMode === "precise" && (
                         <Field label="Heure retour">
                           <input type="time" value={form.heureRetour} onChange={e => update("heureRetour", e.target.value)} className="input-field" />
                         </Field>
-                      ) : (
+                      )}
+                      {form.heureRetourMode === "tranche" && (
                         <div className="grid gap-3 grid-cols-2">
                           <Field label="Début">
                             <input type="time" value={form.heureRetourDebut} onChange={e => update("heureRetourDebut", e.target.value)} className="input-field" />
