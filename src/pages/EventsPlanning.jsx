@@ -154,7 +154,7 @@ export default function EventsPlanning() {
         }
       />
 
-      {/* Toolbar — Line 1: period nav + today + view toggle */}
+      {/* Toolbar — Line 1: period nav + view toggle (with Aujourd'hui) */}
       <div className="mb-2 flex items-center gap-2">
         {/* Period nav */}
         <div className="flex items-center gap-1 rounded-lg border border-[--k-border] bg-white">
@@ -177,38 +177,37 @@ export default function EventsPlanning() {
 
         <div className="flex-1" />
 
-        <button
-          onClick={() => { if (view === "week") setWeekStart(Math.max(1, TODAY - ((TODAY - 1 + FIRST_DAY_OFFSET) % 7))); }}
-          className="h-8 rounded-lg border border-[--k-border] bg-white px-3 text-[12px] font-medium text-[--k-muted] hover:bg-[--k-surface-2] transition"
-        >
-          Aujourd'hui
-        </button>
-
-        {/* View toggle */}
-        <div className="flex gap-1 rounded-lg bg-[--k-surface-2] p-0.5">
+        {/* View toggle: Mois / Semaine / Aujourd'hui */}
+        <div className="flex gap-1 rounded-lg border border-[--k-border] bg-white p-0.5">
           {[{ key: "month", label: "Mois" }, { key: "week", label: "Semaine" }].map(v => (
             <button
               key={v.key}
               className={cn(
                 "rounded-md px-2.5 py-1.5 text-[11px] font-medium transition",
-                view === v.key ? "bg-white text-[--k-text] shadow-sm" : "text-[--k-muted] hover:text-[--k-text]"
+                view === v.key ? "bg-[--k-primary] text-white shadow-sm" : "text-[--k-muted] hover:text-[--k-text] hover:bg-[--k-surface-2]"
               )}
               onClick={() => setView(v.key)}
             >
               {v.label}
             </button>
           ))}
+          <button
+            onClick={() => { if (view === "week") setWeekStart(Math.max(1, TODAY - ((TODAY - 1 + FIRST_DAY_OFFSET) % 7))); }}
+            className="rounded-md px-2.5 py-1.5 text-[11px] font-medium text-[--k-muted] hover:text-[--k-text] hover:bg-[--k-surface-2] transition"
+          >
+            Aujourd'hui
+          </button>
         </div>
       </div>
 
-      {/* Toolbar — Line 2: filters */}
-      <div className="mb-4 flex flex-wrap items-center gap-2">
+      {/* Toolbar — Line 2: filters (right-aligned) */}
+      <div className="mb-4 flex flex-wrap items-center justify-end gap-2">
         <Filter className="h-3.5 w-3.5 text-[--k-muted]" />
 
         <select
           value={clientTypeFilter}
           onChange={e => setClientTypeFilter(e.target.value)}
-          className={cn("h-8 rounded-lg border border-[--k-border] bg-white px-2 text-[12px] font-medium text-[--k-text] outline-none transition", clientTypeFilter !== "all" && "border-[--k-primary] text-[--k-primary]")}
+          className={cn("h-8 rounded-lg border bg-white px-2 text-[12px] font-medium text-[--k-text] outline-none transition", clientTypeFilter !== "all" ? "border-[--k-primary] text-[--k-primary]" : "border-[--k-border]")}
         >
           <option value="all">Client : Tous</option>
           <option value="Professionnel">Pro</option>
@@ -219,7 +218,7 @@ export default function EventsPlanning() {
         <div className="relative group">
           <button
             className={cn(
-              "flex items-center gap-1.5 h-8 rounded-lg border px-2 text-[12px] font-medium transition",
+              "flex items-center gap-1.5 h-8 rounded-lg border bg-white px-2 text-[12px] font-medium transition",
               borneFilters.length > 0 ? "border-[--k-primary] text-[--k-primary]" : "border-[--k-border] text-[--k-text]"
             )}
           >
@@ -244,7 +243,7 @@ export default function EventsPlanning() {
         <select
           value={animFilter}
           onChange={e => setAnimFilter(e.target.value)}
-          className={cn("h-8 rounded-lg border border-[--k-border] bg-white px-2 text-[12px] font-medium text-[--k-text] outline-none transition", animFilter !== "all" && "border-[--k-primary] text-[--k-primary]")}
+          className={cn("h-8 rounded-lg border bg-white px-2 text-[12px] font-medium text-[--k-text] outline-none transition", animFilter !== "all" ? "border-[--k-primary] text-[--k-primary]" : "border-[--k-border]")}
         >
           <option value="all">Animation : Toutes</option>
           {ANIMATION_TYPES.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
@@ -255,7 +254,7 @@ export default function EventsPlanning() {
           <button
             onClick={() => setVilleDropdownOpen(v => !v)}
             className={cn(
-              "flex items-center gap-1.5 h-8 rounded-lg border px-2 text-[12px] font-medium transition",
+              "flex items-center gap-1.5 h-8 rounded-lg border bg-white px-2 text-[12px] font-medium transition",
               villeFilter !== "all" ? "border-[--k-primary] text-[--k-primary]" : "border-[--k-border] text-[--k-text]"
             )}
           >
@@ -289,7 +288,7 @@ export default function EventsPlanning() {
         <select
           value={provenanceFilter}
           onChange={e => setProvenanceFilter(e.target.value)}
-          className={cn("h-8 rounded-lg border border-[--k-border] bg-white px-2 text-[12px] font-medium text-[--k-text] outline-none transition", provenanceFilter !== "all" && "border-[--k-primary] text-[--k-primary]")}
+          className={cn("h-8 rounded-lg border bg-white px-2 text-[12px] font-medium text-[--k-text] outline-none transition", provenanceFilter !== "all" ? "border-[--k-primary] text-[--k-primary]" : "border-[--k-border]")}
         >
           <option value="all">Provenance : Toutes</option>
           <option value="antenne">Antenne locale</option>
