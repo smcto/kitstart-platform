@@ -39,7 +39,7 @@ const BORNE = {
 };
 
 const TEAM = {
-  commercial: { name: "Seb Martin", initials: "SM", color: "bg-indigo-500", role: "Commercial", email: "seb@selfizee.com", phone: "+33 6 12 34 56 78" },
+  commercial: { name: "Seb Mahé", initials: "SM", color: "bg-indigo-500", role: "Commercial", email: "seb@selfizee.com", phone: "+33 6 12 34 56 78" },
   chef: { name: "Julie Martin", initials: "JM", color: "bg-pink-500", role: "Cheffe de projet", email: "julie@selfizee.com", phone: "+33 6 98 76 54 32" },
   tech: { name: "Lucas Dubois", initials: "LD", color: "bg-amber-500", role: "Technicien", email: "lucas@selfizee.com", phone: "+33 6 55 44 33 22" },
 };
@@ -88,7 +88,7 @@ const DERNIERS_EVENTS = [
 
 const COMMENTS = [
   {
-    id: 1, user: { name: "Seb Martin", initials: "SM", color: "bg-indigo-500" },
+    id: 1, user: { name: "Seb Mahé", initials: "SM", color: "bg-indigo-500" },
     date: "05/02/2026 14:30", text: "RAS, borne fonctionnelle après remplacement batterie. Client satisfait.",
     reactions: [{ emoji: "👍", count: 1 }], pinned: false,
   },

@@ -10,17 +10,17 @@ import {
 /* ── Mock data ────────────────────────────────────── */
 
 const EVENTS_DATA = [
-  { id: "EVT-287", name: "Salon du Mariage Paris", dateStart: 8, dateEnd: 10, clientType: "Professionnel", bornes: 12, borneTypes: ["Classik", "Prestige"], animationType: "photobooth", ville: "Paris", client: "Salon Expo SAS", status: "ready", provenance: "transporteur", code: "SM26" },
-  { id: "EVT-291", name: "Soirée L'Oréal", dateStart: 10, dateEnd: 10, clientType: "Professionnel", bornes: 4, borneTypes: ["Prestige"], animationType: "photobooth", ville: "Paris", client: "L'Oréal Group", status: "logistics", provenance: "transporteur", code: "LO26" },
-  { id: "EVT-294", name: "Mariage Dupont", dateStart: 14, dateEnd: 14, clientType: "Particulier", bornes: 2, borneTypes: ["Spherik"], animationType: "photobooth", ville: "Rennes", client: "Famille Dupont", status: "design", provenance: "antenne", code: "MD26" },
-  { id: "EVT-298", name: "Festival Nantes Digital", dateStart: 15, dateEnd: 17, clientType: "Professionnel", bornes: 8, borneTypes: ["Classik"], animationType: "mosaique", ville: "Nantes", client: "Nantes Métropole", status: "confirmed", provenance: "antenne", code: "FN26" },
-  { id: "EVT-302", name: "Team Building Airbus", dateStart: 18, dateEnd: 18, clientType: "Professionnel", bornes: 3, borneTypes: ["Classik"], animationType: "jeux", ville: "Toulouse", client: "Airbus SE", status: "design", provenance: "transporteur", code: "AB26" },
-  { id: "EVT-305", name: "Gala BMW Munich", dateStart: 20, dateEnd: 20, clientType: "Professionnel", bornes: 6, borneTypes: ["Prestige", "Spherik"], animationType: "photobooth", ville: "Munich", client: "BMW AG", status: "confirmed", provenance: "transporteur", code: "BM26" },
-  { id: "EVT-308", name: "Mariage Cohen", dateStart: 22, dateEnd: 22, clientType: "Particulier", bornes: 2, borneTypes: ["Spherik"], animationType: "diaporama", ville: "Lyon", client: "Famille Cohen", status: "confirmed", provenance: "antenne", code: "MC26" },
-  { id: "EVT-312", name: "Salon Auto Lyon", dateStart: 25, dateEnd: 27, clientType: "Professionnel", bornes: 10, borneTypes: ["Classik", "Spherik"], animationType: "photobooth", ville: "Lyon", client: "Lyon Auto Events", status: "confirmed", provenance: "transporteur", code: "SA26" },
-  { id: "EVT-315", name: "Anniversaire Nike", dateStart: 28, dateEnd: 28, clientType: "Professionnel", bornes: 5, borneTypes: ["Prestige"], animationType: "social", ville: "Paris", client: "Nike France", status: "confirmed", provenance: "antenne", code: "NK26" },
-  { id: "EVT-320", name: "Mariage Silva", dateStart: 1, dateEnd: 1, clientType: "Particulier", bornes: 1, borneTypes: ["Classik"], animationType: "photobooth", ville: "Bordeaux", client: "Famille Silva", status: "confirmed", provenance: "antenne", code: "MS26" },
-  { id: "EVT-322", name: "Séminaire Total", dateStart: 3, dateEnd: 4, clientType: "Professionnel", bornes: 3, borneTypes: ["Spherik"], animationType: "photobooth", ville: "Paris", client: "TotalEnergies", status: "confirmed", provenance: "transporteur", code: "ST26" },
+  { id: "EVT-287", name: "Salon du Mariage Paris", dateStart: 8, dateEnd: 10, clientType: "Professionnel", bornes: 12, borneTypes: ["Classik", "Prestige"], animationType: "photobooth", ville: "Paris", client: "Salon Expo SAS", status: "ready", provenance: "transporteur", code: "SM26", borneNums: ["B-0381", "B-0382", "B-0412", "B-0415", "B-0420", "B-0421", "B-0455", "B-0460", "B-0501", "B-0502", "B-0510", "B-0511"] },
+  { id: "EVT-291", name: "Soirée L'Oréal", dateStart: 10, dateEnd: 10, clientType: "Professionnel", bornes: 4, borneTypes: ["Prestige"], animationType: "photobooth", ville: "Paris", client: "L'Oréal Group", status: "logistics", provenance: "transporteur", code: "LO26", borneNums: ["B-0455", "B-0460"] },
+  { id: "EVT-294", name: "Mariage Dupont", dateStart: 14, dateEnd: 14, clientType: "Particulier", bornes: 2, borneTypes: ["Spherik"], animationType: "photobooth", ville: "Rennes", client: "Famille Dupont", status: "design", provenance: "antenne", code: "MD26", borneNums: [], antenne: { name: "Yann Le Goff", initials: "YG", color: "bg-teal-500" } },
+  { id: "EVT-298", name: "Festival Nantes Digital", dateStart: 15, dateEnd: 17, clientType: "Professionnel", bornes: 8, borneTypes: ["Classik"], animationType: "mosaique", ville: "Nantes", client: "Nantes Métropole", status: "confirmed", provenance: "antenne", code: "FN26", borneNums: ["B-0220", "B-0221", "B-0222", "B-0223"], antenne: { name: "Camille Moreau", initials: "CM", color: "bg-cyan-500" } },
+  { id: "EVT-302", name: "Team Building Airbus", dateStart: 18, dateEnd: 18, clientType: "Professionnel", bornes: 3, borneTypes: ["Classik"], animationType: "jeux", ville: "Toulouse", client: "Airbus SE", status: "design", provenance: "transporteur", code: "AB26", borneNums: [] },
+  { id: "EVT-305", name: "Gala BMW Munich", dateStart: 20, dateEnd: 20, clientType: "Professionnel", bornes: 6, borneTypes: ["Prestige", "Spherik"], animationType: "photobooth", ville: "Munich", client: "BMW AG", status: "confirmed", provenance: "transporteur", code: "BM26", borneNums: ["B-0455", "B-0460", "B-0501", "B-0502", "B-0510", "B-0511"] },
+  { id: "EVT-308", name: "Mariage Cohen", dateStart: 22, dateEnd: 22, clientType: "Particulier", bornes: 2, borneTypes: ["Spherik"], animationType: "diaporama", ville: "Lyon", client: "Famille Cohen", status: "confirmed", provenance: "antenne", code: "MC26", borneNums: ["B-0330", "B-0331"], antenne: { name: "Sophie Renard", initials: "SR", color: "bg-rose-500" } },
+  { id: "EVT-312", name: "Salon Auto Lyon", dateStart: 25, dateEnd: 27, clientType: "Professionnel", bornes: 10, borneTypes: ["Classik", "Spherik"], animationType: "photobooth", ville: "Lyon", client: "Lyon Auto Events", status: "confirmed", provenance: "transporteur", code: "SA26", borneNums: ["B-0330", "B-0331", "B-0332", "B-0333", "B-0381", "B-0382", "B-0412", "B-0415", "B-0420", "B-0421"] },
+  { id: "EVT-315", name: "Anniversaire Nike", dateStart: 28, dateEnd: 28, clientType: "Professionnel", bornes: 5, borneTypes: ["Prestige"], animationType: "social", ville: "Paris", client: "Nike France", status: "confirmed", provenance: "antenne", code: "NK26", borneNums: ["B-0455", "B-0460", "B-0501"], antenne: { name: "Yann Le Goff", initials: "YG", color: "bg-teal-500" } },
+  { id: "EVT-320", name: "Mariage Silva", dateStart: 1, dateEnd: 1, clientType: "Particulier", bornes: 1, borneTypes: ["Classik"], animationType: "photobooth", ville: "Bordeaux", client: "Famille Silva", status: "confirmed", provenance: "antenne", code: "MS26", borneNums: ["B-0120"], antenne: { name: "Lucas Petit", initials: "LP", color: "bg-orange-500" } },
+  { id: "EVT-322", name: "Séminaire Total", dateStart: 3, dateEnd: 4, clientType: "Professionnel", bornes: 3, borneTypes: ["Spherik"], animationType: "photobooth", ville: "Paris", client: "TotalEnergies", status: "confirmed", provenance: "transporteur", code: "ST26", borneNums: ["B-0510", "B-0511", "B-0512"] },
 ];
 
 const BORNE_TYPES = ["Classik", "Spherik", "Prestige"];
@@ -154,7 +154,7 @@ export default function EventsPlanning() {
         }
       />
 
-      {/* Toolbar — Line 1: period nav + today + view toggle */}
+      {/* Toolbar — Line 1: period nav + view toggle (with Aujourd'hui) */}
       <div className="mb-2 flex items-center gap-2">
         {/* Period nav */}
         <div className="flex items-center gap-1 rounded-lg border border-[--k-border] bg-white">
@@ -177,38 +177,37 @@ export default function EventsPlanning() {
 
         <div className="flex-1" />
 
-        <button
-          onClick={() => { if (view === "week") setWeekStart(Math.max(1, TODAY - ((TODAY - 1 + FIRST_DAY_OFFSET) % 7))); }}
-          className="h-8 rounded-lg border border-[--k-border] bg-white px-3 text-[12px] font-medium text-[--k-muted] hover:bg-[--k-surface-2] transition"
-        >
-          Aujourd'hui
-        </button>
-
-        {/* View toggle */}
-        <div className="flex gap-1 rounded-lg bg-[--k-surface-2] p-0.5">
+        {/* View toggle: Mois / Semaine / Aujourd'hui */}
+        <div className="flex gap-1 rounded-lg border border-[--k-border] bg-white p-0.5">
           {[{ key: "month", label: "Mois" }, { key: "week", label: "Semaine" }].map(v => (
             <button
               key={v.key}
               className={cn(
                 "rounded-md px-2.5 py-1.5 text-[11px] font-medium transition",
-                view === v.key ? "bg-white text-[--k-text] shadow-sm" : "text-[--k-muted] hover:text-[--k-text]"
+                view === v.key ? "bg-[--k-primary] text-white shadow-sm" : "text-[--k-muted] hover:text-[--k-text] hover:bg-[--k-surface-2]"
               )}
               onClick={() => setView(v.key)}
             >
               {v.label}
             </button>
           ))}
+          <button
+            onClick={() => { if (view === "week") setWeekStart(Math.max(1, TODAY - ((TODAY - 1 + FIRST_DAY_OFFSET) % 7))); }}
+            className="rounded-md px-2.5 py-1.5 text-[11px] font-medium text-[--k-muted] hover:text-[--k-text] hover:bg-[--k-surface-2] transition"
+          >
+            Aujourd'hui
+          </button>
         </div>
       </div>
 
-      {/* Toolbar — Line 2: filters */}
-      <div className="mb-4 flex flex-wrap items-center gap-2">
+      {/* Toolbar — Line 2: filters (right-aligned) */}
+      <div className="mb-4 flex flex-wrap items-center justify-end gap-2">
         <Filter className="h-3.5 w-3.5 text-[--k-muted]" />
 
         <select
           value={clientTypeFilter}
           onChange={e => setClientTypeFilter(e.target.value)}
-          className={cn("h-8 rounded-lg border border-[--k-border] bg-white px-2 text-[12px] font-medium text-[--k-text] outline-none transition", clientTypeFilter !== "all" && "border-[--k-primary] text-[--k-primary]")}
+          className={cn("h-8 rounded-lg border bg-white px-2 text-[12px] font-medium text-[--k-text] outline-none transition", clientTypeFilter !== "all" ? "border-[--k-primary] text-[--k-primary]" : "border-[--k-border]")}
         >
           <option value="all">Client : Tous</option>
           <option value="Professionnel">Pro</option>
@@ -219,7 +218,7 @@ export default function EventsPlanning() {
         <div className="relative group">
           <button
             className={cn(
-              "flex items-center gap-1.5 h-8 rounded-lg border px-2 text-[12px] font-medium transition",
+              "flex items-center gap-1.5 h-8 rounded-lg border bg-white px-2 text-[12px] font-medium transition",
               borneFilters.length > 0 ? "border-[--k-primary] text-[--k-primary]" : "border-[--k-border] text-[--k-text]"
             )}
           >
@@ -244,7 +243,7 @@ export default function EventsPlanning() {
         <select
           value={animFilter}
           onChange={e => setAnimFilter(e.target.value)}
-          className={cn("h-8 rounded-lg border border-[--k-border] bg-white px-2 text-[12px] font-medium text-[--k-text] outline-none transition", animFilter !== "all" && "border-[--k-primary] text-[--k-primary]")}
+          className={cn("h-8 rounded-lg border bg-white px-2 text-[12px] font-medium text-[--k-text] outline-none transition", animFilter !== "all" ? "border-[--k-primary] text-[--k-primary]" : "border-[--k-border]")}
         >
           <option value="all">Animation : Toutes</option>
           {ANIMATION_TYPES.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
@@ -255,7 +254,7 @@ export default function EventsPlanning() {
           <button
             onClick={() => setVilleDropdownOpen(v => !v)}
             className={cn(
-              "flex items-center gap-1.5 h-8 rounded-lg border px-2 text-[12px] font-medium transition",
+              "flex items-center gap-1.5 h-8 rounded-lg border bg-white px-2 text-[12px] font-medium transition",
               villeFilter !== "all" ? "border-[--k-primary] text-[--k-primary]" : "border-[--k-border] text-[--k-text]"
             )}
           >
@@ -289,7 +288,7 @@ export default function EventsPlanning() {
         <select
           value={provenanceFilter}
           onChange={e => setProvenanceFilter(e.target.value)}
-          className={cn("h-8 rounded-lg border border-[--k-border] bg-white px-2 text-[12px] font-medium text-[--k-text] outline-none transition", provenanceFilter !== "all" && "border-[--k-primary] text-[--k-primary]")}
+          className={cn("h-8 rounded-lg border bg-white px-2 text-[12px] font-medium text-[--k-text] outline-none transition", provenanceFilter !== "all" ? "border-[--k-primary] text-[--k-primary]" : "border-[--k-border]")}
         >
           <option value="all">Provenance : Toutes</option>
           <option value="antenne">Antenne locale</option>
@@ -438,6 +437,25 @@ export default function EventsPlanning() {
                         <div className="text-[12px] font-medium text-[--k-text] truncate">{evt.name}</div>
                         <div className="text-[11px] text-[--k-muted]">{evt.client}</div>
                       </div>
+                      {/* Borne nums */}
+                      <div className="shrink-0 flex items-center gap-1 max-w-[180px]">
+                        {evt.borneNums && evt.borneNums.length > 0 ? (
+                          <>
+                            <Monitor className="h-3 w-3 text-[--k-muted] shrink-0" />
+                            <span className="text-[10px] font-mono text-[--k-muted] truncate" title={evt.borneNums.join(", ")}>
+                              {evt.borneNums.length <= 3 ? evt.borneNums.join(", ") : `${evt.borneNums.slice(0, 2).join(", ")} +${evt.borneNums.length - 2}`}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-[10px] italic text-[--k-muted]/60">Non affecté</span>
+                        )}
+                      </div>
+                      {/* Antenne avatar */}
+                      {evt.antenne && (
+                        <span className={cn("flex h-5 w-5 items-center justify-center rounded-full text-[8px] font-bold text-white shrink-0", evt.antenne.color)} title={`Antenne : ${evt.antenne.name}`}>
+                          {evt.antenne.initials}
+                        </span>
+                      )}
                       <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-semibold shrink-0", tc.bg, tc.text)}>{evt.clientType === "Professionnel" ? "Pro" : "Part."}</span>
                       <span className="text-[12px] font-semibold text-[--k-text] shrink-0 w-16 text-right">
                         {evt.dateStart === evt.dateEnd ? `${evt.dateStart} fév` : `${evt.dateStart}–${evt.dateEnd} fév`}

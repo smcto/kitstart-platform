@@ -48,7 +48,7 @@ const CLIENT = {
 };
 
 const TEAM = {
-  commercial: { name: "Seb Martin", initials: "SM", color: "bg-indigo-500", role: "Commercial" },
+  commercial: { name: "Seb Mahé", initials: "SM", color: "bg-indigo-500", role: "Commercial" },
   chef: { name: "Thomas Lefebvre", initials: "TL", color: "bg-emerald-500", role: "Chef de projet" },
   tech: { name: "Lucas Faure", initials: "LF", color: "bg-amber-500", role: "Technicien terrain" },
 };
@@ -103,7 +103,7 @@ const CHECKLIST = [
 
 const COMMENTS = [
   {
-    id: 1, user: { name: "Seb Martin", initials: "SM", color: "bg-indigo-500" },
+    id: 1, user: { name: "Seb Mahé", initials: "SM", color: "bg-indigo-500" },
     date: "07/02/2026 09:42", text: "Briefing client finalisé avec Marie. Elle veut un rendu très élégant, couleurs dorées. RAS côté logistique, les bornes sont prêtes.",
     reactions: [{ emoji: "👍", count: 2 }], pinned: true,
   },
@@ -123,7 +123,7 @@ const COMMENTS = [
     reactions: [{ emoji: "🎉", count: 3 }, { emoji: "👍", count: 1 }], pinned: false,
   },
   {
-    id: 5, user: { name: "Seb Martin", initials: "SM", color: "bg-indigo-500" },
+    id: 5, user: { name: "Seb Mahé", initials: "SM", color: "bg-indigo-500" },
     date: "01/02/2026 10:00", text: "12 bornes affectées : 8 Antenne IDF + 4 expéditions (2 UPS entrepôt + 2 TNT Bretagne). Planning logistique validé.",
     reactions: [], pinned: false,
   },
@@ -135,14 +135,14 @@ const COMMENTS = [
 ];
 
 const ACTIVITY_LOG = [
-  { date: "07/02/2026 09:42", action: "Commentaire ajouté", user: "Seb Martin", type: "comment" },
+  { date: "07/02/2026 09:42", action: "Commentaire ajouté", user: "Seb Mahé", type: "comment" },
   { date: "07/02/2026 09:15", action: "Test impression validé", user: "Lucas Faure", type: "check" },
   { date: "06/02/2026 17:30", action: "Commentaire ajouté", user: "Lucas Faure", type: "comment" },
   { date: "05/02/2026 14:20", action: "Création graphique validée ✓", user: "Léa Martin", type: "check" },
-  { date: "01/02/2026 10:00", action: "12 bornes affectées", user: "Seb Martin", type: "logistics" },
+  { date: "01/02/2026 10:00", action: "12 bornes affectées", user: "Seb Mahé", type: "logistics" },
   { date: "22/01/2026 11:45", action: "Maquettes envoyées au client", user: "Léa Martin", type: "design" },
   { date: "10/01/2026 09:30", action: "Briefing client complété", user: "Thomas Lefebvre", type: "briefing" },
-  { date: "15/12/2025 14:00", action: "Événement créé", user: "Seb Martin", type: "create" },
+  { date: "15/12/2025 14:00", action: "Événement créé", user: "Seb Mahé", type: "create" },
 ];
 
 const STATUS_MAP = {

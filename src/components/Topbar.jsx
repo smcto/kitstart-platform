@@ -217,7 +217,7 @@ export function Topbar({
               <div className="fixed inset-0 z-30" onClick={() => setAccountOpen(false)} />
               <div className="absolute right-0 z-40 mt-2 w-[240px] rounded-2xl border border-[--k-border] bg-white/95 backdrop-blur-lg shadow-xl shadow-black/8 py-1">
                 <div className="px-3 py-2.5 border-b border-[--k-border]">
-                  <div className="text-[13px] font-semibold text-[--k-text]">Seb Martin</div>
+                  <div className="text-[13px] font-semibold text-[--k-text]">Seb Mahé</div>
                   <div className="text-xs text-[--k-muted]">seb@konitys.com</div>
                 </div>
                 <div className="py-1">
