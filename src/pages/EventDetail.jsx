@@ -161,6 +161,15 @@ const BORNE_STATUS = {
   onsite: { label: "Sur site", color: "bg-blue-50 text-blue-600" },
 };
 
+const PHASES = [
+  { key: "briefing", label: "Briefing", checks: ["briefing"] },
+  { key: "crea", label: "Créa", checks: ["design"] },
+  { key: "config", label: "Config", checks: ["test"] },
+  { key: "logistique", label: "Logistique", checks: ["bornes", "logistics", "shipping"] },
+  { key: "event", label: "Événement", checks: ["installation", "event"] },
+  { key: "cloture", label: "Clôture", checks: ["retour"] },
+];
+
 /* ── Page ──────────────────────────────────────────── */
 
 export default function EventDetail() {
@@ -252,7 +261,7 @@ export default function EventDetail() {
               </div>
               {/* Actions */}
               <div className="flex gap-2">
-                <a href={`/events/${EVENT.id}/edit`} className="flex h-8 items-center gap-1.5 rounded-lg border border-[--k-border] bg-white px-3 text-[12px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition shadow-sm">
+                <a href="/events/create" className="flex h-8 items-center gap-1.5 rounded-lg border border-[--k-border] bg-white px-3 text-[12px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition shadow-sm">
                   <Edit className="h-3.5 w-3.5" /> Modifier
                 </a>
                 <button className="flex h-8 items-center gap-1.5 rounded-lg border border-[--k-border] bg-white px-3 text-[12px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition shadow-sm">
@@ -262,9 +271,49 @@ export default function EventDetail() {
             </div>
           </div>
 
-          {/* Progress bar Monday-style */}
-          <div className="mt-4 flex items-center gap-3">
-            <div className="flex-1 h-2 rounded-full bg-slate-100 overflow-hidden">
+          {/* Objectifs & Tags */}
+          <div className="mt-3 flex flex-wrap items-center gap-1.5">
+            {EVENT.objectifs.map(o => (
+              <span key={o} className="rounded-md bg-amber-50 border border-amber-200/60 px-2 py-0.5 text-[10px] font-semibold text-amber-700">{o}</span>
+            ))}
+            {EVENT.tags.map(t => (
+              <span key={t} className="rounded-md bg-slate-100 border border-slate-200/60 px-2 py-0.5 text-[10px] font-semibold text-slate-600">{t}</span>
+            ))}
+          </div>
+
+          {/* Phase status indicators */}
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            {PHASES.map(phase => {
+              const allDone = phase.checks.every(ck => CHECKLIST.find(c => c.key === ck)?.done);
+              const someDone = phase.checks.some(ck => CHECKLIST.find(c => c.key === ck)?.done);
+              return (
+                <div
+                  key={phase.key}
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11px] font-semibold border transition",
+                    allDone
+                      ? "bg-emerald-50 border-emerald-200 text-emerald-700"
+                      : someDone
+                        ? "bg-amber-50 border-amber-200 text-amber-700"
+                        : "bg-slate-50 border-slate-200 text-slate-400"
+                  )}
+                >
+                  {allDone ? (
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                  ) : someDone ? (
+                    <Clock className="h-3.5 w-3.5 text-amber-500" />
+                  ) : (
+                    <Circle className="h-3.5 w-3.5 text-slate-300" />
+                  )}
+                  {phase.label}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Progress bar */}
+          <div className="mt-3 flex items-center gap-3">
+            <div className="flex-1 h-1.5 rounded-full bg-slate-100 overflow-hidden">
               <div className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all" style={{ width: `${progress}%` }} />
             </div>
             <span className="text-[11px] font-semibold text-emerald-600 tabular-nums whitespace-nowrap">{progress}%</span>
@@ -452,26 +501,6 @@ export default function EventDetail() {
                 </Card>
               </div>
 
-              {/* Objectifs & Tags */}
-              <Card title="Objectifs & Tags" icon={FileText} accent="amber">
-                <div className="mb-2">
-                  <div className="text-[11px] font-medium text-[--k-muted] mb-1.5">Objectifs client</div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {EVENT.objectifs.map(o => (
-                      <span key={o} className="rounded-md bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700">{o}</span>
-                    ))}
-                  </div>
-                </div>
-                <div className="border-t border-[--k-border] pt-2">
-                  <div className="text-[11px] font-medium text-[--k-muted] mb-1.5">Tags internes</div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {EVENT.tags.map(t => (
-                      <span key={t} className="rounded-md bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-600">{t}</span>
-                    ))}
-                  </div>
-                </div>
-              </Card>
-
               {/* Briefing créatif */}
               <Card title="Briefing créatif" icon={Palette} accent="pink">
                 <InfoRow label="Marque" value={BRIEFING.marque} />
@@ -586,29 +615,6 @@ export default function EventDetail() {
 
         {/* ── Right sidebar ── */}
         <div className="space-y-5">
-
-          {/* Équipe projet — Monday-style */}
-          <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
-            <div className="border-b border-[--k-border] px-4 py-3">
-              <span className="text-[13px] font-semibold text-[--k-text]">Équipe projet</span>
-            </div>
-            <div className="p-4 space-y-3">
-              {Object.entries(TEAM).map(([key, member]) => (
-                <div key={key} className="flex items-center gap-3">
-                  <div className={cn("flex h-8 w-8 items-center justify-center rounded-full text-[10px] font-bold text-white", member.color)}>
-                    {member.initials}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="text-[12px] font-medium text-[--k-text]">{member.name}</div>
-                    <div className="text-[10px] text-[--k-muted]">{member.role}</div>
-                  </div>
-                  <a href={`tel:`} className="flex h-6 w-6 items-center justify-center rounded-md text-[--k-muted] hover:bg-[--k-surface-2] hover:text-[--k-primary] transition">
-                    <Phone className="h-3 w-3" />
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
 
           {/* Checklist */}
           <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
