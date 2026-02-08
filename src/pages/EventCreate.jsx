@@ -6,7 +6,7 @@ import {
   Bold, Italic, Underline, Strikethrough, List, ListOrdered,
   Link2, Type, Check, ChevronRight, ChevronLeft,
   Camera, Monitor, LayoutGrid, Gamepad2, Share2, Sparkles,
-  ExternalLink, Eye, Info
+  ExternalLink, Eye, Info, CalendarDays
 } from "lucide-react";
 
 /* ── Data ────────────────────────────────────── */
@@ -1876,9 +1876,12 @@ export default function EventCreate() {
         {currentStep === 5 && (
           <div className="space-y-5">
             {/* Rappel des dates */}
-            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
-              <div className="px-5 py-4">
-                <p className="text-[15px] font-medium text-[--k-text]">
+            <div className="rounded-2xl border border-blue-200 bg-blue-50/60 shadow-sm">
+              <div className="flex items-center gap-3 px-5 py-4">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
+                  <CalendarDays className="h-4 w-4" />
+                </span>
+                <p className="text-[14px] font-semibold text-blue-900">
                   Rappel des dates de l'événement : {form.dateAnimation
                     ? `le ${new Date(form.dateAnimation).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "short", year: "numeric" })}`
                     : "le Dimanche 15 Fev 2026"}
