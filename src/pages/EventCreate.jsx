@@ -98,7 +98,6 @@ const MOCK_CONTACTS = [
 ];
 
 const MODALITES_FACTURATION = [
-  { id: "email", label: "Envoi par email" },
   { id: "chorus", label: "Chorus Pro (collectivité / établissement public)" },
   { id: "courrier", label: "Envoi par courrier" },
   { id: "plateforme", label: "Plateforme client (Coupa, Ariba, Ivalua...)" },
@@ -470,7 +469,7 @@ export default function EventCreate() {
                 <h2 className="text-[16px] font-bold text-[--k-text]">Client</h2>
               </div>
               <div className="p-5">
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className={cn("grid gap-4", form.clientType !== "Particulier" ? "sm:grid-cols-3" : "sm:grid-cols-2")}>
                   <Field label="Type Client" required>
                     <select value={form.clientType} onChange={e => update("clientType", e.target.value)} className="input-field">
                       {CLIENT_TYPES.map(t => <option key={t}>{t}</option>)}
@@ -522,7 +521,7 @@ export default function EventCreate() {
                   </Field>
 
                   {form.clientType !== "Particulier" && (
-                    <Field label="Groupe de client">
+                    <Field label="Groupe">
                       <select value={form.clientGroup} onChange={e => update("clientGroup", e.target.value)} className="input-field">
                         <option value="">Séléctionner</option>
                         {CLIENT_GROUPS.map(g => <option key={g}>{g}</option>)}
@@ -530,64 +529,82 @@ export default function EventCreate() {
                     </Field>
                   )}
 
-                  {form.clientType !== "Particulier" && (
-                    <div className="sm:col-span-2 grid gap-4 sm:grid-cols-2">
-                      <Field label="Raison sociale" required>
-                        <input value={form.raisonSociale} onChange={e => update("raisonSociale", e.target.value)} className="input-field" />
+                </div>
+
+                {/* Two-column layout: left = infos, right = adresse + map */}
+                <div className="mt-4 flex gap-5">
+                  {/* Left: coordonnées */}
+                  <div className="flex-1 min-w-0 space-y-4">
+                    {form.clientType !== "Particulier" && (
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <Field label="Raison sociale" required>
+                          <input value={form.raisonSociale} onChange={e => update("raisonSociale", e.target.value)} className="input-field" />
+                        </Field>
+                        <Field label="Enseigne">
+                          <input value={form.enseigne} onChange={e => update("enseigne", e.target.value)} className="input-field" />
+                        </Field>
+                      </div>
+                    )}
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <Field label={form.clientType === "Particulier" ? "Téléphone" : "Tél entreprise"}>
+                        <input value={form.telEntreprise} onChange={e => update("telEntreprise", e.target.value)} className="input-field" />
                       </Field>
-                      <Field label="Enseigne">
-                        <input value={form.enseigne} onChange={e => update("enseigne", e.target.value)} className="input-field" />
+                      <Field label="2ème Téléphone">
+                        <input value={form.tel2} onChange={e => update("tel2", e.target.value)} className="input-field" />
+                      </Field>
+                      <Field label="Email général">
+                        <input type="email" value={form.emailGeneral} onChange={e => update("emailGeneral", e.target.value)} className="input-field" />
                       </Field>
                     </div>
-                  )}
+                  </div>
 
-                  <Field label="Adresse" span={1}>
-                    <input value={form.adresse} onChange={e => update("adresse", e.target.value)} placeholder="Indiquez un lieu" className="input-field" />
-                  </Field>
-                  <Field label="Adresse complémentaire">
-                    <input value={form.adresseComp} onChange={e => update("adresseComp", e.target.value)} className="input-field" />
-                  </Field>
-
-                  <Field label="Code postal">
-                    <input value={form.codePostal} onChange={e => update("codePostal", e.target.value)} className="input-field" />
-                  </Field>
-                  <Field label="Ville">
-                    <div className="flex items-center gap-3">
-                      <label className="flex items-center gap-1.5 text-[12px] text-[--k-muted] cursor-pointer whitespace-nowrap">
-                        <input
-                          type="checkbox"
-                          checked={villeManuelle}
-                          onChange={() => setVilleManuelle(!villeManuelle)}
-                          className="rounded border-[--k-border]"
-                        />
-                        Saisir manuellement
-                      </label>
-                      {villeManuelle ? (
-                        <input value={form.ville} onChange={e => update("ville", e.target.value)} className="input-field flex-1" />
-                      ) : (
-                        <select value={form.ville} onChange={e => update("ville", e.target.value)} className="input-field flex-1">
-                          <option value="">Sélectionner par rapport au code postal</option>
-                          {form.codePostal && form.ville && <option value={form.ville}>{form.ville}</option>}
+                  {/* Right: adresse + mini map */}
+                  <div className="flex-1 min-w-0 space-y-3">
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <Field label="Adresse">
+                        <input value={form.adresse} onChange={e => update("adresse", e.target.value)} placeholder="Indiquez un lieu" className="input-field" />
+                      </Field>
+                      <Field label="Adresse complémentaire">
+                        <input value={form.adresseComp} onChange={e => update("adresseComp", e.target.value)} className="input-field" />
+                      </Field>
+                      <Field label="Code postal">
+                        <input value={form.codePostal} onChange={e => update("codePostal", e.target.value)} className="input-field" />
+                      </Field>
+                      <Field label="Ville">
+                        <div className="flex items-center gap-3">
+                          <label className="flex items-center gap-1.5 text-[12px] text-[--k-muted] cursor-pointer whitespace-nowrap">
+                            <input
+                              type="checkbox"
+                              checked={villeManuelle}
+                              onChange={() => setVilleManuelle(!villeManuelle)}
+                              className="rounded border-[--k-border]"
+                            />
+                            Manuel
+                          </label>
+                          {villeManuelle ? (
+                            <input value={form.ville} onChange={e => update("ville", e.target.value)} className="input-field flex-1" />
+                          ) : (
+                            <select value={form.ville} onChange={e => update("ville", e.target.value)} className="input-field flex-1">
+                              <option value="">Selon CP</option>
+                              {form.codePostal && form.ville && <option value={form.ville}>{form.ville}</option>}
+                            </select>
+                          )}
+                        </div>
+                      </Field>
+                      <Field label="Pays">
+                        <select value={form.pays} onChange={e => update("pays", e.target.value)} className="input-field">
+                          {PAYS.map(p => <option key={p}>{p}</option>)}
                         </select>
-                      )}
+                      </Field>
                     </div>
-                  </Field>
-
-                  <Field label="Pays">
-                    <select value={form.pays} onChange={e => update("pays", e.target.value)} className="input-field">
-                      {PAYS.map(p => <option key={p}>{p}</option>)}
-                    </select>
-                  </Field>
-                  <Field label={form.clientType === "Particulier" ? "Téléphone" : "Tél entreprise"}>
-                    <input value={form.telEntreprise} onChange={e => update("telEntreprise", e.target.value)} className="input-field" />
-                  </Field>
-
-                  <Field label="2ème Téléphone">
-                    <input value={form.tel2} onChange={e => update("tel2", e.target.value)} className="input-field" />
-                  </Field>
-                  <Field label="Email général">
-                    <input type="email" value={form.emailGeneral} onChange={e => update("emailGeneral", e.target.value)} className="input-field" />
-                  </Field>
+                    {/* Mini map placeholder */}
+                    <div className="h-[100px] rounded-lg bg-blue-50 relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-b from-blue-100/60 to-blue-200/40" />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <MapPin className="h-5 w-5 text-red-400" />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -745,55 +762,76 @@ export default function EventCreate() {
                   )}
                 </Field>
 
-                {/* Modalité de dépôt */}
-                <Field label="Modalité de dépôt des factures" required>
-                  <select value={form.modaliteFacturation} onChange={e => update("modaliteFacturation", e.target.value)} className="input-field">
-                    <option value="">Séléctionner</option>
-                    {MODALITES_FACTURATION.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
-                  </select>
-                </Field>
-
-                {/* Chorus-specific fields */}
-                {form.modaliteFacturation === "chorus" && (
-                  <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 space-y-3">
-                    <p className="text-[12px] font-semibold text-blue-800">Informations Chorus Pro</p>
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <Field label="N° SIRET">
-                        <input value={form.refFacturation} onChange={e => update("refFacturation", e.target.value)} placeholder="Ex: 123 456 789 00012" className="input-field" />
-                      </Field>
-                      <Field label="Code service (si applicable)">
-                        <input value={form.infoFacturation} onChange={e => update("infoFacturation", e.target.value)} placeholder="Ex: COMPTA-01" className="input-field" />
-                      </Field>
+                {/* Modalité de dépôt — par défaut = envoi par email, masqué */}
+                <div className="rounded-lg border border-[--k-border] bg-[--k-surface-2]/30 px-4 py-3">
+                  <label className="flex items-center gap-2.5 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={form.modaliteFacturation !== "" && form.modaliteFacturation !== "email"}
+                      onChange={e => {
+                        if (!e.target.checked) { update("modaliteFacturation", ""); update("refFacturation", ""); update("infoFacturation", ""); }
+                        else { update("modaliteFacturation", "chorus"); }
+                      }}
+                      className="h-4 w-4 rounded border-[--k-border] text-[--k-primary] accent-[--k-primary]"
+                    />
+                    <div>
+                      <span className="text-[12px] font-medium text-[--k-text]">Conditions particulières de facturation</span>
+                      <span className="text-[11px] text-[--k-muted] ml-1.5">(par défaut : envoi par email)</span>
                     </div>
-                  </div>
-                )}
+                  </label>
 
-                {/* Plateforme-specific fields */}
-                {form.modaliteFacturation === "plateforme" && (
-                  <div className="rounded-lg border border-purple-200 bg-purple-50 p-4 space-y-3">
-                    <p className="text-[12px] font-semibold text-purple-800">Informations plateforme</p>
-                    <Field label="Nom de la plateforme / URL">
-                      <input value={form.refFacturation} onChange={e => update("refFacturation", e.target.value)} placeholder="Ex: Coupa, https://..." className="input-field" />
-                    </Field>
-                  </div>
-                )}
+                  {form.modaliteFacturation !== "" && form.modaliteFacturation !== "email" && (
+                    <div className="mt-3 space-y-3">
+                      <Field label="Type de dépôt">
+                        <select value={form.modaliteFacturation} onChange={e => update("modaliteFacturation", e.target.value)} className="input-field">
+                          {MODALITES_FACTURATION.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
+                        </select>
+                      </Field>
 
-                {/* Portail-specific fields */}
-                {form.modaliteFacturation === "portail" && (
-                  <div className="rounded-lg border border-purple-200 bg-purple-50 p-4 space-y-3">
-                    <p className="text-[12px] font-semibold text-purple-800">Informations portail fournisseur</p>
-                    <Field label="URL / identifiants du portail">
-                      <input value={form.refFacturation} onChange={e => update("refFacturation", e.target.value)} placeholder="Ex: https://portail.client.fr" className="input-field" />
-                    </Field>
-                  </div>
-                )}
+                      {/* Chorus-specific fields */}
+                      {form.modaliteFacturation === "chorus" && (
+                        <div className="rounded-lg border border-blue-200 bg-blue-50 p-3 space-y-3">
+                          <p className="text-[12px] font-semibold text-blue-800">Informations Chorus Pro</p>
+                          <div className="grid gap-3 sm:grid-cols-2">
+                            <Field label="N° SIRET">
+                              <input value={form.refFacturation} onChange={e => update("refFacturation", e.target.value)} placeholder="Ex: 123 456 789 00012" className="input-field" />
+                            </Field>
+                            <Field label="Code service (si applicable)">
+                              <input value={form.infoFacturation} onChange={e => update("infoFacturation", e.target.value)} placeholder="Ex: COMPTA-01" className="input-field" />
+                            </Field>
+                          </div>
+                        </div>
+                      )}
 
-                {/* Autre */}
-                {form.modaliteFacturation === "autre" && (
-                  <Field label="Précisez">
-                    <input value={form.refFacturation} onChange={e => update("refFacturation", e.target.value)} placeholder="Modalité de dépôt..." className="input-field" />
-                  </Field>
-                )}
+                      {/* Plateforme-specific fields */}
+                      {form.modaliteFacturation === "plateforme" && (
+                        <div className="rounded-lg border border-purple-200 bg-purple-50 p-3 space-y-3">
+                          <p className="text-[12px] font-semibold text-purple-800">Informations plateforme</p>
+                          <Field label="Nom de la plateforme / URL">
+                            <input value={form.refFacturation} onChange={e => update("refFacturation", e.target.value)} placeholder="Ex: Coupa, https://..." className="input-field" />
+                          </Field>
+                        </div>
+                      )}
+
+                      {/* Portail-specific fields */}
+                      {form.modaliteFacturation === "portail" && (
+                        <div className="rounded-lg border border-purple-200 bg-purple-50 p-3 space-y-3">
+                          <p className="text-[12px] font-semibold text-purple-800">Informations portail fournisseur</p>
+                          <Field label="URL / identifiants du portail">
+                            <input value={form.refFacturation} onChange={e => update("refFacturation", e.target.value)} placeholder="Ex: https://portail.client.fr" className="input-field" />
+                          </Field>
+                        </div>
+                      )}
+
+                      {/* Autre */}
+                      {form.modaliteFacturation === "autre" && (
+                        <Field label="Précisez">
+                          <input value={form.refFacturation} onChange={e => update("refFacturation", e.target.value)} placeholder="Modalité de dépôt..." className="input-field" />
+                        </Field>
+                      )}
+                    </div>
+                  )}
+                </div>
 
                 {/* Note facturation collapsible */}
                 <CollapsibleComment
