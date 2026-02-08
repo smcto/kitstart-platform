@@ -303,7 +303,7 @@ export default function EventCreate() {
     // Step 5 - Logistique aller
     typeInstallation: "",
     jourAller: "",
-    heureAllerMode: "precise",
+    heureAllerMode: "aDefinir",
     heureAller: "",
     heureAllerDebut: "",
     heureAllerFin: "",
@@ -312,7 +312,7 @@ export default function EventCreate() {
     // Step 5 - Logistique retour
     typeRetour: "",
     jourRetour: "",
-    heureRetourMode: "precise",
+    heureRetourMode: "aDefinir",
     heureRetour: "",
     heureRetourDebut: "",
     heureRetourFin: "",
@@ -1864,10 +1864,10 @@ export default function EventCreate() {
               </div>
             </div>
 
-            {/* Pièces jointe */}
+            {/* Pièce(s) jointe(s) */}
             <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
               <div className="border-b border-[--k-border] px-5 py-3">
-                <h2 className="text-[16px] font-bold text-[--k-text]">Pièces jointe</h2>
+                <h2 className="text-[16px] font-bold text-[--k-text]">Pièce(s) jointe(s)</h2>
               </div>
               <div className="p-5">
                 <div className="flex items-center justify-center rounded-lg border-2 border-dashed border-[--k-border] bg-[--k-surface-2]/30 py-12 cursor-pointer hover:border-[--k-primary] hover:bg-[--k-primary-2]/20 transition">
@@ -1929,6 +1929,10 @@ export default function EventCreate() {
                       </Field>
                       <div className="flex items-center gap-3">
                         <label className="flex items-center gap-1.5 text-[12px] text-[--k-text] cursor-pointer">
+                          <input type="radio" name="heureAllerMode" checked={form.heureAllerMode === "aDefinir"} onChange={() => update("heureAllerMode", "aDefinir")} className="accent-[--k-primary]" />
+                          À définir
+                        </label>
+                        <label className="flex items-center gap-1.5 text-[12px] text-[--k-text] cursor-pointer">
                           <input type="radio" name="heureAllerMode" checked={form.heureAllerMode === "precise"} onChange={() => update("heureAllerMode", "precise")} className="accent-[--k-primary]" />
                           Heure précise
                         </label>
@@ -1937,11 +1941,12 @@ export default function EventCreate() {
                           Tranche horaire
                         </label>
                       </div>
-                      {form.heureAllerMode === "precise" ? (
+                      {form.heureAllerMode === "precise" && (
                         <Field label={form.typeInstallation === "Pick-up" ? "Heure de retrait" : "Heure de livraison"}>
                           <input type="time" value={form.heureAller} onChange={e => update("heureAller", e.target.value)} className="input-field" />
                         </Field>
-                      ) : (
+                      )}
+                      {form.heureAllerMode === "tranche" && (
                         <div className="grid gap-3 grid-cols-2">
                           <Field label="Début">
                             <input type="time" value={form.heureAllerDebut} onChange={e => update("heureAllerDebut", e.target.value)} className="input-field" />
@@ -1994,6 +1999,10 @@ export default function EventCreate() {
                       </Field>
                       <div className="flex items-center gap-3">
                         <label className="flex items-center gap-1.5 text-[12px] text-[--k-text] cursor-pointer">
+                          <input type="radio" name="heureRetourMode" checked={form.heureRetourMode === "aDefinir"} onChange={() => update("heureRetourMode", "aDefinir")} className="accent-[--k-primary]" />
+                          À définir
+                        </label>
+                        <label className="flex items-center gap-1.5 text-[12px] text-[--k-text] cursor-pointer">
                           <input type="radio" name="heureRetourMode" checked={form.heureRetourMode === "precise"} onChange={() => update("heureRetourMode", "precise")} className="accent-[--k-primary]" />
                           Heure précise
                         </label>
@@ -2002,11 +2011,12 @@ export default function EventCreate() {
                           Tranche horaire
                         </label>
                       </div>
-                      {form.heureRetourMode === "precise" ? (
+                      {form.heureRetourMode === "precise" && (
                         <Field label="Heure retour">
                           <input type="time" value={form.heureRetour} onChange={e => update("heureRetour", e.target.value)} className="input-field" />
                         </Field>
-                      ) : (
+                      )}
+                      {form.heureRetourMode === "tranche" && (
                         <div className="grid gap-3 grid-cols-2">
                           <Field label="Début">
                             <input type="time" value={form.heureRetourDebut} onChange={e => update("heureRetourDebut", e.target.value)} className="input-field" />
