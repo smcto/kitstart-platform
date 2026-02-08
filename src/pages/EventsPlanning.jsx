@@ -476,17 +476,21 @@ export default function EventsPlanning() {
                         <div className="text-[12px] font-medium text-[--k-text] truncate">{evt.name}</div>
                         <div className="text-[11px] text-[--k-muted]">{evt.client}</div>
                       </div>
+                      {/* Ville */}
+                      <span className="shrink-0 flex items-center gap-1 text-[11px] text-[--k-muted] w-20">
+                        <MapPin className="h-3 w-3 shrink-0" />{evt.ville}
+                      </span>
                       {/* Borne nums */}
-                      <div className="shrink-0 flex items-center gap-1 max-w-[180px]">
+                      <div className="shrink-0 flex items-center gap-1.5 w-[160px]">
                         {evt.borneNums && evt.borneNums.length > 0 ? (
                           <>
-                            <Monitor className="h-3 w-3 text-[--k-muted] shrink-0" />
-                            <span className="text-[10px] font-mono text-[--k-muted] truncate" title={evt.borneNums.join(", ")}>
+                            <Monitor className="h-3.5 w-3.5 text-[--k-text]/50 shrink-0" />
+                            <span className="text-[11px] font-mono font-medium text-[--k-text] truncate" title={evt.borneNums.join(", ")}>
                               {evt.borneNums.length <= 3 ? evt.borneNums.join(", ") : `${evt.borneNums.slice(0, 2).join(", ")} +${evt.borneNums.length - 2}`}
                             </span>
                           </>
                         ) : (
-                          <span className="text-[10px] italic text-[--k-muted]/60">Non affecté</span>
+                          <span className="text-[11px] italic text-[--k-muted]/50">Non affecté</span>
                         )}
                       </div>
                       {/* Team avatars: commercial + chefs de projet */}
@@ -501,18 +505,25 @@ export default function EventsPlanning() {
                             {TEAM_MEMBERS[cp].initials}
                           </span>
                         ))}
-                        {evt.antenne && (
-                          <span className={cn("flex h-6 w-6 items-center justify-center rounded-full text-[8px] font-bold text-white ring-2 ring-white", evt.antenne.color)} title={`Antenne : ${evt.antenne.name}`}>
-                            {evt.antenne.initials}
-                          </span>
+                      </div>
+                      {/* Provenance */}
+                      <div className="shrink-0 w-[110px] flex items-center gap-1.5">
+                        {evt.provenance === "antenne" && evt.antenne ? (
+                          <>
+                            <span className={cn("flex h-5 w-5 items-center justify-center rounded-full text-[7px] font-bold text-white shrink-0", evt.antenne.color)}>
+                              {evt.antenne.initials}
+                            </span>
+                            <span className="text-[11px] text-[--k-text] truncate">{evt.antenne.name}</span>
+                          </>
+                        ) : evt.provenance === "antenne" ? (
+                          <span className="text-[11px] text-[--k-muted]">Antenne</span>
+                        ) : (
+                          <span className="text-[11px] text-[--k-muted]">Transporteur</span>
                         )}
                       </div>
                       <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-semibold shrink-0", tc.bg, tc.text)}>{evt.clientType === "Professionnel" ? "Pro" : "Part."}</span>
                       <span className="text-[12px] font-semibold text-[--k-text] shrink-0 w-16 text-right">
                         {evt.dateStart === evt.dateEnd ? `${evt.dateStart} fév` : `${evt.dateStart}–${evt.dateEnd} fév`}
-                      </span>
-                      <span className="flex items-center gap-0.5 text-[11px] text-[--k-muted] shrink-0">
-                        <Camera className="h-3 w-3" /> {evt.bornes}
                       </span>
                     </button>
                   );
