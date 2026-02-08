@@ -505,10 +505,20 @@ export default function EventsPlanning() {
                             {TEAM_MEMBERS[cp].initials}
                           </span>
                         ))}
-                        {evt.antenne && (
-                          <span className={cn("flex h-6 w-6 items-center justify-center rounded-full text-[8px] font-bold text-white ring-2 ring-white", evt.antenne.color)} title={`Antenne : ${evt.antenne.name}`}>
-                            {evt.antenne.initials}
-                          </span>
+                      </div>
+                      {/* Provenance */}
+                      <div className="shrink-0 w-[110px] flex items-center gap-1.5">
+                        {evt.provenance === "antenne" && evt.antenne ? (
+                          <>
+                            <span className={cn("flex h-5 w-5 items-center justify-center rounded-full text-[7px] font-bold text-white shrink-0", evt.antenne.color)}>
+                              {evt.antenne.initials}
+                            </span>
+                            <span className="text-[11px] text-[--k-text] truncate">{evt.antenne.name}</span>
+                          </>
+                        ) : evt.provenance === "antenne" ? (
+                          <span className="text-[11px] text-[--k-muted]">Antenne</span>
+                        ) : (
+                          <span className="text-[11px] text-[--k-muted]">Transporteur</span>
                         )}
                       </div>
                       <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-semibold shrink-0", tc.bg, tc.text)}>{evt.clientType === "Professionnel" ? "Pro" : "Part."}</span>
