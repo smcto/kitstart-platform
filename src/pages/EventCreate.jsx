@@ -302,12 +302,17 @@ export default function EventCreate() {
     commentaireCrea: "",
     // Step 5 - Logistique aller
     typeInstallation: "",
+    jourAller: "",
+    heureAllerMode: "precise",
+    heureAller: "",
+    heureAllerDebut: "",
+    heureAllerFin: "",
     commentaireAllerInterne: "",
     noteAllerClient: "",
     // Step 5 - Logistique retour
     typeRetour: "",
     jourRetour: "",
-    heureRetourMode: "precise", // "precise" or "tranche"
+    heureRetourMode: "precise",
     heureRetour: "",
     heureRetourDebut: "",
     heureRetourFin: "",
@@ -1913,14 +1918,58 @@ export default function EventCreate() {
                   <Field label="Type d'installation / envoi" required>
                     <SelectWithClear
                       value={form.typeInstallation}
-                      onChange={val => update("typeInstallation", val)}
+                      onChange={val => {
+                        update("typeInstallation", val);
+                        // Auto-mirror to retour
+                        const mirror = {
+                          "Envoi transporteur": "Retour transporteur",
+                          "Pick-up": "Retour Pick-up",
+                          "Livraison & installation": "Désinstallation & retour",
+                          "Livraison seulement": "Retour seulement",
+                          "Installation seulement": "Désinstallation seulement",
+                        };
+                        if (mirror[val] && !form.typeRetour) update("typeRetour", mirror[val]);
+                      }}
                       options={TYPES_INSTALLATION}
                       placeholder="Séléctionner"
                     />
                   </Field>
-                  <button className="h-8 rounded-lg bg-[--k-primary] px-3 text-[12px] font-medium text-white hover:brightness-110 transition shadow-sm">
-                    Ajouter un colis transporteur
-                  </button>
+                  {(form.typeInstallation === "Pick-up" || form.typeInstallation === "Livraison & installation" || form.typeInstallation === "Livraison seulement") && (
+                    <>
+                      <Field label="Jour de retrait / livraison">
+                        <input type="date" value={form.jourAller} onChange={e => update("jourAller", e.target.value)} className="input-field" />
+                      </Field>
+                      <div className="flex items-center gap-3">
+                        <label className="flex items-center gap-1.5 text-[12px] text-[--k-text] cursor-pointer">
+                          <input type="radio" name="heureAllerMode" checked={form.heureAllerMode === "precise"} onChange={() => update("heureAllerMode", "precise")} className="accent-[--k-primary]" />
+                          Heure précise
+                        </label>
+                        <label className="flex items-center gap-1.5 text-[12px] text-[--k-text] cursor-pointer">
+                          <input type="radio" name="heureAllerMode" checked={form.heureAllerMode === "tranche"} onChange={() => update("heureAllerMode", "tranche")} className="accent-[--k-primary]" />
+                          Tranche horaire
+                        </label>
+                      </div>
+                      {form.heureAllerMode === "precise" ? (
+                        <Field label={form.typeInstallation === "Pick-up" ? "Heure de retrait" : "Heure de livraison"}>
+                          <input type="time" value={form.heureAller} onChange={e => update("heureAller", e.target.value)} className="input-field" />
+                        </Field>
+                      ) : (
+                        <div className="grid gap-3 grid-cols-2">
+                          <Field label="Début">
+                            <input type="time" value={form.heureAllerDebut} onChange={e => update("heureAllerDebut", e.target.value)} className="input-field" />
+                          </Field>
+                          <Field label="Fin">
+                            <input type="time" value={form.heureAllerFin} onChange={e => update("heureAllerFin", e.target.value)} className="input-field" />
+                          </Field>
+                        </div>
+                      )}
+                    </>
+                  )}
+                  {form.typeInstallation === "Envoi transporteur" && (
+                    <button className="h-8 rounded-lg bg-[--k-primary] px-3 text-[12px] font-medium text-white hover:brightness-110 transition shadow-sm">
+                      Ajouter un colis transporteur
+                    </button>
+                  )}
                   <CollapsibleComment
                     label="Commentaire interne..."
                     value={form.commentaireAllerInterne}
@@ -1981,9 +2030,11 @@ export default function EventCreate() {
                       )}
                     </>
                   )}
-                  <button className="h-8 rounded-lg bg-[--k-primary] px-3 text-[12px] font-medium text-white hover:brightness-110 transition shadow-sm">
-                    Ajouter un colis transporteur
-                  </button>
+                  {form.typeRetour === "Retour transporteur" && (
+                    <button className="h-8 rounded-lg bg-[--k-primary] px-3 text-[12px] font-medium text-white hover:brightness-110 transition shadow-sm">
+                      Ajouter un colis transporteur
+                    </button>
+                  )}
                   <CollapsibleComment
                     label="Commentaire interne..."
                     value={form.commentaireRetourInterne}
