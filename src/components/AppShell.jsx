@@ -13,13 +13,22 @@ export function AppShell({ currentApp, children, activeKey, hubMode = false }) {
   }, [collapsed]);
 
   const apps = useMemo(() => ([
-    { name: "Konitys Hub", badge: "Home", description: "Catalogue des apps" },
-    { name: "Events Manager", description: "Événements, planning & logistique" },
-    { name: "Bornes Manager", description: "Parc, events, logs, diagnostics" },
-    { name: "Antennes Selfizee", description: "Réseau & supervision" },
-    { name: "Stock Manager", description: "Consommables & alertes" },
-    { name: "Support", description: "Tickets & suivi" },
-    { name: "Catalog IA", description: "Génération de contenus / visuels" },
+    { name: "Konitys Hub", badge: "Home", description: "Catalogue des apps", category: "metier" },
+    { name: "Events Manager", description: "Événements, planning & logistique", category: "metier" },
+    { name: "Bornes Manager", description: "Parc, events, logs, diagnostics", category: "metier" },
+    { name: "Antennes Selfizee", description: "Réseau & supervision", category: "metier" },
+    { name: "Stock Manager", description: "Consommables & alertes", category: "metier" },
+    { name: "Support", description: "Tickets & suivi", category: "metier" },
+    { name: "Catalog IA", description: "Génération de contenus / visuels", category: "metier" },
+    { name: "Emailing", description: "Campagnes email & templates", category: "utilitaire" },
+    { name: "Envoi SMS", description: "Notifications & rappels SMS", category: "utilitaire" },
+    { name: "Détourage Image", description: "Suppression de fond automatique", category: "utilitaire" },
+    { name: "Étiquettes UPS", description: "Génération de bordereaux d'envoi", category: "utilitaire" },
+    { name: "QR Codes", description: "Génération de QR codes personnalisés", category: "utilitaire" },
+    { name: "Compresseur", description: "Compression & redimensionnement d'images", category: "utilitaire" },
+    { name: "Convertisseur PDF", description: "Conversion de fichiers en PDF", category: "utilitaire" },
+    { name: "Calculatrice Devis", description: "Calcul rapide HT / TTC / marges", category: "utilitaire" },
+    { name: "Notes", description: "Prise de notes & mémos rapides", category: "utilitaire" },
   ]), []);
 
   return (
