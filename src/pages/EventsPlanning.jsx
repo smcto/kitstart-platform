@@ -472,16 +472,16 @@ export default function EventsPlanning() {
                     <button key={evt.id} onClick={(e) => handleEventClick(evt, e)} className="flex items-center gap-3 px-4 py-2.5 hover:bg-[--k-surface-2]/30 transition w-full text-left">
                       <span className={cn("h-2 w-2 rounded-full shrink-0", st.dot)} />
                       <span className="text-[11px] font-mono text-[--k-muted] shrink-0 w-10">{evt.code}</span>
-                      <div className="flex-1 min-w-0">
+                      <div className="min-w-0 w-[220px] shrink-0">
                         <div className="text-[12px] font-medium text-[--k-text] truncate">{evt.name}</div>
-                        <div className="text-[11px] text-[--k-muted]">{evt.client}</div>
+                        <div className="text-[11px] text-[--k-muted] truncate">{evt.client}</div>
                       </div>
                       {/* Ville */}
-                      <span className="shrink-0 flex items-center gap-1 text-[11px] text-[--k-muted] w-20">
+                      <span className="shrink-0 flex items-center gap-1 text-[11px] text-[--k-muted] w-[90px]">
                         <MapPin className="h-3 w-3 shrink-0" />{evt.ville}
                       </span>
                       {/* Borne nums */}
-                      <div className="shrink-0 flex items-center gap-1.5 w-[160px]">
+                      <div className="shrink-0 flex items-center gap-1.5 w-[150px]">
                         {evt.borneNums && evt.borneNums.length > 0 ? (
                           <>
                             <Monitor className="h-3.5 w-3.5 text-[--k-text]/50 shrink-0" />
@@ -494,7 +494,7 @@ export default function EventsPlanning() {
                         )}
                       </div>
                       {/* Team avatars: commercial + chefs de projet */}
-                      <div className="shrink-0 flex items-center -space-x-1.5">
+                      <div className="shrink-0 w-[72px] flex items-center -space-x-1.5">
                         {evt.commercial && TEAM_MEMBERS[evt.commercial] && (
                           <span className={cn("flex h-6 w-6 items-center justify-center rounded-full text-[8px] font-bold text-white ring-2 ring-white", TEAM_MEMBERS[evt.commercial].color)} title={`Commercial : ${TEAM_MEMBERS[evt.commercial].name}`}>
                             {TEAM_MEMBERS[evt.commercial].initials}
@@ -507,7 +507,7 @@ export default function EventsPlanning() {
                         ))}
                       </div>
                       {/* Provenance */}
-                      <div className="shrink-0 w-[110px] flex items-center gap-1.5">
+                      <div className="shrink-0 w-[120px] flex items-center gap-1.5">
                         {evt.provenance === "antenne" && evt.antenne ? (
                           <>
                             <span className={cn("flex h-5 w-5 items-center justify-center rounded-full text-[7px] font-bold text-white shrink-0", evt.antenne.color)}>
@@ -521,8 +521,8 @@ export default function EventsPlanning() {
                           <span className="text-[11px] text-[--k-muted]">Transporteur</span>
                         )}
                       </div>
-                      <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-semibold shrink-0", tc.bg, tc.text)}>{evt.clientType === "Professionnel" ? "Pro" : "Part."}</span>
-                      <span className="text-[12px] font-semibold text-[--k-text] shrink-0 w-16 text-right">
+                      <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-semibold shrink-0 w-[42px] text-center", tc.bg, tc.text)}>{evt.clientType === "Professionnel" ? "Pro" : "Part."}</span>
+                      <span className="text-[12px] font-semibold text-[--k-text] shrink-0 w-[70px] text-right">
                         {evt.dateStart === evt.dateEnd ? `${evt.dateStart} fév` : `${evt.dateStart}–${evt.dateEnd} fév`}
                       </span>
                     </button>
