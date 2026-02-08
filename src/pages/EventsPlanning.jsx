@@ -154,8 +154,8 @@ export default function EventsPlanning() {
         }
       />
 
-      {/* Toolbar */}
-      <div className="mb-4 flex flex-wrap items-center gap-2">
+      {/* Toolbar — Line 1: period nav + today + view toggle */}
+      <div className="mb-2 flex items-center gap-2">
         {/* Period nav */}
         <div className="flex items-center gap-1 rounded-lg border border-[--k-border] bg-white">
           <button
@@ -175,6 +175,8 @@ export default function EventsPlanning() {
           </button>
         </div>
 
+        <div className="flex-1" />
+
         <button
           onClick={() => { if (view === "week") setWeekStart(Math.max(1, TODAY - ((TODAY - 1 + FIRST_DAY_OFFSET) % 7))); }}
           className="h-8 rounded-lg border border-[--k-border] bg-white px-3 text-[12px] font-medium text-[--k-muted] hover:bg-[--k-surface-2] transition"
@@ -182,9 +184,25 @@ export default function EventsPlanning() {
           Aujourd'hui
         </button>
 
-        <div className="flex-1" />
+        {/* View toggle */}
+        <div className="flex gap-1 rounded-lg bg-[--k-surface-2] p-0.5">
+          {[{ key: "month", label: "Mois" }, { key: "week", label: "Semaine" }].map(v => (
+            <button
+              key={v.key}
+              className={cn(
+                "rounded-md px-2.5 py-1.5 text-[11px] font-medium transition",
+                view === v.key ? "bg-white text-[--k-text] shadow-sm" : "text-[--k-muted] hover:text-[--k-text]"
+              )}
+              onClick={() => setView(v.key)}
+            >
+              {v.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
-        {/* Filters */}
+      {/* Toolbar — Line 2: filters */}
+      <div className="mb-4 flex flex-wrap items-center gap-2">
         <Filter className="h-3.5 w-3.5 text-[--k-muted]" />
 
         <select
@@ -283,22 +301,6 @@ export default function EventsPlanning() {
             <X className="h-3 w-3" /> Effacer
           </button>
         )}
-
-        {/* View toggle */}
-        <div className="flex gap-1 rounded-lg bg-[--k-surface-2] p-0.5">
-          {[{ key: "month", label: "Mois" }, { key: "week", label: "Semaine" }].map(v => (
-            <button
-              key={v.key}
-              className={cn(
-                "rounded-md px-2.5 py-1.5 text-[11px] font-medium transition",
-                view === v.key ? "bg-white text-[--k-text] shadow-sm" : "text-[--k-muted] hover:text-[--k-text]"
-              )}
-              onClick={() => setView(v.key)}
-            >
-              {v.label}
-            </button>
-          ))}
-        </div>
       </div>
 
       {/* ── Month view ──────────────────────────── */}
@@ -405,34 +407,52 @@ export default function EventsPlanning() {
         ))}
       </div>
 
-      {/* Side list of events this month */}
-      <div className="mt-5 rounded-2xl border border-[--k-border] bg-white shadow-sm">
-        <div className="border-b border-[--k-border] bg-gradient-to-r from-rose-50/50 to-pink-50/30 px-4 py-3 rounded-t-2xl">
-          <span className="text-[13px] font-semibold text-[--k-text]">Événements du mois ({filteredEvents.length})</span>
-        </div>
-        <div className="divide-y divide-[--k-border]">
-          {filteredEvents.map(evt => {
-            const tc = CLIENT_TYPE_COLORS[evt.clientType] || CLIENT_TYPE_COLORS.Professionnel;
-            const st = STATUS_MAP[evt.status] || { label: evt.status, dot: "bg-slate-300" };
-            return (
-              <button key={evt.id} onClick={(e) => handleEventClick(evt, e)} className="flex items-center gap-3 px-4 py-2.5 hover:bg-[--k-surface-2]/30 transition w-full text-left">
-                <span className={cn("h-2 w-2 rounded-full shrink-0", st.dot)} />
-                <div className="flex-1 min-w-0">
-                  <div className="text-[12px] font-medium text-[--k-text] truncate">{evt.name}</div>
-                  <div className="text-[11px] text-[--k-muted]">{evt.client}</div>
-                </div>
-                <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-semibold shrink-0", tc.bg, tc.text)}>{evt.clientType === "Professionnel" ? "Pro" : "Part."}</span>
-                <span className="text-[12px] font-semibold text-[--k-text] shrink-0 w-16 text-right">
-                  {evt.dateStart === evt.dateEnd ? `${evt.dateStart} fév` : `${evt.dateStart}–${evt.dateEnd} fév`}
-                </span>
-                <span className="flex items-center gap-0.5 text-[11px] text-[--k-muted] shrink-0">
-                  <Camera className="h-3 w-3" /> {evt.bornes}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      {/* Event list — dynamic based on view & filters */}
+      {(() => {
+        const visibleEvents = view === "week"
+          ? filteredEvents.filter(e => {
+              const weekEnd = Math.min(weekStart + 6, DAYS_IN_MONTH);
+              return e.dateEnd >= weekStart && e.dateStart <= weekEnd;
+            })
+          : filteredEvents;
+        const listLabel = view === "week"
+          ? `Événements de la semaine (${visibleEvents.length})`
+          : `Événements du mois (${visibleEvents.length})`;
+        return (
+          <div className="mt-5 rounded-2xl border border-[--k-border] bg-white shadow-sm">
+            <div className="border-b border-[--k-border] bg-gradient-to-r from-rose-50/50 to-pink-50/30 px-4 py-3 rounded-t-2xl">
+              <span className="text-[13px] font-semibold text-[--k-text]">{listLabel}</span>
+            </div>
+            {visibleEvents.length === 0 ? (
+              <div className="px-4 py-8 text-center text-[13px] text-[--k-muted]">Aucun événement ne correspond aux filtres sélectionnés.</div>
+            ) : (
+              <div className="divide-y divide-[--k-border]">
+                {visibleEvents.map(evt => {
+                  const tc = CLIENT_TYPE_COLORS[evt.clientType] || CLIENT_TYPE_COLORS.Professionnel;
+                  const st = STATUS_MAP[evt.status] || { label: evt.status, dot: "bg-slate-300" };
+                  return (
+                    <button key={evt.id} onClick={(e) => handleEventClick(evt, e)} className="flex items-center gap-3 px-4 py-2.5 hover:bg-[--k-surface-2]/30 transition w-full text-left">
+                      <span className={cn("h-2 w-2 rounded-full shrink-0", st.dot)} />
+                      <span className="text-[11px] font-mono text-[--k-muted] shrink-0 w-10">{evt.code}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-[12px] font-medium text-[--k-text] truncate">{evt.name}</div>
+                        <div className="text-[11px] text-[--k-muted]">{evt.client}</div>
+                      </div>
+                      <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-semibold shrink-0", tc.bg, tc.text)}>{evt.clientType === "Professionnel" ? "Pro" : "Part."}</span>
+                      <span className="text-[12px] font-semibold text-[--k-text] shrink-0 w-16 text-right">
+                        {evt.dateStart === evt.dateEnd ? `${evt.dateStart} fév` : `${evt.dateStart}–${evt.dateEnd} fév`}
+                      </span>
+                      <span className="flex items-center gap-0.5 text-[11px] text-[--k-muted] shrink-0">
+                        <Camera className="h-3 w-3" /> {evt.bornes}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {/* ── Event Popup ─────────────────────────── */}
       {popup && (
