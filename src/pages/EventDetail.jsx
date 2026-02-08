@@ -8,7 +8,7 @@ import {
   Palette, FileText, Send, MessageSquare, ExternalLink,
   AtSign, Paperclip, Smile, MoreHorizontal, Heart, ThumbsUp,
   Reply, Pin, Settings, Link2, Hash, ChevronDown, Users,
-  Briefcase, UserCircle, Eye
+  Briefcase, UserCircle, Eye, Plus, X, Upload
 } from "lucide-react";
 
 /* ── Mock data ────────────────────────────────────── */
@@ -172,6 +172,9 @@ const PHASES = [
 
 /* ── Page ──────────────────────────────────────────── */
 
+const TYPES_INSTALLATION = ["Envoi transporteur", "Pick-up", "Livraison & installation", "Livraison seulement", "Installation seulement"];
+const TYPES_RETOUR = ["Retour transporteur", "Retour Pick-up", "Désinstallation & retour", "Retour seulement", "Désinstallation seulement"];
+
 export default function EventDetail() {
   const st = STATUS_MAP[EVENT.status];
   const doneCount = CHECKLIST.filter(c => c.done).length;
@@ -179,6 +182,31 @@ export default function EventDetail() {
   const [activeTab, setActiveTab] = useState("updates");
   const [newComment, setNewComment] = useState("");
   const commentRef = useRef(null);
+
+  // Créa form state
+  const [creaRealisee, setCreaRealisee] = useState("nous");
+  const [supportsACreer, setSupportsACreer] = useState("oui");
+  const [supportsAImprimer, setSupportsAImprimer] = useState("oui");
+  const [infosComplementairesCrea, setInfosComplementairesCrea] = useState("");
+
+  // Config form state
+  const [configNotes, setConfigNotes] = useState("");
+
+  // Logistique form state
+  const [typeInstallation, setTypeInstallation] = useState("Livraison & installation");
+  const [jourAller, setJourAller] = useState("2026-02-07");
+  const [heureAllerMode, setHeureAllerMode] = useState("precise");
+  const [heureAller, setHeureAller] = useState("14:00");
+  const [heureAllerDebut, setHeureAllerDebut] = useState("");
+  const [heureAllerFin, setHeureAllerFin] = useState("");
+  const [typeRetour, setTypeRetour] = useState("Désinstallation & retour");
+  const [jourRetour, setJourRetour] = useState("2026-02-10");
+  const [heureRetourMode, setHeureRetourMode] = useState("tranche");
+  const [heureRetour, setHeureRetour] = useState("");
+  const [heureRetourDebut, setHeureRetourDebut] = useState("17:00");
+  const [heureRetourFin, setHeureRetourFin] = useState("19:00");
+  const [commentaireAllerInterne, setCommentaireAllerInterne] = useState("");
+  const [commentaireRetourInterne, setCommentaireRetourInterne] = useState("");
 
   const TABS = [
     { key: "updates", label: "Mises à jour", icon: MessageSquare, count: COMMENTS.length },
@@ -490,47 +518,93 @@ export default function EventDetail() {
           {/* ── CRÉA TAB ── */}
           {activeTab === "crea" && (
             <>
-              {/* Phase status */}
               <PhaseStatus checks={["briefing", "design"]} checklist={CHECKLIST} />
 
-              {/* Briefing créatif */}
-              <Card title="Briefing créatif" icon={Palette} accent="pink">
-                <InfoRow label="Marque" value={BRIEFING.marque} />
-                <InfoRow label="Template" value={BRIEFING.template} />
-                <InfoRow label="Logo" value={BRIEFING.logo} />
-                <div className="flex items-center gap-2 py-1.5 border-b border-[--k-border]">
-                  <span className="w-24 shrink-0 text-[11px] text-[--k-muted]">Couleurs</span>
-                  <div className="flex gap-1.5">
-                    {BRIEFING.couleurs.map(c => (
-                      <span key={c} className="h-5 w-5 rounded-md border border-[--k-border] shadow-sm" style={{ backgroundColor: c }} title={c} />
-                    ))}
-                  </div>
+              {/* Créa / Supports graphiques */}
+              <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+                <div className="border-b border-[--k-border] px-5 py-3">
+                  <h2 className="text-[15px] font-bold text-[--k-text]">Créa / Supports graphiques</h2>
                 </div>
-                <InfoRow label="Texte accueil" value={BRIEFING.texteAccueil} />
-                <InfoRow label="Texte partage" value={BRIEFING.textePartage} />
-                <InfoRow label="Backdrop" value={BRIEFING.backdrop} />
-                <InfoRow label="Props" value={BRIEFING.props} />
-              </Card>
-
-              {/* Animations */}
-              <Card title="Animations commandées" icon={Camera} accent="violet">
-                {ANIMATIONS.map((a, i) => (
-                  <div key={i} className={cn("py-2", i > 0 && "border-t border-[--k-border]")}>
-                    <div className="text-[12px] font-semibold text-[--k-text] mb-1">{a.type}</div>
-                    <div className="flex flex-wrap gap-1">
-                      {a.options.map(o => <span key={o} className="rounded-md bg-violet-50 px-2 py-0.5 text-[10px] font-medium text-violet-600">{o}</span>)}
-                      {a.perso.map(o => <span key={o} className="rounded-md bg-pink-50 px-2 py-0.5 text-[10px] font-medium text-pink-600">{o}</span>)}
-                      {a.partage.map(o => <span key={o} className="rounded-md bg-blue-50 px-2 py-0.5 text-[10px] font-medium text-blue-600">{o}</span>)}
+                <div className="p-5 space-y-5">
+                  <div>
+                    <p className="text-[13px] font-semibold text-[--k-text] mb-2">La création graphique est réalisée <span className="text-[--k-danger]">*</span> :</p>
+                    <div className="flex items-center gap-6">
+                      <label className="flex items-center gap-2 text-[13px] text-[--k-text] cursor-pointer">
+                        <input type="radio" name="creaRealisee" checked={creaRealisee === "nous"} onChange={() => setCreaRealisee("nous")} className="accent-[--k-primary]" />
+                        Par nos soins
+                      </label>
+                      <label className="flex items-center gap-2 text-[13px] text-[--k-text] cursor-pointer">
+                        <input type="radio" name="creaRealisee" checked={creaRealisee === "client"} onChange={() => setCreaRealisee("client")} className="accent-[--k-primary]" />
+                        Par le client
+                      </label>
                     </div>
                   </div>
-                ))}
-              </Card>
+                  <div>
+                    <p className="text-[13px] font-semibold text-[--k-text] mb-2">Y-a-t-il des supports à créer ? (magnet / photocall...)</p>
+                    <div className="flex items-center gap-6">
+                      {["non", "oui"].map(v => (
+                        <label key={v} className="flex items-center gap-2 text-[13px] text-[--k-text] cursor-pointer">
+                          <input type="radio" name="supportsACreer" checked={supportsACreer === v} onChange={() => setSupportsACreer(v)} className="accent-[--k-primary]" />
+                          {v === "oui" ? "Oui" : "Non"}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-[13px] font-semibold text-[--k-text] mb-2">Y-a-t-il des supports à imprimer ? (magnet / photocall...)</p>
+                    <div className="flex items-center gap-6">
+                      {["non", "oui"].map(v => (
+                        <label key={v} className="flex items-center gap-2 text-[13px] text-[--k-text] cursor-pointer">
+                          <input type="radio" name="supportsAImprimer" checked={supportsAImprimer === v} onChange={() => setSupportsAImprimer(v)} className="accent-[--k-primary]" />
+                          {v === "oui" ? "Oui" : "Non"}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[12px] font-semibold text-[--k-muted] mb-1.5">Informations complémentaires</label>
+                    <textarea value={infosComplementairesCrea} onChange={e => setInfosComplementairesCrea(e.target.value)} placeholder="Informations complémentaires sur la création graphique..." rows={3} className="w-full rounded-lg border border-[--k-border] bg-[--k-surface-2]/30 px-4 py-2.5 text-[13px] outline-none focus:border-rose-300 focus:bg-white transition" />
+                  </div>
+                </div>
+              </div>
 
-              {/* Actions */}
+              {/* Animations récap */}
+              <div className="bg-white rounded-2xl border border-[--k-border] border-l-[3px] border-l-violet-400 shadow-sm">
+                <div className="flex items-center gap-2 border-b border-[--k-border] px-4 py-3">
+                  <Camera className="h-4 w-4 text-violet-400" />
+                  <span className="text-[13px] font-semibold text-[--k-text]">Animations commandées</span>
+                </div>
+                <div className="px-4 py-3">
+                  {ANIMATIONS.map((a, i) => (
+                    <div key={i} className={cn("py-2", i > 0 && "border-t border-[--k-border]")}>
+                      <div className="text-[12px] font-semibold text-[--k-text] mb-1">{a.type}</div>
+                      <div className="flex flex-wrap gap-1">
+                        {a.options.map(o => <span key={o} className="rounded-md bg-violet-50 px-2 py-0.5 text-[10px] font-medium text-violet-600">{o}</span>)}
+                        {a.perso.map(o => <span key={o} className="rounded-md bg-pink-50 px-2 py-0.5 text-[10px] font-medium text-pink-600">{o}</span>)}
+                        {a.partage.map(o => <span key={o} className="rounded-md bg-blue-50 px-2 py-0.5 text-[10px] font-medium text-blue-600">{o}</span>)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Pièce(s) jointe(s) */}
+              <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+                <div className="border-b border-[--k-border] px-5 py-3">
+                  <h2 className="text-[15px] font-bold text-[--k-text]">Pièce(s) jointe(s)</h2>
+                </div>
+                <div className="p-5">
+                  <div className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-[--k-border] bg-[--k-surface-2]/20 py-8 hover:border-[--k-primary] hover:bg-[--k-primary-2]/10 transition cursor-pointer">
+                    <Upload className="h-6 w-6 text-[--k-muted]" />
+                    <p className="text-[13px] text-[--k-muted]">Glisser-déposer ou <span className="text-[--k-primary] font-medium">parcourir</span></p>
+                    <p className="text-[10px] text-[--k-muted]/60">PDF, JPG, PNG — Max 10 Mo</p>
+                  </div>
+                </div>
+              </div>
+
               <div className="flex flex-wrap gap-2">
                 <ActionPill icon={Send} label="Envoyer les maquettes au client" />
-                <ActionPill icon={Eye} label="Voir le rendu de la config" />
-                <ActionPill icon={Edit} label="Modifier le briefing" />
+                <ActionPill icon={Eye} label="Voir le rendu" />
               </div>
             </>
           )}
@@ -540,11 +614,24 @@ export default function EventDetail() {
             <>
               <PhaseStatus checks={["test"]} checklist={CHECKLIST} />
 
-              {/* Configuration */}
-              <Card title="Configuration borne" icon={Settings} accent="rose">
-                <InfoRow label="Code config" value={
-                  <span className="font-mono font-bold text-rose-600 tracking-wider">{EVENT.configCode}</span>
-                } />
+              {/* Code config + lien */}
+              <div className="rounded-2xl border border-rose-200 bg-gradient-to-r from-rose-50 to-pink-50 p-5">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div>
+                    <div className="text-[11px] font-semibold text-rose-400 uppercase tracking-wide mb-1">Code configuration</div>
+                    <div className="flex items-center gap-3">
+                      <span className="font-mono text-[22px] font-black text-rose-600 tracking-[0.15em]">{EVENT.configCode}</span>
+                      <button className="flex h-7 w-7 items-center justify-center rounded-md border border-rose-200 text-rose-400 hover:text-rose-600 hover:bg-white transition"><Copy className="h-3.5 w-3.5" /></button>
+                    </div>
+                  </div>
+                  <a href={EVENT.configUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 rounded-lg bg-rose-500 px-4 py-2.5 text-[12px] font-semibold text-white hover:bg-rose-600 transition shadow-sm">
+                    <ExternalLink className="h-3.5 w-3.5" /> Ouvrir l'app de config
+                  </a>
+                </div>
+              </div>
+
+              {/* Briefing & config details */}
+              <Card title="Détails configuration" icon={Settings} accent="rose">
                 <InfoRow label="Template" value={BRIEFING.template} />
                 <InfoRow label="Texte accueil" value={BRIEFING.texteAccueil} />
                 <InfoRow label="Texte partage" value={BRIEFING.textePartage} />
@@ -573,17 +660,17 @@ export default function EventDetail() {
                 ))}
               </Card>
 
-              {/* Actions */}
+              {/* Notes config */}
+              <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+                <div className="border-b border-[--k-border] px-5 py-3">
+                  <h2 className="text-[15px] font-bold text-[--k-text]">Notes de configuration</h2>
+                </div>
+                <div className="p-5">
+                  <textarea value={configNotes} onChange={e => setConfigNotes(e.target.value)} placeholder="Notes sur la configuration, points d'attention techniques..." rows={3} className="w-full rounded-lg border border-[--k-border] bg-[--k-surface-2]/30 px-4 py-2.5 text-[13px] outline-none focus:border-rose-300 focus:bg-white transition" />
+                </div>
+              </div>
+
               <div className="flex flex-wrap gap-2">
-                <a
-                  href={EVENT.configUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 rounded-lg bg-rose-500 px-4 py-2 text-[12px] font-semibold text-white hover:bg-rose-600 transition shadow-sm"
-                >
-                  <ExternalLink className="h-3.5 w-3.5" /> Ouvrir l'app de config
-                </a>
-                <ActionPill icon={Copy} label="Copier le code config" />
                 <ActionPill icon={Send} label="Envoyer la config au technicien" />
               </div>
             </>
@@ -594,18 +681,116 @@ export default function EventDetail() {
             <>
               <PhaseStatus checks={["bornes", "logistics", "shipping"]} checklist={CHECKLIST} />
 
-              {/* Dispositifs commandés */}
-              <Card title="Dispositifs commandés" icon={Package} accent="emerald">
-                {DISPOSITIFS.map((d, i) => (
-                  <div key={i} className={cn("flex items-center justify-between py-2", i > 0 && "border-t border-[--k-border]")}>
-                    <div>
-                      <span className="text-[12px] font-semibold text-[--k-text]">{d.borneType}</span>
-                      {d.notes && <span className="ml-2 text-[11px] text-[--k-muted]">({d.notes})</span>}
-                    </div>
-                    <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-emerald-600">×{d.qty}</span>
+              {/* Date reminder */}
+              <div className="rounded-xl border border-blue-200 bg-blue-50/60 flex items-center gap-3 px-5 py-3">
+                <CalendarDays className="h-4 w-4 text-blue-500 shrink-0" />
+                <p className="text-[13px] font-semibold text-blue-900">
+                  Événement : {new Date(EVENT.dateStart).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })} — {EVENT.location}
+                </p>
+              </div>
+
+              {/* Logistique aller / retour — 50/50 */}
+              <div className="grid gap-5 lg:grid-cols-2">
+                {/* Aller */}
+                <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+                  <div className="border-b border-[--k-border] px-5 py-3">
+                    <h2 className="text-[15px] font-bold text-[--k-text]">Logistique aller</h2>
                   </div>
-                ))}
-              </Card>
+                  <div className="p-5 space-y-4">
+                    <Field label="Type d'installation / envoi" required>
+                      <select value={typeInstallation} onChange={e => setTypeInstallation(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-rose-300 transition">
+                        <option value="">Séléctionner</option>
+                        {TYPES_INSTALLATION.map(t => <option key={t} value={t}>{t}</option>)}
+                      </select>
+                    </Field>
+                    {(typeInstallation === "Pick-up" || typeInstallation === "Livraison & installation" || typeInstallation === "Livraison seulement") && (
+                      <>
+                        <Field label="Jour de retrait / livraison">
+                          <input type="date" value={jourAller} onChange={e => setJourAller(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-rose-300 transition" />
+                        </Field>
+                        <div className="flex items-center gap-3">
+                          {[{ v: "aDefinir", l: "À définir" }, { v: "precise", l: "Heure précise" }, { v: "tranche", l: "Tranche horaire" }].map(o => (
+                            <label key={o.v} className="flex items-center gap-1.5 text-[12px] text-[--k-text] cursor-pointer">
+                              <input type="radio" name="heureAllerMode" checked={heureAllerMode === o.v} onChange={() => setHeureAllerMode(o.v)} className="accent-[--k-primary]" />
+                              {o.l}
+                            </label>
+                          ))}
+                        </div>
+                        {heureAllerMode === "precise" && (
+                          <Field label="Heure">
+                            <input type="time" value={heureAller} onChange={e => setHeureAller(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-rose-300 transition" />
+                          </Field>
+                        )}
+                        {heureAllerMode === "tranche" && (
+                          <div className="grid gap-3 grid-cols-2">
+                            <Field label="Début"><input type="time" value={heureAllerDebut} onChange={e => setHeureAllerDebut(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-rose-300 transition" /></Field>
+                            <Field label="Fin"><input type="time" value={heureAllerFin} onChange={e => setHeureAllerFin(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-rose-300 transition" /></Field>
+                          </div>
+                        )}
+                      </>
+                    )}
+                    {typeInstallation === "Envoi transporteur" && (
+                      <button className="h-8 rounded-lg bg-[--k-primary] px-3 text-[12px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5">
+                        <Plus className="h-3.5 w-3.5" /> Ajouter un colis transporteur
+                      </button>
+                    )}
+                    <div>
+                      <label className="block text-[12px] font-semibold text-[--k-muted] mb-1.5">Commentaire interne</label>
+                      <textarea value={commentaireAllerInterne} onChange={e => setCommentaireAllerInterne(e.target.value)} placeholder="Commentaire interne..." rows={2} className="w-full rounded-lg border border-[--k-border] bg-[--k-surface-2]/30 px-4 py-2 text-[13px] outline-none focus:border-rose-300 focus:bg-white transition" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Retour */}
+                <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+                  <div className="border-b border-[--k-border] px-5 py-3">
+                    <h2 className="text-[15px] font-bold text-[--k-text]">Logistique retour</h2>
+                  </div>
+                  <div className="p-5 space-y-4">
+                    <Field label="Type de désinstallation / retour" required>
+                      <select value={typeRetour} onChange={e => setTypeRetour(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-rose-300 transition">
+                        <option value="">Séléctionner</option>
+                        {TYPES_RETOUR.map(t => <option key={t} value={t}>{t}</option>)}
+                      </select>
+                    </Field>
+                    {typeRetour && (
+                      <>
+                        <Field label="Jour retour">
+                          <input type="date" value={jourRetour} onChange={e => setJourRetour(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-rose-300 transition" />
+                        </Field>
+                        <div className="flex items-center gap-3">
+                          {[{ v: "aDefinir", l: "À définir" }, { v: "precise", l: "Heure précise" }, { v: "tranche", l: "Tranche horaire" }].map(o => (
+                            <label key={o.v} className="flex items-center gap-1.5 text-[12px] text-[--k-text] cursor-pointer">
+                              <input type="radio" name="heureRetourMode" checked={heureRetourMode === o.v} onChange={() => setHeureRetourMode(o.v)} className="accent-[--k-primary]" />
+                              {o.l}
+                            </label>
+                          ))}
+                        </div>
+                        {heureRetourMode === "precise" && (
+                          <Field label="Heure retour">
+                            <input type="time" value={heureRetour} onChange={e => setHeureRetour(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-rose-300 transition" />
+                          </Field>
+                        )}
+                        {heureRetourMode === "tranche" && (
+                          <div className="grid gap-3 grid-cols-2">
+                            <Field label="Début"><input type="time" value={heureRetourDebut} onChange={e => setHeureRetourDebut(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-rose-300 transition" /></Field>
+                            <Field label="Fin"><input type="time" value={heureRetourFin} onChange={e => setHeureRetourFin(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-rose-300 transition" /></Field>
+                          </div>
+                        )}
+                      </>
+                    )}
+                    {typeRetour === "Retour transporteur" && (
+                      <button className="h-8 rounded-lg bg-[--k-primary] px-3 text-[12px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5">
+                        <Plus className="h-3.5 w-3.5" /> Ajouter un colis transporteur
+                      </button>
+                    )}
+                    <div>
+                      <label className="block text-[12px] font-semibold text-[--k-muted] mb-1.5">Commentaire interne</label>
+                      <textarea value={commentaireRetourInterne} onChange={e => setCommentaireRetourInterne(e.target.value)} placeholder="Commentaire interne..." rows={2} className="w-full rounded-lg border border-[--k-border] bg-[--k-surface-2]/30 px-4 py-2 text-[13px] outline-none focus:border-rose-300 focus:bg-white transition" />
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               {/* Bornes assignées */}
               <Card title={`Bornes assignées (${BORNES_ASSIGNED.length})`} icon={Camera} accent="rose">
@@ -625,24 +810,15 @@ export default function EventDetail() {
                         const bs = BORNE_STATUS[b.status];
                         return (
                           <tr key={b.id} className="border-b border-[--k-border] last:border-0 hover:bg-rose-50/30 transition">
-                            <td className="px-3 py-2.5">
-                              <a href={`/bornes/${b.id}`} className="font-mono font-semibold text-[--k-primary] hover:underline">{b.id}</a>
-                            </td>
+                            <td className="px-3 py-2.5"><a href={`/bornes/${b.id}`} className="font-mono font-semibold text-[--k-primary] hover:underline">{b.id}</a></td>
                             <td className="px-3 py-2.5 text-[--k-text]">{b.model}</td>
                             <td className="px-3 py-2.5 text-[--k-muted]">{b.location}</td>
                             <td className="px-3 py-2.5">
                               {b.shipping.startsWith("UPS") || b.shipping.startsWith("TNT") ? (
-                                <span className="flex items-center gap-1 text-amber-600">
-                                  <Truck className="h-3 w-3" />
-                                  <span className="text-[11px] font-mono">{b.shipping}</span>
-                                </span>
-                              ) : (
-                                <span className="text-[--k-muted]">{b.shipping}</span>
-                              )}
+                                <span className="flex items-center gap-1 text-amber-600"><Truck className="h-3 w-3" /><span className="text-[11px] font-mono">{b.shipping}</span></span>
+                              ) : (<span className="text-[--k-muted]">{b.shipping}</span>)}
                             </td>
-                            <td className="px-3 py-2.5">
-                              <span className={cn("inline-flex rounded-md px-2 py-0.5 text-[10px] font-bold", bs.color)}>{bs.label}</span>
-                            </td>
+                            <td className="px-3 py-2.5"><span className={cn("inline-flex rounded-md px-2 py-0.5 text-[10px] font-bold", bs.color)}>{bs.label}</span></td>
                           </tr>
                         );
                       })}
@@ -655,15 +831,6 @@ export default function EventDetail() {
                 </div>
               </Card>
 
-              {/* Infos logistique */}
-              <Card title="Informations logistique" icon={Truck} accent="amber">
-                <InfoRow label="Provenance" value={EVENT.provenance} />
-                <InfoRow label="Antenne" value={EVENT.antenne} />
-                <InfoRow label="Lieu" value={EVENT.location} />
-                <InfoRow label="Adresse" value={EVENT.address} />
-              </Card>
-
-              {/* Actions */}
               <div className="flex flex-wrap gap-2">
                 <ActionPill icon={FileText} label="Générer bon de livraison" />
                 <ActionPill icon={Printer} label="Imprimer les étiquettes" />
