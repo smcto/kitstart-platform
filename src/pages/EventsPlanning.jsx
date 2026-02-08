@@ -192,7 +192,7 @@ export default function EventsPlanning() {
             </button>
           ))}
           <button
-            onClick={() => { if (view === "week") setWeekStart(Math.max(1, TODAY - ((TODAY - 1 + FIRST_DAY_OFFSET) % 7))); }}
+            onClick={() => { setView("week"); setWeekStart(Math.max(1, TODAY - ((TODAY - 1 + FIRST_DAY_OFFSET) % 7))); }}
             className="rounded-md px-2.5 py-1.5 text-[11px] font-medium text-[--k-muted] hover:text-[--k-text] hover:bg-[--k-surface-2] transition"
           >
             Aujourd'hui
