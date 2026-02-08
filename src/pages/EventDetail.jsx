@@ -161,6 +161,15 @@ const BORNE_STATUS = {
   onsite: { label: "Sur site", color: "bg-blue-50 text-blue-600" },
 };
 
+const PHASES = [
+  { key: "briefing", label: "Briefing", checks: ["briefing"] },
+  { key: "crea", label: "Créa", checks: ["design"] },
+  { key: "config", label: "Config", checks: ["test"] },
+  { key: "logistique", label: "Logistique", checks: ["bornes", "logistics", "shipping"] },
+  { key: "event", label: "Événement", checks: ["installation", "event"] },
+  { key: "cloture", label: "Clôture", checks: ["retour"] },
+];
+
 /* ── Page ──────────────────────────────────────────── */
 
 export default function EventDetail() {
@@ -174,7 +183,9 @@ export default function EventDetail() {
   const TABS = [
     { key: "updates", label: "Mises à jour", icon: MessageSquare, count: COMMENTS.length },
     { key: "info", label: "Infos", icon: FileText },
-    { key: "bornes", label: "Bornes", icon: Camera, count: BORNES_ASSIGNED.length },
+    { key: "crea", label: "Créa", icon: Palette },
+    { key: "config", label: "Config", icon: Settings },
+    { key: "logistique", label: "Logistique", icon: Truck },
     { key: "activity", label: "Activité", icon: Clock },
   ];
 
@@ -209,6 +220,7 @@ export default function EventDetail() {
                 <span className="flex items-center gap-1"><CalendarDays className="h-3 w-3" />{new Date(EVENT.dateStart).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })} → {new Date(EVENT.dateEnd).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}</span>
                 <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{EVENT.location}</span>
                 <span className="flex items-center gap-1"><Camera className="h-3 w-3" />{BORNES_ASSIGNED.length} bornes</span>
+                <span className="flex items-center gap-1"><Truck className="h-3 w-3" />{EVENT.provenance}{EVENT.provenance === "Antenne locale" && EVENT.antenne ? ` — ${EVENT.antenne}` : ""}</span>
                 <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-bold", EVENT.clientType === "Pro" ? "bg-blue-50 text-blue-600" : "bg-pink-50 text-pink-500")}>{EVENT.clientType}</span>
               </div>
 
@@ -252,7 +264,7 @@ export default function EventDetail() {
               </div>
               {/* Actions */}
               <div className="flex gap-2">
-                <a href={`/events/${EVENT.id}/edit`} className="flex h-8 items-center gap-1.5 rounded-lg border border-[--k-border] bg-white px-3 text-[12px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition shadow-sm">
+                <a href="/events/create" className="flex h-8 items-center gap-1.5 rounded-lg border border-[--k-border] bg-white px-3 text-[12px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition shadow-sm">
                   <Edit className="h-3.5 w-3.5" /> Modifier
                 </a>
                 <button className="flex h-8 items-center gap-1.5 rounded-lg border border-[--k-border] bg-white px-3 text-[12px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition shadow-sm">
@@ -262,9 +274,49 @@ export default function EventDetail() {
             </div>
           </div>
 
-          {/* Progress bar Monday-style */}
-          <div className="mt-4 flex items-center gap-3">
-            <div className="flex-1 h-2 rounded-full bg-slate-100 overflow-hidden">
+          {/* Objectifs & Tags */}
+          <div className="mt-3 flex flex-wrap items-center gap-1.5">
+            {EVENT.objectifs.map(o => (
+              <span key={o} className="rounded-md bg-amber-50 border border-amber-200/60 px-2 py-0.5 text-[10px] font-semibold text-amber-700">{o}</span>
+            ))}
+            {EVENT.tags.map(t => (
+              <span key={t} className="rounded-md bg-slate-100 border border-slate-200/60 px-2 py-0.5 text-[10px] font-semibold text-slate-600">{t}</span>
+            ))}
+          </div>
+
+          {/* Phase status indicators */}
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            {PHASES.map(phase => {
+              const allDone = phase.checks.every(ck => CHECKLIST.find(c => c.key === ck)?.done);
+              const someDone = phase.checks.some(ck => CHECKLIST.find(c => c.key === ck)?.done);
+              return (
+                <div
+                  key={phase.key}
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11px] font-semibold border transition",
+                    allDone
+                      ? "bg-emerald-50 border-emerald-200 text-emerald-700"
+                      : someDone
+                        ? "bg-amber-50 border-amber-200 text-amber-700"
+                        : "bg-slate-50 border-slate-200 text-slate-400"
+                  )}
+                >
+                  {allDone ? (
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                  ) : someDone ? (
+                    <Clock className="h-3.5 w-3.5 text-amber-500" />
+                  ) : (
+                    <Circle className="h-3.5 w-3.5 text-slate-300" />
+                  )}
+                  {phase.label}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Progress bar */}
+          <div className="mt-3 flex items-center gap-3">
+            <div className="flex-1 h-1.5 rounded-full bg-slate-100 overflow-hidden">
               <div className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all" style={{ width: `${progress}%` }} />
             </div>
             <span className="text-[11px] font-semibold text-emerald-600 tabular-nums whitespace-nowrap">{progress}%</span>
@@ -396,7 +448,6 @@ export default function EventDetail() {
           {/* ── INFO TAB ── */}
           {activeTab === "info" && (
             <>
-              {/* Client & Event info */}
               <div className="grid gap-5 md:grid-cols-2">
                 <Card title="Client" icon={Building2} accent="blue">
                   <InfoRow label="Société" value={
@@ -424,53 +475,23 @@ export default function EventDetail() {
                 </Card>
               </div>
 
-              {/* Animations & Dispositifs */}
-              <div className="grid gap-5 md:grid-cols-2">
-                <Card title="Animations" icon={Camera} accent="violet">
-                  {ANIMATIONS.map((a, i) => (
-                    <div key={i} className={cn("py-2", i > 0 && "border-t border-[--k-border]")}>
-                      <div className="text-[12px] font-semibold text-[--k-text] mb-1">{a.type}</div>
-                      <div className="flex flex-wrap gap-1">
-                        {[...a.options, ...a.perso, ...a.partage].map(o => (
-                          <span key={o} className="rounded-md bg-violet-50 px-2 py-0.5 text-[10px] font-medium text-violet-600">{o}</span>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </Card>
-
-                <Card title="Dispositifs" icon={Package} accent="emerald">
-                  {DISPOSITIFS.map((d, i) => (
-                    <div key={i} className={cn("flex items-center justify-between py-2", i > 0 && "border-t border-[--k-border]")}>
-                      <div>
-                        <span className="text-[12px] font-semibold text-[--k-text]">{d.borneType}</span>
-                        {d.notes && <span className="ml-2 text-[11px] text-[--k-muted]">({d.notes})</span>}
-                      </div>
-                      <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-emerald-600">×{d.qty}</span>
-                    </div>
-                  ))}
-                </Card>
-              </div>
-
-              {/* Objectifs & Tags */}
-              <Card title="Objectifs & Tags" icon={FileText} accent="amber">
-                <div className="mb-2">
-                  <div className="text-[11px] font-medium text-[--k-muted] mb-1.5">Objectifs client</div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {EVENT.objectifs.map(o => (
-                      <span key={o} className="rounded-md bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700">{o}</span>
-                    ))}
+              {/* Notes internes */}
+              {EVENT.notes && (
+                <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-4">
+                  <div className="text-[11px] font-semibold text-blue-600 mb-1.5 flex items-center gap-1.5">
+                    <FileText className="h-3.5 w-3.5" /> Notes internes
                   </div>
+                  <div className="text-[12px] text-[--k-text] leading-relaxed">{EVENT.notes}</div>
                 </div>
-                <div className="border-t border-[--k-border] pt-2">
-                  <div className="text-[11px] font-medium text-[--k-muted] mb-1.5">Tags internes</div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {EVENT.tags.map(t => (
-                      <span key={t} className="rounded-md bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-600">{t}</span>
-                    ))}
-                  </div>
-                </div>
-              </Card>
+              )}
+            </>
+          )}
+
+          {/* ── CRÉA TAB ── */}
+          {activeTab === "crea" && (
+            <>
+              {/* Phase status */}
+              <PhaseStatus checks={["briefing", "design"]} checklist={CHECKLIST} />
 
               {/* Briefing créatif */}
               <Card title="Briefing créatif" icon={Palette} accent="pink">
@@ -485,72 +506,170 @@ export default function EventDetail() {
                     ))}
                   </div>
                 </div>
-                <InfoRow label="Accueil" value={BRIEFING.texteAccueil} />
-                <InfoRow label="Partage" value={BRIEFING.textePartage} />
+                <InfoRow label="Texte accueil" value={BRIEFING.texteAccueil} />
+                <InfoRow label="Texte partage" value={BRIEFING.textePartage} />
                 <InfoRow label="Backdrop" value={BRIEFING.backdrop} />
                 <InfoRow label="Props" value={BRIEFING.props} />
               </Card>
 
-              {/* Notes internes */}
-              {EVENT.notes && (
-                <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-4">
-                  <div className="text-[11px] font-semibold text-blue-600 mb-1.5 flex items-center gap-1.5">
-                    <FileText className="h-3.5 w-3.5" /> Notes internes
+              {/* Animations */}
+              <Card title="Animations commandées" icon={Camera} accent="violet">
+                {ANIMATIONS.map((a, i) => (
+                  <div key={i} className={cn("py-2", i > 0 && "border-t border-[--k-border]")}>
+                    <div className="text-[12px] font-semibold text-[--k-text] mb-1">{a.type}</div>
+                    <div className="flex flex-wrap gap-1">
+                      {a.options.map(o => <span key={o} className="rounded-md bg-violet-50 px-2 py-0.5 text-[10px] font-medium text-violet-600">{o}</span>)}
+                      {a.perso.map(o => <span key={o} className="rounded-md bg-pink-50 px-2 py-0.5 text-[10px] font-medium text-pink-600">{o}</span>)}
+                      {a.partage.map(o => <span key={o} className="rounded-md bg-blue-50 px-2 py-0.5 text-[10px] font-medium text-blue-600">{o}</span>)}
+                    </div>
                   </div>
-                  <div className="text-[12px] text-[--k-text] leading-relaxed">{EVENT.notes}</div>
-                </div>
-              )}
+                ))}
+              </Card>
+
+              {/* Actions */}
+              <div className="flex flex-wrap gap-2">
+                <ActionPill icon={Send} label="Envoyer les maquettes au client" />
+                <ActionPill icon={Eye} label="Voir le rendu de la config" />
+                <ActionPill icon={Edit} label="Modifier le briefing" />
+              </div>
             </>
           )}
 
-          {/* ── BORNES TAB ── */}
-          {activeTab === "bornes" && (
-            <Card title={`Bornes assignées (${BORNES_ASSIGNED.length})`} icon={Camera} accent="rose">
-              <div className="overflow-x-auto -mx-4 px-4">
-                <table className="w-full text-[12px]">
-                  <thead>
-                    <tr className="border-b-2 border-[--k-border]">
-                      <th className="px-3 py-2.5 text-left text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide">ID</th>
-                      <th className="px-3 py-2.5 text-left text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide">Modèle</th>
-                      <th className="px-3 py-2.5 text-left text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide">Provenance</th>
-                      <th className="px-3 py-2.5 text-left text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide">Expédition</th>
-                      <th className="px-3 py-2.5 text-left text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide">Statut</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {BORNES_ASSIGNED.map(b => {
-                      const bs = BORNE_STATUS[b.status];
-                      return (
-                        <tr key={b.id} className="border-b border-[--k-border] last:border-0 hover:bg-rose-50/30 transition">
-                          <td className="px-3 py-2.5">
-                            <a href={`/bornes/${b.id}`} className="font-mono font-semibold text-[--k-primary] hover:underline">{b.id}</a>
-                          </td>
-                          <td className="px-3 py-2.5 text-[--k-text]">{b.model}</td>
-                          <td className="px-3 py-2.5 text-[--k-muted]">{b.location}</td>
-                          <td className="px-3 py-2.5">
-                            {b.shipping.startsWith("UPS") || b.shipping.startsWith("TNT") ? (
-                              <span className="flex items-center gap-1 text-amber-600">
-                                <Truck className="h-3 w-3" />
-                                <span className="text-[11px] font-mono">{b.shipping}</span>
-                              </span>
-                            ) : (
-                              <span className="text-[--k-muted]">{b.shipping}</span>
-                            )}
-                          </td>
-                          <td className="px-3 py-2.5">
-                            <span className={cn("inline-flex rounded-md px-2 py-0.5 text-[10px] font-bold", bs.color)}>{bs.label}</span>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+          {/* ── CONFIG TAB ── */}
+          {activeTab === "config" && (
+            <>
+              <PhaseStatus checks={["test"]} checklist={CHECKLIST} />
+
+              {/* Configuration */}
+              <Card title="Configuration borne" icon={Settings} accent="rose">
+                <InfoRow label="Code config" value={
+                  <span className="font-mono font-bold text-rose-600 tracking-wider">{EVENT.configCode}</span>
+                } />
+                <InfoRow label="Template" value={BRIEFING.template} />
+                <InfoRow label="Texte accueil" value={BRIEFING.texteAccueil} />
+                <InfoRow label="Texte partage" value={BRIEFING.textePartage} />
+                <div className="flex items-center gap-2 py-1.5 border-b border-[--k-border]">
+                  <span className="w-24 shrink-0 text-[11px] text-[--k-muted]">Couleurs</span>
+                  <div className="flex gap-1.5">
+                    {BRIEFING.couleurs.map(c => (
+                      <span key={c} className="h-5 w-5 rounded-md border border-[--k-border] shadow-sm" style={{ backgroundColor: c }} title={c} />
+                    ))}
+                  </div>
+                </div>
+                <InfoRow label="Logo" value={BRIEFING.logo} />
+              </Card>
+
+              {/* Animations configurées */}
+              <Card title="Animations configurées" icon={Camera} accent="violet">
+                {ANIMATIONS.map((a, i) => (
+                  <div key={i} className={cn("py-2", i > 0 && "border-t border-[--k-border]")}>
+                    <div className="text-[12px] font-semibold text-[--k-text] mb-1">{a.type}</div>
+                    <div className="flex flex-wrap gap-1">
+                      {[...a.options, ...a.perso, ...a.partage].map(o => (
+                        <span key={o} className="rounded-md bg-violet-50 px-2 py-0.5 text-[10px] font-medium text-violet-600">{o}</span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </Card>
+
+              {/* Actions */}
+              <div className="flex flex-wrap gap-2">
+                <a
+                  href={EVENT.configUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 rounded-lg bg-rose-500 px-4 py-2 text-[12px] font-semibold text-white hover:bg-rose-600 transition shadow-sm"
+                >
+                  <ExternalLink className="h-3.5 w-3.5" /> Ouvrir l'app de config
+                </a>
+                <ActionPill icon={Copy} label="Copier le code config" />
+                <ActionPill icon={Send} label="Envoyer la config au technicien" />
               </div>
-              <div className="mt-3 flex gap-4 text-[11px] text-[--k-muted]">
-                <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-emerald-500" />{BORNES_ASSIGNED.filter(b => b.status === "ready").length} prêtes</span>
-                <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-amber-500" />{BORNES_ASSIGNED.filter(b => b.status === "transit").length} en transit</span>
+            </>
+          )}
+
+          {/* ── LOGISTIQUE TAB ── */}
+          {activeTab === "logistique" && (
+            <>
+              <PhaseStatus checks={["bornes", "logistics", "shipping"]} checklist={CHECKLIST} />
+
+              {/* Dispositifs commandés */}
+              <Card title="Dispositifs commandés" icon={Package} accent="emerald">
+                {DISPOSITIFS.map((d, i) => (
+                  <div key={i} className={cn("flex items-center justify-between py-2", i > 0 && "border-t border-[--k-border]")}>
+                    <div>
+                      <span className="text-[12px] font-semibold text-[--k-text]">{d.borneType}</span>
+                      {d.notes && <span className="ml-2 text-[11px] text-[--k-muted]">({d.notes})</span>}
+                    </div>
+                    <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-emerald-600">×{d.qty}</span>
+                  </div>
+                ))}
+              </Card>
+
+              {/* Bornes assignées */}
+              <Card title={`Bornes assignées (${BORNES_ASSIGNED.length})`} icon={Camera} accent="rose">
+                <div className="overflow-x-auto -mx-4 px-4">
+                  <table className="w-full text-[12px]">
+                    <thead>
+                      <tr className="border-b-2 border-[--k-border]">
+                        <th className="px-3 py-2.5 text-left text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide">ID</th>
+                        <th className="px-3 py-2.5 text-left text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide">Modèle</th>
+                        <th className="px-3 py-2.5 text-left text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide">Provenance</th>
+                        <th className="px-3 py-2.5 text-left text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide">Expédition</th>
+                        <th className="px-3 py-2.5 text-left text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide">Statut</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {BORNES_ASSIGNED.map(b => {
+                        const bs = BORNE_STATUS[b.status];
+                        return (
+                          <tr key={b.id} className="border-b border-[--k-border] last:border-0 hover:bg-rose-50/30 transition">
+                            <td className="px-3 py-2.5">
+                              <a href={`/bornes/${b.id}`} className="font-mono font-semibold text-[--k-primary] hover:underline">{b.id}</a>
+                            </td>
+                            <td className="px-3 py-2.5 text-[--k-text]">{b.model}</td>
+                            <td className="px-3 py-2.5 text-[--k-muted]">{b.location}</td>
+                            <td className="px-3 py-2.5">
+                              {b.shipping.startsWith("UPS") || b.shipping.startsWith("TNT") ? (
+                                <span className="flex items-center gap-1 text-amber-600">
+                                  <Truck className="h-3 w-3" />
+                                  <span className="text-[11px] font-mono">{b.shipping}</span>
+                                </span>
+                              ) : (
+                                <span className="text-[--k-muted]">{b.shipping}</span>
+                              )}
+                            </td>
+                            <td className="px-3 py-2.5">
+                              <span className={cn("inline-flex rounded-md px-2 py-0.5 text-[10px] font-bold", bs.color)}>{bs.label}</span>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="mt-3 flex gap-4 text-[11px] text-[--k-muted]">
+                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-emerald-500" />{BORNES_ASSIGNED.filter(b => b.status === "ready").length} prêtes</span>
+                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-amber-500" />{BORNES_ASSIGNED.filter(b => b.status === "transit").length} en transit</span>
+                </div>
+              </Card>
+
+              {/* Infos logistique */}
+              <Card title="Informations logistique" icon={Truck} accent="amber">
+                <InfoRow label="Provenance" value={EVENT.provenance} />
+                <InfoRow label="Antenne" value={EVENT.antenne} />
+                <InfoRow label="Lieu" value={EVENT.location} />
+                <InfoRow label="Adresse" value={EVENT.address} />
+              </Card>
+
+              {/* Actions */}
+              <div className="flex flex-wrap gap-2">
+                <ActionPill icon={FileText} label="Générer bon de livraison" />
+                <ActionPill icon={Printer} label="Imprimer les étiquettes" />
+                <ActionPill icon={Mail} label="Envoyer tracking au client" />
               </div>
-            </Card>
+            </>
           )}
 
           {/* ── ACTIVITY TAB ── */}
@@ -586,29 +705,6 @@ export default function EventDetail() {
 
         {/* ── Right sidebar ── */}
         <div className="space-y-5">
-
-          {/* Équipe projet — Monday-style */}
-          <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
-            <div className="border-b border-[--k-border] px-4 py-3">
-              <span className="text-[13px] font-semibold text-[--k-text]">Équipe projet</span>
-            </div>
-            <div className="p-4 space-y-3">
-              {Object.entries(TEAM).map(([key, member]) => (
-                <div key={key} className="flex items-center gap-3">
-                  <div className={cn("flex h-8 w-8 items-center justify-center rounded-full text-[10px] font-bold text-white", member.color)}>
-                    {member.initials}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="text-[12px] font-medium text-[--k-text]">{member.name}</div>
-                    <div className="text-[10px] text-[--k-muted]">{member.role}</div>
-                  </div>
-                  <a href={`tel:`} className="flex h-6 w-6 items-center justify-center rounded-md text-[--k-muted] hover:bg-[--k-surface-2] hover:text-[--k-primary] transition">
-                    <Phone className="h-3 w-3" />
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
 
           {/* Checklist */}
           <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
@@ -714,5 +810,47 @@ function ActionBtn({ icon: Icon, label }) {
       <Icon className="h-3.5 w-3.5 text-[--k-muted]" />
       {label}
     </button>
+  );
+}
+
+function ActionPill({ icon: Icon, label }) {
+  return (
+    <button className="flex items-center gap-1.5 rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[12px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition shadow-sm">
+      <Icon className="h-3.5 w-3.5 text-[--k-muted]" />
+      {label}
+    </button>
+  );
+}
+
+function PhaseStatus({ checks, checklist }) {
+  const items = checks.map(ck => checklist.find(c => c.key === ck)).filter(Boolean);
+  const allDone = items.every(c => c.done);
+  const someDone = items.some(c => c.done);
+  return (
+    <div className={cn(
+      "rounded-xl border p-4 flex items-center gap-3",
+      allDone ? "bg-emerald-50/60 border-emerald-200" : someDone ? "bg-amber-50/60 border-amber-200" : "bg-slate-50 border-slate-200"
+    )}>
+      {allDone ? (
+        <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />
+      ) : someDone ? (
+        <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0" />
+      ) : (
+        <Circle className="h-5 w-5 text-slate-300 shrink-0" />
+      )}
+      <div className="flex-1 min-w-0">
+        <div className={cn("text-[13px] font-semibold", allDone ? "text-emerald-700" : someDone ? "text-amber-700" : "text-slate-500")}>
+          {allDone ? "Toutes les étapes sont validées" : someDone ? "En cours — certaines étapes restent à valider" : "Aucune étape validée"}
+        </div>
+        <div className="flex flex-wrap gap-2 mt-1.5">
+          {items.map(c => (
+            <span key={c.key} className={cn("flex items-center gap-1 text-[11px] font-medium", c.done ? "text-emerald-600" : "text-slate-400")}>
+              {c.done ? <CheckCircle2 className="h-3 w-3" /> : <Circle className="h-3 w-3" />}
+              {c.label}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
