@@ -10,17 +10,17 @@ import {
 /* ── Mock data ────────────────────────────────────── */
 
 const EVENTS_DATA = [
-  { id: "EVT-287", name: "Salon du Mariage Paris", dateStart: 8, dateEnd: 10, clientType: "Professionnel", bornes: 12, borneTypes: ["Classik", "Prestige"], animationType: "photobooth", ville: "Paris", client: "Salon Expo SAS", status: "ready", provenance: "transporteur", code: "SM26", borneNums: ["B-0381", "B-0382", "B-0412", "B-0415", "B-0420", "B-0421", "B-0455", "B-0460", "B-0501", "B-0502", "B-0510", "B-0511"] },
-  { id: "EVT-291", name: "Soirée L'Oréal", dateStart: 10, dateEnd: 10, clientType: "Professionnel", bornes: 4, borneTypes: ["Prestige"], animationType: "photobooth", ville: "Paris", client: "L'Oréal Group", status: "logistics", provenance: "transporteur", code: "LO26", borneNums: ["B-0455", "B-0460"] },
+  { id: "EVT-287", name: "Salon du Mariage Paris", dateStart: 8, dateEnd: 10, clientType: "Professionnel", bornes: 12, borneTypes: ["Classik", "Prestige"], animationType: "photobooth", ville: "Paris", client: "Salon Expo SAS", status: "ready", provenance: "transporteur", code: "SM26", borneNums: ["C381", "C382", "C412", "C415", "C420", "C421", "P455", "P460", "P501", "P502", "P510", "P511"] },
+  { id: "EVT-291", name: "Soirée L'Oréal", dateStart: 10, dateEnd: 10, clientType: "Professionnel", bornes: 4, borneTypes: ["Prestige"], animationType: "photobooth", ville: "Paris", client: "L'Oréal Group", status: "logistics", provenance: "transporteur", code: "LO26", borneNums: ["P455", "P460"] },
   { id: "EVT-294", name: "Mariage Dupont", dateStart: 14, dateEnd: 14, clientType: "Particulier", bornes: 2, borneTypes: ["Spherik"], animationType: "photobooth", ville: "Rennes", client: "Famille Dupont", status: "design", provenance: "antenne", code: "MD26", borneNums: [], antenne: { name: "Yann Le Goff", initials: "YG", color: "bg-teal-500" } },
-  { id: "EVT-298", name: "Festival Nantes Digital", dateStart: 15, dateEnd: 17, clientType: "Professionnel", bornes: 8, borneTypes: ["Classik"], animationType: "mosaique", ville: "Nantes", client: "Nantes Métropole", status: "confirmed", provenance: "antenne", code: "FN26", borneNums: ["B-0220", "B-0221", "B-0222", "B-0223"], antenne: { name: "Camille Moreau", initials: "CM", color: "bg-cyan-500" } },
+  { id: "EVT-298", name: "Festival Nantes Digital", dateStart: 15, dateEnd: 17, clientType: "Professionnel", bornes: 8, borneTypes: ["Classik"], animationType: "mosaique", ville: "Nantes", client: "Nantes Métropole", status: "confirmed", provenance: "antenne", code: "FN26", borneNums: ["C220", "C221", "C222", "C223"], antenne: { name: "Camille Moreau", initials: "CM", color: "bg-cyan-500" } },
   { id: "EVT-302", name: "Team Building Airbus", dateStart: 18, dateEnd: 18, clientType: "Professionnel", bornes: 3, borneTypes: ["Classik"], animationType: "jeux", ville: "Toulouse", client: "Airbus SE", status: "design", provenance: "transporteur", code: "AB26", borneNums: [] },
-  { id: "EVT-305", name: "Gala BMW Munich", dateStart: 20, dateEnd: 20, clientType: "Professionnel", bornes: 6, borneTypes: ["Prestige", "Spherik"], animationType: "photobooth", ville: "Munich", client: "BMW AG", status: "confirmed", provenance: "transporteur", code: "BM26", borneNums: ["B-0455", "B-0460", "B-0501", "B-0502", "B-0510", "B-0511"] },
-  { id: "EVT-308", name: "Mariage Cohen", dateStart: 22, dateEnd: 22, clientType: "Particulier", bornes: 2, borneTypes: ["Spherik"], animationType: "diaporama", ville: "Lyon", client: "Famille Cohen", status: "confirmed", provenance: "antenne", code: "MC26", borneNums: ["B-0330", "B-0331"], antenne: { name: "Sophie Renard", initials: "SR", color: "bg-rose-500" } },
-  { id: "EVT-312", name: "Salon Auto Lyon", dateStart: 25, dateEnd: 27, clientType: "Professionnel", bornes: 10, borneTypes: ["Classik", "Spherik"], animationType: "photobooth", ville: "Lyon", client: "Lyon Auto Events", status: "confirmed", provenance: "transporteur", code: "SA26", borneNums: ["B-0330", "B-0331", "B-0332", "B-0333", "B-0381", "B-0382", "B-0412", "B-0415", "B-0420", "B-0421"] },
-  { id: "EVT-315", name: "Anniversaire Nike", dateStart: 28, dateEnd: 28, clientType: "Professionnel", bornes: 5, borneTypes: ["Prestige"], animationType: "social", ville: "Paris", client: "Nike France", status: "confirmed", provenance: "antenne", code: "NK26", borneNums: ["B-0455", "B-0460", "B-0501"], antenne: { name: "Yann Le Goff", initials: "YG", color: "bg-teal-500" } },
-  { id: "EVT-320", name: "Mariage Silva", dateStart: 1, dateEnd: 1, clientType: "Particulier", bornes: 1, borneTypes: ["Classik"], animationType: "photobooth", ville: "Bordeaux", client: "Famille Silva", status: "confirmed", provenance: "antenne", code: "MS26", borneNums: ["B-0120"], antenne: { name: "Lucas Petit", initials: "LP", color: "bg-orange-500" } },
-  { id: "EVT-322", name: "Séminaire Total", dateStart: 3, dateEnd: 4, clientType: "Professionnel", bornes: 3, borneTypes: ["Spherik"], animationType: "photobooth", ville: "Paris", client: "TotalEnergies", status: "confirmed", provenance: "transporteur", code: "ST26", borneNums: ["B-0510", "B-0511", "B-0512"] },
+  { id: "EVT-305", name: "Gala BMW Munich", dateStart: 20, dateEnd: 20, clientType: "Professionnel", bornes: 6, borneTypes: ["Prestige", "Spherik"], animationType: "photobooth", ville: "Munich", client: "BMW AG", status: "confirmed", provenance: "transporteur", code: "BM26", borneNums: ["P455", "P460", "S501", "S502", "S510", "S511"] },
+  { id: "EVT-308", name: "Mariage Cohen", dateStart: 22, dateEnd: 22, clientType: "Particulier", bornes: 2, borneTypes: ["Spherik"], animationType: "diaporama", ville: "Lyon", client: "Famille Cohen", status: "confirmed", provenance: "antenne", code: "MC26", borneNums: ["S330", "S331"], antenne: { name: "Sophie Renard", initials: "SR", color: "bg-rose-500" } },
+  { id: "EVT-312", name: "Salon Auto Lyon", dateStart: 25, dateEnd: 27, clientType: "Professionnel", bornes: 10, borneTypes: ["Classik", "Spherik"], animationType: "photobooth", ville: "Lyon", client: "Lyon Auto Events", status: "confirmed", provenance: "transporteur", code: "SA26", borneNums: ["S330", "S331", "S332", "S333", "C381", "C382", "C412", "C415", "C420", "C421"] },
+  { id: "EVT-315", name: "Anniversaire Nike", dateStart: 28, dateEnd: 28, clientType: "Professionnel", bornes: 5, borneTypes: ["Prestige"], animationType: "social", ville: "Paris", client: "Nike France", status: "confirmed", provenance: "antenne", code: "NK26", borneNums: ["P455", "P460", "P501"], antenne: { name: "Yann Le Goff", initials: "YG", color: "bg-teal-500" } },
+  { id: "EVT-320", name: "Mariage Silva", dateStart: 1, dateEnd: 1, clientType: "Particulier", bornes: 1, borneTypes: ["Classik"], animationType: "photobooth", ville: "Bordeaux", client: "Famille Silva", status: "confirmed", provenance: "antenne", code: "MS26", borneNums: ["C120"], antenne: { name: "Lucas Petit", initials: "LP", color: "bg-orange-500" } },
+  { id: "EVT-322", name: "Séminaire Total", dateStart: 3, dateEnd: 4, clientType: "Professionnel", bornes: 3, borneTypes: ["Spherik"], animationType: "photobooth", ville: "Paris", client: "TotalEnergies", status: "confirmed", provenance: "transporteur", code: "ST26", borneNums: ["S510", "S511", "S512"] },
 ];
 
 const BORNE_TYPES = ["Classik", "Spherik", "Prestige"];
@@ -46,8 +46,16 @@ const STATUS_MAP = {
   live: { label: "En cours", dot: "bg-rose-500" },
 };
 
-const DAYS_IN_MONTH = 28;
-const FIRST_DAY_OFFSET = 6;
+const MONTHS = [
+  { name: "Décembre 2025", short: "déc. 2025", days: 31, offset: 0 },   // idx 0
+  { name: "Janvier 2026", short: "jan. 2026", days: 31, offset: 3 },     // idx 1
+  { name: "Février 2026", short: "fév. 2026", days: 28, offset: 6 },     // idx 2 ← current
+  { name: "Mars 2026", short: "mars 2026", days: 31, offset: 6 },        // idx 3
+  { name: "Avril 2026", short: "avr. 2026", days: 30, offset: 2 },       // idx 4
+  { name: "Mai 2026", short: "mai 2026", days: 31, offset: 4 },          // idx 5
+  { name: "Juin 2026", short: "juin 2026", days: 30, offset: 0 },        // idx 6
+];
+const CURRENT_MONTH_IDX = 2; // Février 2026
 const TODAY = 7;
 const ALL_VILLES = [...new Set(EVENTS_DATA.map(e => e.ville))].sort();
 
@@ -55,6 +63,7 @@ const ALL_VILLES = [...new Set(EVENTS_DATA.map(e => e.ville))].sort();
 
 export default function EventsPlanning() {
   const [view, setView] = useState("month");
+  const [monthIdx, setMonthIdx] = useState(CURRENT_MONTH_IDX);
   const [weekStart, setWeekStart] = useState(3); // Monday of the week containing TODAY
   const [clientTypeFilter, setClientTypeFilter] = useState("all");
   const [borneFilters, setBorneFilters] = useState([]);
@@ -89,11 +98,14 @@ export default function EventsPlanning() {
 
   const toggleBorneFilter = (t) => setBorneFilters(prev => prev.includes(t) ? prev.filter(x => x !== t) : [...prev, t]);
 
+  const month = MONTHS[monthIdx];
+  const isCurrentMonth = monthIdx === CURRENT_MONTH_IDX;
+
   // ── Calendar grid (month)
   const weeks = [];
   let currentWeek = [];
-  for (let i = 0; i < FIRST_DAY_OFFSET; i++) currentWeek.push(null);
-  for (let d = 1; d <= DAYS_IN_MONTH; d++) {
+  for (let i = 0; i < month.offset; i++) currentWeek.push(null);
+  for (let d = 1; d <= month.days; d++) {
     currentWeek.push(d);
     if (currentWeek.length === 7) { weeks.push(currentWeek); currentWeek = []; }
   }
@@ -101,7 +113,7 @@ export default function EventsPlanning() {
 
   // ── Week view days
   const weekDays = [];
-  for (let d = weekStart; d < weekStart + 7 && d <= DAYS_IN_MONTH; d++) {
+  for (let d = weekStart; d < weekStart + 7 && d <= month.days; d++) {
     if (d >= 1) weekDays.push(d);
   }
   while (weekDays.length < 7) weekDays.push(null);
@@ -145,7 +157,6 @@ export default function EventsPlanning() {
     <AppShell currentApp="Events Manager" activeKey="planning">
       <PageHeader
         title="Calendrier des événements"
-        subtitle="Février 2026"
         actions={
           <a href="/events/create" className="flex h-8 items-center gap-1.5 rounded-lg bg-[--k-primary] px-3 text-white text-[12px] font-medium hover:brightness-110 transition shadow-sm">
             <Plus className="h-4 w-4" />
@@ -159,17 +170,23 @@ export default function EventsPlanning() {
         {/* Period nav */}
         <div className="flex items-center gap-1 rounded-lg border border-[--k-border] bg-white">
           <button
-            onClick={() => view === "week" ? setWeekStart(Math.max(1, weekStart - 7)) : null}
-            className="flex h-8 w-8 items-center justify-center rounded-l-lg hover:bg-[--k-surface-2] text-[--k-muted] transition"
+            onClick={() => {
+              if (view === "week") setWeekStart(Math.max(1, weekStart - 7));
+              else setMonthIdx(Math.max(0, monthIdx - 1));
+            }}
+            className={cn("flex h-8 w-8 items-center justify-center rounded-l-lg hover:bg-[--k-surface-2] text-[--k-muted] transition", view === "month" && monthIdx === 0 && "opacity-30 pointer-events-none")}
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
-          <span className="px-3 text-[13px] font-semibold text-[--k-text]">
-            {view === "week" ? `${weekStart}–${Math.min(weekStart + 6, DAYS_IN_MONTH)} fév. 2026` : "Février 2026"}
+          <span className="px-3 text-[13px] font-semibold text-[--k-text] min-w-[140px] text-center">
+            {view === "week" ? `${weekStart}–${Math.min(weekStart + 6, month.days)} ${month.short}` : month.name}
           </span>
           <button
-            onClick={() => view === "week" ? setWeekStart(Math.min(DAYS_IN_MONTH - 6, weekStart + 7)) : null}
-            className="flex h-8 w-8 items-center justify-center rounded-r-lg hover:bg-[--k-surface-2] text-[--k-muted] transition"
+            onClick={() => {
+              if (view === "week") setWeekStart(Math.min(month.days - 6, weekStart + 7));
+              else setMonthIdx(Math.min(MONTHS.length - 1, monthIdx + 1));
+            }}
+            className={cn("flex h-8 w-8 items-center justify-center rounded-r-lg hover:bg-[--k-surface-2] text-[--k-muted] transition", view === "month" && monthIdx === MONTHS.length - 1 && "opacity-30 pointer-events-none")}
           >
             <ChevronRight className="h-4 w-4" />
           </button>
@@ -192,7 +209,7 @@ export default function EventsPlanning() {
             </button>
           ))}
           <button
-            onClick={() => { setView("week"); setWeekStart(Math.max(1, TODAY - ((TODAY - 1 + FIRST_DAY_OFFSET) % 7))); }}
+            onClick={() => { setMonthIdx(CURRENT_MONTH_IDX); setView("week"); setWeekStart(Math.max(1, TODAY - ((TODAY - 1 + MONTHS[CURRENT_MONTH_IDX].offset) % 7))); }}
             className="rounded-md px-2.5 py-1.5 text-[11px] font-medium text-[--k-muted] hover:text-[--k-text] hover:bg-[--k-surface-2] transition"
           >
             Aujourd'hui
@@ -314,7 +331,7 @@ export default function EventsPlanning() {
             <div key={wi} className="grid grid-cols-7 border-b border-[--k-border] last:border-0">
               {week.map((day, di) => {
                 const dayEvents = getEventsForDay(day);
-                const isToday = day === TODAY;
+                const isToday = isCurrentMonth && day === TODAY;
                 return (
                   <div key={di} className={cn(
                     "min-h-[100px] border-r border-[--k-border] last:border-r-0 p-1.5 transition",
@@ -352,7 +369,7 @@ export default function EventsPlanning() {
           <div className="grid grid-cols-7">
             {weekDays.map((day, di) => {
               const dayEvents = getEventsForDay(day);
-              const isToday = day === TODAY;
+              const isToday = isCurrentMonth && day === TODAY;
               return (
                 <div key={di} className={cn(
                   "min-h-[300px] border-r border-[--k-border] last:border-r-0 p-2 transition",
@@ -408,15 +425,17 @@ export default function EventsPlanning() {
 
       {/* Event list — dynamic based on view & filters */}
       {(() => {
-        const visibleEvents = view === "week"
-          ? filteredEvents.filter(e => {
-              const weekEnd = Math.min(weekStart + 6, DAYS_IN_MONTH);
-              return e.dateEnd >= weekStart && e.dateStart <= weekEnd;
-            })
-          : filteredEvents;
+        const visibleEvents = isCurrentMonth
+          ? (view === "week"
+            ? filteredEvents.filter(e => {
+                const weekEnd = Math.min(weekStart + 6, month.days);
+                return e.dateEnd >= weekStart && e.dateStart <= weekEnd;
+              })
+            : filteredEvents)
+          : [];
         const listLabel = view === "week"
           ? `Événements de la semaine (${visibleEvents.length})`
-          : `Événements du mois (${visibleEvents.length})`;
+          : `Événements — ${month.name} (${visibleEvents.length})`;
         return (
           <div className="mt-5 rounded-2xl border border-[--k-border] bg-white shadow-sm">
             <div className="border-b border-[--k-border] bg-gradient-to-r from-rose-50/50 to-pink-50/30 px-4 py-3 rounded-t-2xl">
