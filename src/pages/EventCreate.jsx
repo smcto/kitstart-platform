@@ -1139,70 +1139,6 @@ export default function EventCreate() {
                       placeholder="Séléctionner"
                     />
                   </Field>
-                  {/* Responsable(s) - Person picker */}
-                  <div className="sm:col-span-2">
-                    <Field label="Responsable(s) / Antenne">
-                      <div className="relative">
-                        <div className="flex items-center gap-2 flex-wrap mb-2">
-                          {selectedResponsables.map(id => {
-                            const p = MOCK_RESPONSABLES.find(r => r.id === id);
-                            if (!p) return null;
-                            return (
-                              <span key={id} className="inline-flex items-center gap-1.5 rounded-full bg-[--k-primary-2] pl-1 pr-2.5 py-0.5">
-                                <span className={cn("h-5 w-5 rounded-full flex items-center justify-center text-[9px] font-bold text-white", p.color)}>
-                                  {p.prenom[0]}{p.nom[0]}
-                                </span>
-                                <span className="text-[12px] font-medium text-[--k-primary]">{p.prenom} {p.nom}</span>
-                                <button onClick={() => setSelectedResponsables(prev => prev.filter(x => x !== id))} className="text-[--k-primary] hover:text-[--k-danger] ml-0.5">
-                                  <X className="h-3 w-3" />
-                                </button>
-                              </span>
-                            );
-                          })}
-                        </div>
-                        <div className="relative">
-                          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[--k-muted]" />
-                          <input
-                            value={responsableSearch}
-                            onChange={e => { setResponsableSearch(e.target.value); setShowResponsablePicker(true); }}
-                            onFocus={() => setShowResponsablePicker(true)}
-                            placeholder="Rechercher un responsable..."
-                            className="input-field pl-8"
-                          />
-                        </div>
-                        {showResponsablePicker && (
-                          <div className="absolute z-20 mt-1 w-full max-h-64 overflow-auto rounded-lg border border-[--k-border] bg-white shadow-lg">
-                            {MOCK_RESPONSABLES
-                              .filter(r => !selectedResponsables.includes(r.id))
-                              .filter(r => !responsableSearch || `${r.prenom} ${r.nom} ${r.ville}`.toLowerCase().includes(responsableSearch.toLowerCase()))
-                              .map(r => (
-                                <button
-                                  key={r.id}
-                                  onClick={() => {
-                                    setSelectedResponsables(prev => [...prev, r.id]);
-                                    setResponsableSearch("");
-                                    setShowResponsablePicker(false);
-                                  }}
-                                  className="w-full flex items-center gap-3 px-3 py-2.5 text-left hover:bg-[--k-surface-2] transition"
-                                >
-                                  <span className={cn("h-8 w-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0", r.color)}>
-                                    {r.prenom[0]}{r.nom[0]}
-                                  </span>
-                                  <div className="min-w-0">
-                                    <div className="text-[13px] font-medium text-[--k-text]">{r.prenom} {r.nom}</div>
-                                    <div className="text-[11px] text-[--k-muted]">{r.ville}</div>
-                                  </div>
-                                </button>
-                              ))}
-                            {MOCK_RESPONSABLES.filter(r => !selectedResponsables.includes(r.id)).filter(r => !responsableSearch || `${r.prenom} ${r.nom} ${r.ville}`.toLowerCase().includes(responsableSearch.toLowerCase())).length === 0 && (
-                              <div className="px-3 py-4 text-center text-[13px] text-[--k-muted]">Aucun résultat</div>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    </Field>
-                  </div>
-
                   <div className="sm:col-span-2">
                     <CollapsibleComment
                       label="Description événement"
@@ -1262,16 +1198,6 @@ export default function EventCreate() {
                           </button>
                         ))}
                       </div>
-                      <CollapsibleTagInput
-                        value={tagInput}
-                        onChange={setTagInput}
-                        onAdd={() => {
-                          if (tagInput.trim()) {
-                            setInternalTags(prev => prev.includes(tagInput.trim()) ? prev : [...prev, tagInput.trim()]);
-                            setTagInput("");
-                          }
-                        }}
-                      />
                     </Field>
                   </div>
                 </div>
@@ -1889,6 +1815,75 @@ export default function EventCreate() {
               </div>
             </div>
 
+            {/* Responsable(s) / Antenne */}
+            <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+              <div className="border-b border-[--k-border] px-5 py-3">
+                <h2 className="text-[16px] font-bold text-[--k-text]">Responsable(s) / Antenne</h2>
+              </div>
+              <div className="p-5">
+                <Field label="Responsable(s) / Antenne">
+                  <div className="relative">
+                    <div className="flex items-center gap-2 flex-wrap mb-2">
+                      {selectedResponsables.map(id => {
+                        const p = MOCK_RESPONSABLES.find(r => r.id === id);
+                        if (!p) return null;
+                        return (
+                          <span key={id} className="inline-flex items-center gap-1.5 rounded-full bg-[--k-primary-2] pl-1 pr-2.5 py-0.5">
+                            <span className={cn("h-5 w-5 rounded-full flex items-center justify-center text-[9px] font-bold text-white", p.color)}>
+                              {p.prenom[0]}{p.nom[0]}
+                            </span>
+                            <span className="text-[12px] font-medium text-[--k-primary]">{p.prenom} {p.nom}</span>
+                            <button onClick={() => setSelectedResponsables(prev => prev.filter(x => x !== id))} className="text-[--k-primary] hover:text-[--k-danger] ml-0.5">
+                              <X className="h-3 w-3" />
+                            </button>
+                          </span>
+                        );
+                      })}
+                    </div>
+                    <div className="relative">
+                      <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[--k-muted]" />
+                      <input
+                        value={responsableSearch}
+                        onChange={e => { setResponsableSearch(e.target.value); setShowResponsablePicker(true); }}
+                        onFocus={() => setShowResponsablePicker(true)}
+                        placeholder="Rechercher un responsable..."
+                        className="input-field pl-8"
+                      />
+                    </div>
+                    {showResponsablePicker && (
+                      <div className="absolute z-20 mt-1 w-full max-h-64 overflow-auto rounded-lg border border-[--k-border] bg-white shadow-lg">
+                        {MOCK_RESPONSABLES
+                          .filter(r => !selectedResponsables.includes(r.id))
+                          .filter(r => !responsableSearch || `${r.prenom} ${r.nom} ${r.ville}`.toLowerCase().includes(responsableSearch.toLowerCase()))
+                          .map(r => (
+                            <button
+                              key={r.id}
+                              onClick={() => {
+                                setSelectedResponsables(prev => [...prev, r.id]);
+                                setResponsableSearch("");
+                                setShowResponsablePicker(false);
+                              }}
+                              className="w-full flex items-center gap-3 px-3 py-2.5 text-left hover:bg-[--k-surface-2] transition"
+                            >
+                              <span className={cn("h-8 w-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0", r.color)}>
+                                {r.prenom[0]}{r.nom[0]}
+                              </span>
+                              <div className="min-w-0">
+                                <div className="text-[13px] font-medium text-[--k-text]">{r.prenom} {r.nom}</div>
+                                <div className="text-[11px] text-[--k-muted]">{r.ville}</div>
+                              </div>
+                            </button>
+                          ))}
+                        {MOCK_RESPONSABLES.filter(r => !selectedResponsables.includes(r.id)).filter(r => !responsableSearch || `${r.prenom} ${r.nom} ${r.ville}`.toLowerCase().includes(responsableSearch.toLowerCase())).length === 0 && (
+                          <div className="px-3 py-4 text-center text-[13px] text-[--k-muted]">Aucun résultat</div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </Field>
+              </div>
+            </div>
+
             {/* Logistique aller / retour — 50/50 */}
             <div className="grid gap-5 lg:grid-cols-2">
               {/* Aller */}
@@ -2239,14 +2234,19 @@ function CollapsibleSection({ title, buttonLabel, children }) {
       <div className="p-5">{children}</div>
     </div>
   ) : (
-    <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm p-4">
-      <button
-        onClick={() => setOpen(true)}
-        className="flex items-center gap-2 rounded-lg border border-dashed border-[--k-border] px-3 py-2 text-[12px] text-[--k-muted] hover:border-[--k-primary] hover:text-[--k-primary] transition w-full"
-      >
-        <Plus className="h-3.5 w-3.5" />
-        {buttonLabel || title}
-      </button>
+    <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+      <div className="border-b border-[--k-border] px-5 py-3">
+        <h2 className="text-[16px] font-bold text-[--k-text]">{title}</h2>
+      </div>
+      <div className="p-5">
+        <button
+          onClick={() => setOpen(true)}
+          className="flex items-center gap-2 rounded-lg border border-dashed border-[--k-border] px-3 py-2 text-[12px] text-[--k-muted] hover:border-[--k-primary] hover:text-[--k-primary] transition w-full"
+        >
+          <Plus className="h-3.5 w-3.5" />
+          {buttonLabel || title}
+        </button>
+      </div>
     </div>
   );
 }
