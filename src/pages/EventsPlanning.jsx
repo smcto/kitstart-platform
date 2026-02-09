@@ -4,7 +4,8 @@ import { PageHeader } from "../components/PageHeader";
 import { cn } from "../components/ui/cn";
 import {
   ChevronLeft, ChevronRight, Camera, Filter, Plus,
-  ChevronDown, X, Search, ExternalLink, MapPin, Monitor
+  ChevronDown, X, Search, ExternalLink, MapPin, Monitor,
+  Truck, Building2
 } from "lucide-react";
 
 /* ── Mock data ────────────────────────────────────── */
@@ -19,17 +20,17 @@ const TEAM_MEMBERS = {
 };
 
 const EVENTS_DATA = [
-  { id: "EVT-287", name: "Salon du Mariage Paris", dateStart: 8, dateEnd: 10, clientType: "Professionnel", bornes: 12, borneTypes: ["Classik", "Prestige"], animationType: "photobooth", ville: "Paris", client: "Salon Expo SAS", status: "ready", provenance: "transporteur", code: "SM26", borneNums: ["C381", "C382", "C412", "C415", "C420", "C421", "P455", "P460", "P501", "P502", "P510", "P511"], commercial: "BL", chefsProjets: ["BG", "ER"] },
-  { id: "EVT-291", name: "Soirée L'Oréal", dateStart: 10, dateEnd: 10, clientType: "Professionnel", bornes: 4, borneTypes: ["Prestige"], animationType: "photobooth", ville: "Paris", client: "L'Oréal Group", status: "logistics", provenance: "transporteur", code: "LO26", borneNums: ["P455", "P460"], commercial: "BL", chefsProjets: ["ER"] },
-  { id: "EVT-294", name: "Mariage Dupont", dateStart: 14, dateEnd: 14, clientType: "Particulier", bornes: 2, borneTypes: ["Spherik"], animationType: "photobooth", ville: "Rennes", client: "Famille Dupont", status: "design", provenance: "antenne", code: "MD26", borneNums: [], antenne: { name: "Yann Le Goff", initials: "YG", color: "bg-teal-500" }, commercial: "LL", chefsProjets: ["PT"] },
-  { id: "EVT-298", name: "Festival Nantes Digital", dateStart: 15, dateEnd: 17, clientType: "Professionnel", bornes: 8, borneTypes: ["Classik"], animationType: "mosaique", ville: "Nantes", client: "Nantes Métropole", status: "confirmed", provenance: "antenne", code: "FN26", borneNums: ["C220", "C221", "C222", "C223"], antenne: { name: "Camille Moreau", initials: "CM", color: "bg-cyan-500" }, commercial: "BL", chefsProjets: ["BG"] },
-  { id: "EVT-302", name: "Team Building Airbus", dateStart: 18, dateEnd: 18, clientType: "Professionnel", bornes: 3, borneTypes: ["Classik"], animationType: "jeux", ville: "Toulouse", client: "Airbus SE", status: "design", provenance: "transporteur", code: "AB26", borneNums: [], commercial: "LL", chefsProjets: ["SM"] },
-  { id: "EVT-305", name: "Gala BMW Munich", dateStart: 20, dateEnd: 20, clientType: "Professionnel", bornes: 6, borneTypes: ["Prestige", "Spherik"], animationType: "photobooth", ville: "Munich", client: "BMW AG", status: "confirmed", provenance: "transporteur", code: "BM26", borneNums: ["P455", "P460", "S501", "S502", "S510", "S511"], commercial: "BL", chefsProjets: ["BG", "PT"] },
-  { id: "EVT-308", name: "Mariage Cohen", dateStart: 22, dateEnd: 22, clientType: "Particulier", bornes: 2, borneTypes: ["Spherik"], animationType: "diaporama", ville: "Lyon", client: "Famille Cohen", status: "confirmed", provenance: "antenne", code: "MC26", borneNums: ["S330", "S331"], antenne: { name: "Sophie Renard", initials: "SR", color: "bg-rose-500" }, commercial: "LL", chefsProjets: ["SM"] },
-  { id: "EVT-312", name: "Salon Auto Lyon", dateStart: 25, dateEnd: 27, clientType: "Professionnel", bornes: 10, borneTypes: ["Classik", "Spherik"], animationType: "photobooth", ville: "Lyon", client: "Lyon Auto Events", status: "confirmed", provenance: "transporteur", code: "SA26", borneNums: ["S330", "S331", "S332", "S333", "C381", "C382", "C412", "C415", "C420", "C421"], commercial: "BL", chefsProjets: ["ER", "SM"] },
-  { id: "EVT-315", name: "Anniversaire Nike", dateStart: 28, dateEnd: 28, clientType: "Professionnel", bornes: 5, borneTypes: ["Prestige"], animationType: "social", ville: "Paris", client: "Nike France", status: "confirmed", provenance: "antenne", code: "NK26", borneNums: ["P455", "P460", "P501"], antenne: { name: "Yann Le Goff", initials: "YG", color: "bg-teal-500" }, commercial: "BL", chefsProjets: ["PT"] },
-  { id: "EVT-320", name: "Mariage Silva", dateStart: 1, dateEnd: 1, clientType: "Particulier", bornes: 1, borneTypes: ["Classik"], animationType: "photobooth", ville: "Bordeaux", client: "Famille Silva", status: "confirmed", provenance: "antenne", code: "MS26", borneNums: ["C120"], antenne: { name: "Lucas Petit", initials: "LP", color: "bg-orange-500" }, commercial: "LL", chefsProjets: ["PT"] },
-  { id: "EVT-322", name: "Séminaire Total", dateStart: 3, dateEnd: 4, clientType: "Professionnel", bornes: 3, borneTypes: ["Spherik"], animationType: "photobooth", ville: "Paris", client: "TotalEnergies", status: "confirmed", provenance: "transporteur", code: "ST26", borneNums: ["S510", "S511", "S512"], commercial: "BL", chefsProjets: ["BG"] },
+  { id: "EVT-287", name: "Salon du Mariage Paris", dateStart: 8, dateEnd: 10, clientType: "Professionnel", bornes: 12, borneTypes: ["Classik", "Prestige"], animationType: "photobooth", ville: "Paris", client: "Salon Expo SAS", status: "ready", provenances: ["antenne", "transporteur"], code: "SM26", borneNums: ["C381", "C382", "C412", "C415", "C420", "C421", "P455", "P460", "P501", "P502", "P510", "P511"], commercial: "BL", chefsProjets: ["BG", "ER"], antenne: { name: "Yann Le Goff", initials: "YG", color: "bg-teal-500" } },
+  { id: "EVT-291", name: "Soirée L'Oréal", dateStart: 10, dateEnd: 10, clientType: "Professionnel", bornes: 4, borneTypes: ["Prestige"], animationType: "photobooth", ville: "Paris", client: "L'Oréal Group", status: "logistics", provenances: ["transporteur"], code: "LO26", borneNums: ["P455", "P460"], commercial: "BL", chefsProjets: ["ER"] },
+  { id: "EVT-294", name: "Mariage Dupont", dateStart: 14, dateEnd: 14, clientType: "Particulier", bornes: 2, borneTypes: ["Spherik"], animationType: "photobooth", ville: "Rennes", client: "Famille Dupont", status: "design", provenances: ["antenne"], code: "MD26", borneNums: [], antenne: { name: "Yann Le Goff", initials: "YG", color: "bg-teal-500" }, commercial: "LL", chefsProjets: ["PT"] },
+  { id: "EVT-298", name: "Festival Nantes Digital", dateStart: 15, dateEnd: 17, clientType: "Professionnel", bornes: 8, borneTypes: ["Classik"], animationType: "mosaique", ville: "Nantes", client: "Nantes Métropole", status: "confirmed", provenances: ["antenne"], code: "FN26", borneNums: ["C220", "C221", "C222", "C223"], antenne: { name: "Camille Moreau", initials: "CM", color: "bg-cyan-500" }, commercial: "BL", chefsProjets: ["BG"] },
+  { id: "EVT-302", name: "Team Building Airbus", dateStart: 18, dateEnd: 18, clientType: "Professionnel", bornes: 3, borneTypes: ["Classik"], animationType: "jeux", ville: "Toulouse", client: "Airbus SE", status: "design", provenances: ["transporteur"], code: "AB26", borneNums: [], commercial: "LL", chefsProjets: ["SM"] },
+  { id: "EVT-305", name: "Gala BMW Munich", dateStart: 20, dateEnd: 20, clientType: "Professionnel", bornes: 6, borneTypes: ["Prestige", "Spherik"], animationType: "photobooth", ville: "Munich", client: "BMW AG", status: "confirmed", provenances: ["transporteur"], code: "BM26", borneNums: ["P455", "P460", "S501", "S502", "S510", "S511"], commercial: "BL", chefsProjets: ["BG", "PT"] },
+  { id: "EVT-308", name: "Mariage Cohen", dateStart: 22, dateEnd: 22, clientType: "Particulier", bornes: 2, borneTypes: ["Spherik"], animationType: "diaporama", ville: "Lyon", client: "Famille Cohen", status: "confirmed", provenances: ["antenne"], code: "MC26", borneNums: ["S330", "S331"], antenne: { name: "Sophie Renard", initials: "SR", color: "bg-rose-500" }, commercial: "LL", chefsProjets: ["SM"] },
+  { id: "EVT-312", name: "Salon Auto Lyon", dateStart: 25, dateEnd: 27, clientType: "Professionnel", bornes: 10, borneTypes: ["Classik", "Spherik"], animationType: "photobooth", ville: "Lyon", client: "Lyon Auto Events", status: "confirmed", provenances: ["antenne", "transporteur"], code: "SA26", borneNums: ["S330", "S331", "S332", "S333", "C381", "C382", "C412", "C415", "C420", "C421"], commercial: "BL", chefsProjets: ["ER", "SM"], antenne: { name: "Sophie Renard", initials: "SR", color: "bg-rose-500" } },
+  { id: "EVT-315", name: "Anniversaire Nike", dateStart: 28, dateEnd: 28, clientType: "Professionnel", bornes: 5, borneTypes: ["Prestige"], animationType: "social", ville: "Paris", client: "Nike France", status: "confirmed", provenances: ["antenne"], code: "NK26", borneNums: ["P455", "P460", "P501"], antenne: { name: "Yann Le Goff", initials: "YG", color: "bg-teal-500" }, commercial: "BL", chefsProjets: ["PT"] },
+  { id: "EVT-320", name: "Mariage Silva", dateStart: 1, dateEnd: 1, clientType: "Particulier", bornes: 1, borneTypes: ["Classik"], animationType: "photobooth", ville: "Bordeaux", client: "Famille Silva", status: "confirmed", provenances: ["antenne"], code: "MS26", borneNums: ["C120"], antenne: { name: "Lucas Petit", initials: "LP", color: "bg-orange-500" }, commercial: "LL", chefsProjets: ["PT"] },
+  { id: "EVT-322", name: "Séminaire Total", dateStart: 3, dateEnd: 4, clientType: "Professionnel", bornes: 3, borneTypes: ["Spherik"], animationType: "photobooth", ville: "Paris", client: "TotalEnergies", status: "confirmed", provenances: ["transporteur"], code: "ST26", borneNums: ["S510", "S511", "S512"], commercial: "BL", chefsProjets: ["BG"] },
 ];
 
 const BORNE_TYPES = ["Classik", "Spherik", "Prestige"];
@@ -100,7 +101,7 @@ export default function EventsPlanning() {
     (borneFilters.length === 0 || e.borneTypes.some(b => borneFilters.includes(b))) &&
     (animFilter === "all" || e.animationType === animFilter) &&
     (villeFilter === "all" || e.ville === villeFilter) &&
-    (provenanceFilter === "all" || e.provenance === provenanceFilter) &&
+    (provenanceFilter === "all" || (e.provenances || []).includes(provenanceFilter)) &&
     (personneFilter === "all" || e.commercial === personneFilter || (e.chefsProjets || []).includes(personneFilter))
   );
 
@@ -472,53 +473,62 @@ export default function EventsPlanning() {
                     <button key={evt.id} onClick={(e) => handleEventClick(evt, e)} className="flex items-center gap-3 px-4 py-2.5 hover:bg-[--k-surface-2]/30 transition w-full text-left">
                       <span className={cn("h-2 w-2 rounded-full shrink-0", st.dot)} />
                       <span className="text-[11px] font-mono text-[--k-muted] shrink-0 w-10">{evt.code}</span>
-                      <div className="min-w-0 w-[220px] shrink-0">
+                      <div className="min-w-0 w-[200px] shrink-0">
                         <div className="text-[12px] font-medium text-[--k-text] truncate">{evt.name}</div>
                         <div className="text-[11px] text-[--k-muted] truncate">{evt.client}</div>
                       </div>
                       {/* Ville */}
-                      <span className="shrink-0 flex items-center gap-1 text-[11px] text-[--k-muted] w-[90px]">
+                      <span className="shrink-0 flex items-center gap-1 text-[11px] text-[--k-muted] w-[80px]">
                         <MapPin className="h-3 w-3 shrink-0" />{evt.ville}
                       </span>
-                      {/* Borne nums */}
-                      <div className="shrink-0 flex items-center gap-1.5 w-[150px]">
-                        {evt.borneNums && evt.borneNums.length > 0 ? (
-                          <>
-                            <Monitor className="h-3.5 w-3.5 text-[--k-text]/50 shrink-0" />
-                            <span className="text-[11px] font-mono font-medium text-[--k-text] truncate" title={evt.borneNums.join(", ")}>
-                              {evt.borneNums.length <= 3 ? evt.borneNums.join(", ") : `${evt.borneNums.slice(0, 2).join(", ")} +${evt.borneNums.length - 2}`}
-                            </span>
-                          </>
-                        ) : (
-                          <span className="text-[11px] italic text-[--k-muted]/50">Non affecté</span>
-                        )}
-                      </div>
-                      {/* Team avatars: commercial + chefs de projet */}
-                      <div className="shrink-0 w-[72px] flex items-center -space-x-1.5">
+                      {/* Commercial */}
+                      <div className="shrink-0 w-[34px] flex items-center justify-center" title={evt.commercial && TEAM_MEMBERS[evt.commercial] ? `Commercial : ${TEAM_MEMBERS[evt.commercial].name}` : ""}>
                         {evt.commercial && TEAM_MEMBERS[evt.commercial] && (
-                          <span className={cn("flex h-6 w-6 items-center justify-center rounded-full text-[8px] font-bold text-white ring-2 ring-white", TEAM_MEMBERS[evt.commercial].color)} title={`Commercial : ${TEAM_MEMBERS[evt.commercial].name}`}>
+                          <span className={cn("flex h-6 w-6 items-center justify-center rounded-full text-[8px] font-bold text-white ring-2 ring-white shadow-sm", TEAM_MEMBERS[evt.commercial].color)}>
                             {TEAM_MEMBERS[evt.commercial].initials}
                           </span>
                         )}
+                      </div>
+                      {/* Chef(s) de projet */}
+                      <div className="shrink-0 w-[52px] flex items-center -space-x-1.5">
                         {(evt.chefsProjets || []).map(cp => TEAM_MEMBERS[cp] && (
-                          <span key={cp} className={cn("flex h-6 w-6 items-center justify-center rounded-full text-[8px] font-bold text-white ring-2 ring-white", TEAM_MEMBERS[cp].color)} title={`${TEAM_MEMBERS[cp].role} : ${TEAM_MEMBERS[cp].name}`}>
+                          <span key={cp} className={cn("flex h-6 w-6 items-center justify-center rounded-full text-[8px] font-bold text-white ring-2 ring-white shadow-sm", TEAM_MEMBERS[cp].color)} title={`${TEAM_MEMBERS[cp].role} : ${TEAM_MEMBERS[cp].name}`}>
                             {TEAM_MEMBERS[cp].initials}
                           </span>
                         ))}
                       </div>
-                      {/* Provenance */}
-                      <div className="shrink-0 w-[120px] flex items-center gap-1.5">
-                        {evt.provenance === "antenne" && evt.antenne ? (
-                          <>
-                            <span className={cn("flex h-5 w-5 items-center justify-center rounded-full text-[7px] font-bold text-white shrink-0", evt.antenne.color)}>
-                              {evt.antenne.initials}
-                            </span>
-                            <span className="text-[11px] text-[--k-text] truncate">{evt.antenne.name}</span>
-                          </>
-                        ) : evt.provenance === "antenne" ? (
-                          <span className="text-[11px] text-[--k-muted]">Antenne</span>
+                      {/* Bornes — icône + count + numéros */}
+                      <div className="shrink-0 w-[170px] flex items-center gap-1.5">
+                        <div className="flex items-center justify-center h-6 w-6 rounded-md bg-slate-100 shrink-0">
+                          <Monitor className="h-3.5 w-3.5 text-slate-500" />
+                        </div>
+                        {evt.borneNums && evt.borneNums.length > 0 ? (
+                          <div className="min-w-0">
+                            <div className="text-[11px] font-semibold text-[--k-text] leading-tight">{evt.borneNums.length}/{evt.bornes} affectée{evt.borneNums.length > 1 ? "s" : ""}</div>
+                            <div className="text-[10px] font-mono text-[--k-muted] truncate leading-tight" title={evt.borneNums.join(", ")}>
+                              {evt.borneNums.length <= 4 ? evt.borneNums.join(", ") : `${evt.borneNums.slice(0, 3).join(", ")} +${evt.borneNums.length - 3}`}
+                            </div>
+                          </div>
                         ) : (
-                          <span className="text-[11px] text-[--k-muted]">Transporteur</span>
+                          <div className="min-w-0">
+                            <div className="text-[11px] font-semibold text-amber-600 leading-tight">0/{evt.bornes} affectée{evt.bornes > 1 ? "s" : ""}</div>
+                            <div className="text-[10px] italic text-[--k-muted]/60 leading-tight">Non affecté</div>
+                          </div>
+                        )}
+                      </div>
+                      {/* Provenance — antenne / transporteur / les 2 */}
+                      <div className="shrink-0 w-[130px] flex items-center gap-1.5">
+                        {(evt.provenances || []).includes("antenne") && (
+                          <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 border border-emerald-200/60 px-1.5 py-0.5">
+                            <Building2 className="h-3 w-3 text-emerald-600" />
+                            <span className="text-[10px] font-medium text-emerald-700">Antenne</span>
+                          </span>
+                        )}
+                        {(evt.provenances || []).includes("transporteur") && (
+                          <span className="inline-flex items-center gap-1 rounded-md bg-amber-50 border border-amber-200/60 px-1.5 py-0.5">
+                            <Truck className="h-3 w-3 text-amber-600" />
+                            <span className="text-[10px] font-medium text-amber-700">Expéd.</span>
+                          </span>
                         )}
                       </div>
                       <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-semibold shrink-0 w-[42px] text-center", tc.bg, tc.text)}>{evt.clientType === "Professionnel" ? "Pro" : "Part."}</span>
@@ -581,7 +591,13 @@ export default function EventsPlanning() {
                 </div>
                 <div>
                   <span className="text-[11px] text-[--k-muted]">Provenance</span>
-                  <div className="font-medium text-[--k-text]">{popup.provenance === "antenne" ? "Antenne locale" : "Transporteur"}</div>
+                  <div className="font-medium text-[--k-text] flex items-center gap-1.5">
+                    {(popup.provenances || []).map(p => (
+                      <span key={p} className={cn("inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-medium", p === "antenne" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700")}>
+                        {p === "antenne" ? <><Building2 className="h-3 w-3" /> Antenne</> : <><Truck className="h-3 w-3" /> Transporteur</>}
+                      </span>
+                    ))}
+                  </div>
                 </div>
                 <div>
                   <span className="text-[11px] text-[--k-muted]">Statut</span>
