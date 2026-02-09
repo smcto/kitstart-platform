@@ -1198,16 +1198,6 @@ export default function EventCreate() {
                           </button>
                         ))}
                       </div>
-                      <CollapsibleTagInput
-                        value={tagInput}
-                        onChange={setTagInput}
-                        onAdd={() => {
-                          if (tagInput.trim()) {
-                            setInternalTags(prev => prev.includes(tagInput.trim()) ? prev : [...prev, tagInput.trim()]);
-                            setTagInput("");
-                          }
-                        }}
-                      />
                     </Field>
                   </div>
                 </div>
@@ -2244,14 +2234,19 @@ function CollapsibleSection({ title, buttonLabel, children }) {
       <div className="p-5">{children}</div>
     </div>
   ) : (
-    <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm p-4">
-      <button
-        onClick={() => setOpen(true)}
-        className="flex items-center gap-2 rounded-lg border border-dashed border-[--k-border] px-3 py-2 text-[12px] text-[--k-muted] hover:border-[--k-primary] hover:text-[--k-primary] transition w-full"
-      >
-        <Plus className="h-3.5 w-3.5" />
-        {buttonLabel || title}
-      </button>
+    <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+      <div className="border-b border-[--k-border] px-5 py-3">
+        <h2 className="text-[16px] font-bold text-[--k-text]">{title}</h2>
+      </div>
+      <div className="p-5">
+        <button
+          onClick={() => setOpen(true)}
+          className="flex items-center gap-2 rounded-lg border border-dashed border-[--k-border] px-3 py-2 text-[12px] text-[--k-muted] hover:border-[--k-primary] hover:text-[--k-primary] transition w-full"
+        >
+          <Plus className="h-3.5 w-3.5" />
+          {buttonLabel || title}
+        </button>
+      </div>
     </div>
   );
 }
