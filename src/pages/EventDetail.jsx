@@ -8,7 +8,8 @@ import {
   Palette, FileText, Send, MessageSquare, ExternalLink,
   AtSign, Paperclip, Smile, MoreHorizontal, Heart, ThumbsUp,
   Reply, Pin, Settings, Link2, Hash, ChevronDown, Users,
-  Briefcase, UserCircle, Eye, Plus, X, Upload
+  Briefcase, UserCircle, Eye, Plus, X, Upload, Globe, Receipt,
+  CreditCard, ChevronUp
 } from "lucide-react";
 
 /* ── Mock data ────────────────────────────────────── */
@@ -39,12 +40,39 @@ const EVENT = {
 const CLIENT = {
   id: 12034,
   company: "Salon Expo SAS",
-  contact: "Marie Laurent",
-  role: "Directrice événementiel",
-  email: "m.laurent@salonexpo.fr",
-  phone: "+33 6 12 34 56 78",
+  siret: "812 345 678 00012",
+  tva: "FR 12 812345678",
   address: "45 rue de la Convention, 75015 Paris",
+  website: "www.salonexpo.fr",
   groupe: "Entreprise",
+};
+
+const CLIENT_CONTACTS = [
+  { id: 1, name: "Marie Laurent", role: "Directrice événementiel", email: "m.laurent@salonexpo.fr", phone: "+33 6 12 34 56 78", type: "projet", photo: "https://i.pravatar.cc/150?u=marie-laurent" },
+  { id: 2, name: "Julien Moreau", role: "Chef de projet événementiel", email: "j.moreau@salonexpo.fr", phone: "+33 6 98 76 54 32", type: "projet", photo: "https://i.pravatar.cc/150?u=julien-moreau" },
+  { id: 3, name: "Sophie Durand", role: "Responsable comptabilité", email: "compta@salonexpo.fr", phone: "+33 1 45 67 89 00", type: "facturation", photo: "https://i.pravatar.cc/150?u=sophie-durand" },
+];
+
+const DEVIS = [
+  { id: "DEV-2025-0412", date: "2025-12-18", montant: 8500, status: "accepted", label: "Prestation photobooth — Salon du Mariage 2026", lignes: [
+    { desc: "Location 3x Spherik + 2x Prestige (3 jours)", qty: 1, pu: 5200 },
+    { desc: "Impression magnets personnalisés (500 ex.)", qty: 1, pu: 800 },
+    { desc: "Mosaïque photo live — Grand format", qty: 1, pu: 1200 },
+    { desc: "Galerie en ligne + envoi mail (illimité)", qty: 1, pu: 600 },
+    { desc: "Installation & désinstallation sur site", qty: 1, pu: 700 },
+  ]},
+  { id: "DEV-2025-0398", date: "2025-12-10", montant: 6200, status: "declined", label: "Prestation photobooth — Version sans mosaïque", lignes: [
+    { desc: "Location 3x Spherik + 2x Prestige (3 jours)", qty: 1, pu: 5200 },
+    { desc: "Galerie en ligne + envoi mail (illimité)", qty: 1, pu: 600 },
+    { desc: "Installation & désinstallation sur site", qty: 1, pu: 400 },
+  ]},
+];
+
+const DEVIS_STATUS = {
+  accepted: { label: "Accepté", color: "bg-emerald-50 text-emerald-600" },
+  declined: { label: "Refusé", color: "bg-red-50 text-red-500" },
+  pending: { label: "En attente", color: "bg-amber-50 text-amber-600" },
+  draft: { label: "Brouillon", color: "bg-slate-100 text-slate-500" },
 };
 
 const TEAM = {
@@ -180,7 +208,8 @@ export default function EventDetail() {
   const doneCount = CHECKLIST.filter(c => c.done).length;
   const progress = Math.round((doneCount / CHECKLIST.length) * 100);
   const [activeTab, setActiveTab] = useState("updates");
-  const [editing, setEditing] = useState(null); // null or tab key like "crea", "config", "logistique"
+  const [editing, setEditing] = useState(null); // null or tab key like "crea", "config", "logistique", "client"
+  const [showDevis, setShowDevis] = useState(null); // null or devis object
   const [newComment, setNewComment] = useState("");
   const commentRef = useRef(null);
 
@@ -471,19 +500,164 @@ export default function EventDetail() {
           {/* ── INFO TAB ── */}
           {activeTab === "info" && (
             <>
-              <Card title="Client" icon={Building2}>
-                <InfoRow label="Société" value={
-                  <a href={`/clients/${CLIENT.id}`} className="text-[--k-primary] hover:underline font-medium flex items-center gap-1">
-                    {CLIENT.company} <ExternalLink className="h-3 w-3" />
-                  </a>
-                } />
-                <InfoRow label="Groupe" value={CLIENT.groupe} />
-                <InfoRow label="Contact" value={CLIENT.contact} />
-                <InfoRow label="Fonction" value={CLIENT.role} />
-                <InfoRow label="Email" value={<a href={`mailto:${CLIENT.email}`} className="text-[--k-primary] hover:underline">{CLIENT.email}</a>} />
-                <InfoRow label="Téléphone" value={CLIENT.phone} />
-              </Card>
+              {/* ── Client identity ── */}
+              <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm overflow-hidden">
+                <div className="border-b border-[--k-border] px-5 py-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Building2 className="h-4 w-4 text-slate-400" />
+                    <h2 className="text-[15px] font-bold text-[--k-text]">Client</h2>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {editing !== "client" ? (
+                      <button onClick={() => setEditing("client")} className="flex items-center gap-1.5 rounded-lg border border-[--k-border] px-3 py-1.5 text-[12px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition">
+                        <Edit className="h-3.5 w-3.5 text-[--k-muted]" /> Compléter
+                      </button>
+                    ) : (
+                      <button onClick={() => setEditing(null)} className="flex items-center gap-1.5 rounded-lg bg-[--k-primary] px-3 py-1.5 text-[12px] font-medium text-white hover:brightness-110 transition shadow-sm">
+                        <CheckCircle2 className="h-3.5 w-3.5" /> Valider
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <div className="p-5">
+                  {editing === "client" ? (
+                    <div className="space-y-4">
+                      <Field label="Société"><input type="text" defaultValue={CLIENT.company} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
+                      <Field label="SIRET"><input type="text" defaultValue={CLIENT.siret} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
+                      <Field label="N° TVA"><input type="text" defaultValue={CLIENT.tva} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
+                      <Field label="Adresse"><input type="text" defaultValue={CLIENT.address} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
+                      <Field label="Site web"><input type="text" defaultValue={CLIENT.website} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
+                      <Field label="Groupe"><input type="text" defaultValue={CLIENT.groupe} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
+                    </div>
+                  ) : (
+                    <div className="space-y-0">
+                      <InfoRow label="Société" value={<span className="font-semibold text-[--k-text]">{CLIENT.company}</span>} />
+                      <InfoRow label="SIRET" value={<span className="font-mono text-[11px]">{CLIENT.siret}</span>} />
+                      <InfoRow label="N° TVA" value={<span className="font-mono text-[11px]">{CLIENT.tva}</span>} />
+                      <InfoRow label="Adresse" value={CLIENT.address} />
+                      <InfoRow label="Site web" value={<a href={`https://${CLIENT.website}`} target="_blank" rel="noopener noreferrer" className="text-[--k-primary] hover:underline flex items-center gap-1">{CLIENT.website} <ExternalLink className="h-3 w-3" /></a>} />
+                      <InfoRow label="Groupe" value={<span className="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">{CLIENT.groupe}</span>} />
+                    </div>
+                  )}
+                  {/* Link to client page */}
+                  <div className="mt-4 pt-3 border-t border-[--k-border]">
+                    <a href={`/clients/${CLIENT.id}`} className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-[--k-primary] hover:underline">
+                      <ExternalLink className="h-3.5 w-3.5" /> Voir la fiche client complète
+                    </a>
+                  </div>
+                </div>
+              </div>
 
+              {/* ── Contacts ── */}
+              <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm overflow-hidden">
+                <div className="border-b border-[--k-border] px-5 py-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4 text-slate-400" />
+                    <h2 className="text-[15px] font-bold text-[--k-text]">Contacts</h2>
+                  </div>
+                  <button className="flex items-center gap-1.5 rounded-lg border border-[--k-border] px-3 py-1.5 text-[12px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition">
+                    <Plus className="h-3.5 w-3.5 text-[--k-muted]" /> Ajouter
+                  </button>
+                </div>
+                <div className="p-5 space-y-5">
+                  {/* Contacts projet */}
+                  <div>
+                    <div className="text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide mb-3 flex items-center gap-1.5">
+                      <Briefcase className="h-3 w-3" /> Contact{CLIENT_CONTACTS.filter(c => c.type === "projet").length > 1 ? "s" : ""} projet
+                    </div>
+                    <div className="space-y-3">
+                      {CLIENT_CONTACTS.filter(c => c.type === "projet").map(contact => (
+                        <div key={contact.id} className="flex items-start gap-3 rounded-xl border border-[--k-border] bg-[--k-surface-2]/20 p-3">
+                          <img src={contact.photo} alt={contact.name} className="h-9 w-9 rounded-full object-cover shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <div className="text-[13px] font-semibold text-[--k-text]">{contact.name}</div>
+                            <div className="text-[11px] text-[--k-muted] mb-1.5">{contact.role}</div>
+                            <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+                              <a href={`mailto:${contact.email}`} className="flex items-center gap-1 text-[11px] text-[--k-primary] hover:underline">
+                                <Mail className="h-3 w-3" /> {contact.email}
+                              </a>
+                              <a href={`tel:${contact.phone}`} className="flex items-center gap-1 text-[11px] text-[--k-primary] hover:underline">
+                                <Phone className="h-3 w-3" /> {contact.phone}
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Contacts facturation */}
+                  <div>
+                    <div className="text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide mb-3 flex items-center gap-1.5">
+                      <CreditCard className="h-3 w-3" /> Contact{CLIENT_CONTACTS.filter(c => c.type === "facturation").length > 1 ? "s" : ""} facturation
+                    </div>
+                    <div className="space-y-3">
+                      {CLIENT_CONTACTS.filter(c => c.type === "facturation").map(contact => (
+                        <div key={contact.id} className="flex items-start gap-3 rounded-xl border border-[--k-border] bg-[--k-surface-2]/20 p-3">
+                          <img src={contact.photo} alt={contact.name} className="h-9 w-9 rounded-full object-cover shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <div className="text-[13px] font-semibold text-[--k-text]">{contact.name}</div>
+                            <div className="text-[11px] text-[--k-muted] mb-1.5">{contact.role}</div>
+                            <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+                              <a href={`mailto:${contact.email}`} className="flex items-center gap-1 text-[11px] text-[--k-primary] hover:underline">
+                                <Mail className="h-3 w-3" /> {contact.email}
+                              </a>
+                              <a href={`tel:${contact.phone}`} className="flex items-center gap-1 text-[11px] text-[--k-primary] hover:underline">
+                                <Phone className="h-3 w-3" /> {contact.phone}
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* ── Devis associés ── */}
+              <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm overflow-hidden">
+                <div className="border-b border-[--k-border] px-5 py-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Receipt className="h-4 w-4 text-slate-400" />
+                    <h2 className="text-[15px] font-bold text-[--k-text]">Devis associés</h2>
+                    <span className="rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold text-slate-500">{DEVIS.length}</span>
+                  </div>
+                </div>
+                <div className="divide-y divide-[--k-border]">
+                  {DEVIS.map(devis => {
+                    const ds = DEVIS_STATUS[devis.status];
+                    return (
+                      <div key={devis.id} className="px-5 py-4 hover:bg-slate-50/50 transition">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="font-mono text-[12px] font-bold text-[--k-text]">{devis.id}</span>
+                              <span className={cn("rounded-md px-2 py-0.5 text-[10px] font-bold", ds.color)}>{ds.label}</span>
+                            </div>
+                            <div className="text-[12px] text-[--k-text]/80 mb-1">{devis.label}</div>
+                            <div className="text-[11px] text-[--k-muted]">
+                              {new Date(devis.date).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                              <span className="mx-2">·</span>
+                              {devis.lignes.length} ligne{devis.lignes.length > 1 ? "s" : ""}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3 shrink-0">
+                            <span className="text-[16px] font-bold text-[--k-text] tabular-nums">{devis.montant.toLocaleString("fr-FR")} €</span>
+                            <button
+                              onClick={() => setShowDevis(devis)}
+                              className="flex items-center gap-1.5 rounded-lg border border-[--k-border] px-3 py-1.5 text-[11px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition"
+                            >
+                              <Eye className="h-3.5 w-3.5 text-[--k-muted]" /> Voir
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* ── Détails événement ── */}
               <Card title="Détails événement" icon={CalendarDays}>
                 <InfoRow label="Type" value={
                   <span className="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">{EVENT.type}</span>
@@ -503,6 +677,79 @@ export default function EventDetail() {
                     <FileText className="h-3.5 w-3.5" /> Notes internes
                   </div>
                   <div className="text-[12px] text-[--k-text] leading-relaxed">{EVENT.notes}</div>
+                </div>
+              )}
+
+              {/* ── Devis PDF popup/modal ── */}
+              {showDevis && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowDevis(null)}>
+                  <div className="relative w-full max-w-lg mx-4 rounded-2xl bg-white shadow-2xl border border-[--k-border] overflow-hidden" onClick={e => e.stopPropagation()}>
+                    {/* Header */}
+                    <div className="flex items-center justify-between border-b border-[--k-border] px-6 py-4">
+                      <div>
+                        <div className="text-[15px] font-bold text-[--k-text]">{showDevis.id}</div>
+                        <div className="text-[12px] text-[--k-muted]">{showDevis.label}</div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button className="flex h-8 items-center gap-1.5 rounded-lg border border-[--k-border] bg-white px-3 text-[12px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition">
+                          <Download className="h-3.5 w-3.5" /> PDF
+                        </button>
+                        <button onClick={() => setShowDevis(null)} className="flex h-8 w-8 items-center justify-center rounded-lg text-[--k-muted] hover:bg-slate-100 transition">
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Devis content */}
+                    <div className="px-6 py-5">
+                      {/* Client + date info */}
+                      <div className="flex justify-between mb-5">
+                        <div>
+                          <div className="text-[11px] text-[--k-muted] uppercase tracking-wide mb-0.5">Client</div>
+                          <div className="text-[13px] font-semibold text-[--k-text]">{CLIENT.company}</div>
+                          <div className="text-[11px] text-[--k-muted]">{CLIENT.address}</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-[11px] text-[--k-muted] uppercase tracking-wide mb-0.5">Date</div>
+                          <div className="text-[13px] font-medium text-[--k-text]">
+                            {new Date(showDevis.date).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                          </div>
+                          <div className="mt-1">
+                            <span className={cn("rounded-md px-2 py-0.5 text-[10px] font-bold", DEVIS_STATUS[showDevis.status].color)}>{DEVIS_STATUS[showDevis.status].label}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Lines table */}
+                      <table className="w-full text-[12px] mb-4">
+                        <thead>
+                          <tr className="border-b-2 border-[--k-border]">
+                            <th className="py-2 text-left text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide">Description</th>
+                            <th className="py-2 text-right text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide w-16">Qté</th>
+                            <th className="py-2 text-right text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide w-24">Prix HT</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {showDevis.lignes.map((l, i) => (
+                            <tr key={i} className="border-b border-[--k-border] last:border-0">
+                              <td className="py-2.5 text-[--k-text]">{l.desc}</td>
+                              <td className="py-2.5 text-right text-[--k-muted] tabular-nums">{l.qty}</td>
+                              <td className="py-2.5 text-right font-medium text-[--k-text] tabular-nums">{l.pu.toLocaleString("fr-FR")} €</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+
+                      {/* Total */}
+                      <div className="flex justify-end border-t-2 border-[--k-border] pt-3">
+                        <div className="text-right">
+                          <div className="text-[11px] text-[--k-muted] mb-0.5">Total HT</div>
+                          <div className="text-[18px] font-bold text-[--k-text] tabular-nums">{showDevis.montant.toLocaleString("fr-FR")} €</div>
+                          <div className="text-[11px] text-[--k-muted]">TVA 20% : {(showDevis.montant * 0.2).toLocaleString("fr-FR")} € · TTC : {(showDevis.montant * 1.2).toLocaleString("fr-FR")} €</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </>
@@ -956,21 +1203,28 @@ export default function EventDetail() {
             </div>
           )}
 
-          {/* Contextual: Client résumé — on info */}
+          {/* Contextual: Contact rapide — on info */}
           {activeTab === "info" && (
             <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
               <div className="border-b border-[--k-border] px-4 py-3">
                 <span className="text-[13px] font-semibold text-[--k-text]">Contact rapide</span>
               </div>
-              <div className="p-4 space-y-2">
-                <div className="text-[13px] font-medium text-[--k-text]">{CLIENT.contact}</div>
-                <div className="text-[11px] text-[--k-muted]">{CLIENT.role}</div>
-                <div className="flex flex-col gap-1 mt-2">
-                  <a href={`mailto:${CLIENT.email}`} className="flex items-center gap-2 text-[12px] text-[--k-primary] hover:underline">
-                    <Mail className="h-3.5 w-3.5" /> {CLIENT.email}
-                  </a>
-                  <a href={`tel:${CLIENT.phone}`} className="flex items-center gap-2 text-[12px] text-[--k-primary] hover:underline">
-                    <Phone className="h-3.5 w-3.5" /> {CLIENT.phone}
+              <div className="p-4 space-y-3">
+                {CLIENT_CONTACTS.filter(c => c.type === "projet").map(contact => (
+                  <div key={contact.id} className="flex items-center gap-2.5">
+                    <img src={contact.photo} alt={contact.name} className="h-7 w-7 rounded-full object-cover shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[12px] font-medium text-[--k-text] truncate">{contact.name}</div>
+                      <div className="flex items-center gap-2">
+                        <a href={`mailto:${contact.email}`} className="text-[--k-primary] hover:underline"><Mail className="h-3 w-3" /></a>
+                        <a href={`tel:${contact.phone}`} className="text-[--k-primary] hover:underline"><Phone className="h-3 w-3" /></a>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <div className="pt-2 border-t border-[--k-border]">
+                  <a href={`/clients/${CLIENT.id}`} className="flex items-center gap-1.5 text-[11px] font-semibold text-[--k-primary] hover:underline">
+                    <ExternalLink className="h-3 w-3" /> Fiche client
                   </a>
                 </div>
               </div>
