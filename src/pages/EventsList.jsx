@@ -1,43 +1,47 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { AppShell } from "../components/AppShell";
 import { PageHeader } from "../components/PageHeader";
 import { cn } from "../components/ui/cn";
 import {
-  CalendarDays, Camera, Search, Filter, Plus, ChevronDown,
-  MapPin, Download, MoreHorizontal, Eye, Edit, Copy, Trash2
+  Search, Filter, Plus, Download, MapPin, Monitor,
+  Truck, Building2, MoreHorizontal, Edit, Eye, Copy, Trash2, FileText,
+  ChevronDown, X
 } from "lucide-react";
 
 /* ── Mock data ────────────────────────────────────── */
 
+const TEAM_MEMBERS = {
+  BL: { name: "Bertrand L.", initials: "BL", color: "bg-indigo-500", role: "Commercial", photo: "https://i.pravatar.cc/150?u=bertrand" },
+  LL: { name: "Lucie L.", initials: "LL", color: "bg-pink-500", role: "Commerciale", photo: "https://i.pravatar.cc/150?u=lucie" },
+  BG: { name: "Benjamin G.", initials: "BG", color: "bg-emerald-500", role: "Chef de projet", photo: "https://i.pravatar.cc/150?u=benjamin" },
+  ER: { name: "Elen R.", initials: "ER", color: "bg-fuchsia-500", role: "Cheffe de projet", photo: "https://i.pravatar.cc/150?u=elen" },
+  PT: { name: "Pauline T.", initials: "PT", color: "bg-amber-500", role: "Cheffe de projet", photo: "https://i.pravatar.cc/150?u=pauline" },
+  SM: { name: "Seb M.", initials: "SM", color: "bg-sky-500", role: "Chef de projet", photo: "https://i.pravatar.cc/150?u=seb" },
+};
+
 const EVENTS = [
-  { id: "EVT-2026-0287", name: "Salon du Mariage Paris", client: "Salon Expo SAS", dateStart: "2026-02-08", dateEnd: "2026-02-10", bornes: 12, type: "Salon", location: "Paris Expo — Porte de Versailles", status: "ready", antenne: "IDF Paris", contact: "Marie Laurent" },
-  { id: "EVT-2026-0291", name: "Soirée L'Oréal 50 ans", client: "L'Oréal Group", dateStart: "2026-02-10", dateEnd: "2026-02-10", bornes: 4, type: "Corporate", location: "Pavillon Cambon, Paris", status: "logistics", antenne: "IDF Paris", contact: "Thomas Duval" },
-  { id: "EVT-2026-0294", name: "Mariage Dupont-Martin", client: "Famille Dupont", dateStart: "2026-02-14", dateEnd: "2026-02-14", bornes: 2, type: "Mariage", location: "Château de Versailles", status: "design", antenne: "IDF Paris", contact: "Julie Dupont" },
-  { id: "EVT-2026-0298", name: "Festival Nantes Digital", client: "Nantes Métropole", dateStart: "2026-02-15", dateEnd: "2026-02-17", bornes: 8, type: "Festival", location: "Parc des Expo, Nantes", status: "confirmed", antenne: "Grand Ouest", contact: "Pierre Morin" },
-  { id: "EVT-2026-0302", name: "Team Building Airbus", client: "Airbus SE", dateStart: "2026-02-18", dateEnd: "2026-02-18", bornes: 3, type: "Corporate", location: "Blagnac, Toulouse", status: "design", antenne: "Occitanie", contact: "Sophie Bernard" },
-  { id: "EVT-2026-0305", name: "Gala BMW Munich", client: "BMW AG", dateStart: "2026-02-20", dateEnd: "2026-02-20", bornes: 6, type: "Corporate", location: "BMW Welt, Munich", status: "confirmed", antenne: "International", contact: "Hans Weber" },
-  { id: "EVT-2026-0308", name: "Mariage Cohen-Lévy", client: "Famille Cohen", dateStart: "2026-02-22", dateEnd: "2026-02-22", bornes: 2, type: "Mariage", location: "Domaine de Primard", status: "confirmed", antenne: "IDF Paris", contact: "Rachel Cohen" },
-  { id: "EVT-2026-0312", name: "Salon Auto Lyon", client: "Lyon Auto Events", dateStart: "2026-02-25", dateEnd: "2026-02-27", bornes: 10, type: "Salon", location: "Eurexpo Lyon", status: "confirmed", antenne: "Rhône-Alpes", contact: "Marc Petit" },
-  { id: "EVT-2026-0315", name: "Anniversaire Nike", client: "Nike France", dateStart: "2026-02-28", dateEnd: "2026-02-28", bornes: 5, type: "Corporate", location: "Nike Campus, Paris", status: "confirmed", antenne: "IDF Paris", contact: "Léa Martin" },
-  { id: "EVT-2026-0256", name: "Soirée Chanel N°5", client: "Chanel SAS", dateStart: "2026-01-28", dateEnd: "2026-01-28", bornes: 3, type: "Corporate", location: "Grand Palais, Paris", status: "done", antenne: "IDF Paris", contact: "Emma Blanc" },
-  { id: "EVT-2026-0248", name: "Carnaval Nice", client: "Ville de Nice", dateStart: "2026-01-24", dateEnd: "2026-01-26", bornes: 15, type: "Festival", location: "Promenade des Anglais", status: "done", antenne: "PACA", contact: "Antoine Rossi" },
-  { id: "EVT-2026-0241", name: "Mariage Petit-Grand", client: "Famille Petit", dateStart: "2026-01-18", dateEnd: "2026-01-18", bornes: 1, type: "Mariage", location: "Moulin de Vernègues", status: "done", antenne: "PACA", contact: "Claire Petit" },
+  { id: "EVT-287", name: "Salon du Mariage Paris", client: "Salon Expo SAS", dateLabel: "8–10 fév", heureDebut: "10:00", heureFin: "19:00", bornes: 12, borneNums: ["C381", "C382", "C412", "C415", "C420", "C421", "P455", "P460", "P501", "P502", "P510", "P511"], ville: "Paris", code: "SM26", clientType: "Pro", status: "ready", provenances: ["antenne", "transporteur"], antenne: { name: "Yann Le Goff", initials: "YG", photo: "https://i.pravatar.cc/150?u=yann" }, commercial: "BL", chefsProjets: ["BG", "ER"] },
+  { id: "EVT-291", name: "Soirée L'Oréal 50 ans", client: "L'Oréal Group", dateLabel: "10 fév", heureDebut: "19:30", heureFin: "23:30", bornes: 4, borneNums: ["P455", "P460"], ville: "Paris", code: "LO26", clientType: "Pro", status: "logistics", provenances: ["transporteur"], commercial: "BL", chefsProjets: ["ER"] },
+  { id: "EVT-294", name: "Mariage Dupont-Martin", client: "Famille Dupont", dateLabel: "14 fév", heureDebut: "15:00", heureFin: "02:00", bornes: 2, borneNums: [], ville: "Rennes", code: "MD26", clientType: "Part.", status: "design", provenances: ["antenne"], antenne: { name: "Yann Le Goff", initials: "YG", photo: "https://i.pravatar.cc/150?u=yann" }, commercial: "LL", chefsProjets: ["PT"] },
+  { id: "EVT-298", name: "Festival Nantes Digital", client: "Nantes Métropole", dateLabel: "15–17 fév", heureDebut: "09:00", heureFin: "18:00", bornes: 8, borneNums: ["C220", "C221", "C222", "C223"], ville: "Nantes", code: "FN26", clientType: "Pro", status: "confirmed", provenances: ["antenne"], antenne: { name: "Camille Moreau", initials: "CM", photo: "https://i.pravatar.cc/150?u=camille-moreau" }, commercial: "BL", chefsProjets: ["BG"] },
+  { id: "EVT-302", name: "Team Building Airbus", client: "Airbus SE", dateLabel: "18 fév", heureDebut: "09:00", heureFin: "17:00", bornes: 3, borneNums: [], ville: "Toulouse", code: "AB26", clientType: "Pro", status: "design", provenances: ["antenne"], commercial: "LL", chefsProjets: ["SM"] },
+  { id: "EVT-305", name: "Gala BMW Munich", client: "BMW AG", dateLabel: "20 fév", heureDebut: "20:00", heureFin: "01:00", bornes: 6, borneNums: ["P455", "P460", "S501", "S502", "S510", "S511"], ville: "Munich", code: "BM26", clientType: "Pro", status: "confirmed", provenances: ["transporteur"], commercial: "BL", chefsProjets: ["BG", "PT"] },
+  { id: "EVT-308", name: "Mariage Cohen-Lévy", client: "Famille Cohen", dateLabel: "22 fév", heureDebut: "16:00", heureFin: "03:00", bornes: 2, borneNums: ["S330", "S331"], ville: "Lyon", code: "MC26", clientType: "Part.", status: "confirmed", provenances: ["antenne"], antenne: { name: "Sophie Renard", initials: "SR", photo: "https://i.pravatar.cc/150?u=sophie" }, commercial: "LL", chefsProjets: ["SM"] },
+  { id: "EVT-312", name: "Salon Auto Lyon", client: "Lyon Auto Events", dateLabel: "25–27 fév", heureDebut: "10:00", heureFin: "19:00", bornes: 10, borneNums: ["S330", "S331", "S332", "S333", "C381", "C382", "C412", "C415", "C420", "C421"], ville: "Lyon", code: "SA26", clientType: "Pro", status: "confirmed", provenances: ["antenne", "transporteur"], antenne: { name: "Sophie Renard", initials: "SR", photo: "https://i.pravatar.cc/150?u=sophie" }, commercial: "BL", chefsProjets: ["ER", "SM"] },
+  { id: "EVT-315", name: "Anniversaire Nike", client: "Nike France", dateLabel: "28 fév", heureDebut: "18:00", heureFin: "23:00", bornes: 5, borneNums: ["P455", "P460", "P501"], ville: "Paris", code: "NK26", clientType: "Pro", status: "confirmed", provenances: ["antenne"], antenne: { name: "Yann Le Goff", initials: "YG", photo: "https://i.pravatar.cc/150?u=yann" }, commercial: "BL", chefsProjets: ["PT"] },
+  { id: "EVT-320", name: "Mariage Silva", client: "Famille Silva", dateLabel: "1 mars", heureDebut: "14:00", heureFin: "01:00", bornes: 1, borneNums: ["C120"], ville: "Bordeaux", code: "MS26", clientType: "Part.", status: "confirmed", provenances: ["antenne"], antenne: { name: "Lucas Petit", initials: "LP", photo: "https://i.pravatar.cc/150?u=lucas-petit" }, commercial: "LL", chefsProjets: ["PT"] },
+  { id: "EVT-322", name: "Séminaire Total", client: "TotalEnergies", dateLabel: "3–4 mars", heureDebut: "08:30", heureFin: "17:30", bornes: 3, borneNums: ["S510", "S511", "S512"], ville: "Paris", code: "ST26", clientType: "Pro", status: "confirmed", provenances: ["transporteur"], commercial: "BL", chefsProjets: ["BG"] },
+  { id: "EVT-256", name: "Soirée Chanel N°5", client: "Chanel SAS", dateLabel: "28 jan", heureDebut: "20:00", heureFin: "00:00", bornes: 3, borneNums: ["P455", "P460", "P501"], ville: "Paris", code: "CH26", clientType: "Pro", status: "done", provenances: ["antenne"], antenne: { name: "Yann Le Goff", initials: "YG", photo: "https://i.pravatar.cc/150?u=yann" }, commercial: "BL", chefsProjets: ["ER"] },
+  { id: "EVT-248", name: "Carnaval Nice", client: "Ville de Nice", dateLabel: "24–26 jan", heureDebut: "10:00", heureFin: "22:00", bornes: 15, borneNums: ["C100", "C101", "C102", "C103", "C104", "C105", "C106", "C107", "C108", "C109", "C110", "C111", "C112", "S200", "S201"], ville: "Nice", code: "CN26", clientType: "Pro", status: "done", provenances: ["antenne", "transporteur"], antenne: { name: "Marc Rossi", initials: "MR", photo: "https://i.pravatar.cc/150?u=marc" }, commercial: "BL", chefsProjets: ["BG", "PT"] },
 ];
 
 const STATUS_MAP = {
-  confirmed: { label: "Confirmé", color: "bg-blue-50 text-blue-600", dot: "bg-blue-500" },
-  design: { label: "Création", color: "bg-violet-50 text-violet-600", dot: "bg-violet-500" },
-  logistics: { label: "Logistique", color: "bg-amber-50 text-amber-600", dot: "bg-amber-500" },
-  ready: { label: "Prêt", color: "bg-emerald-50 text-emerald-600", dot: "bg-emerald-500" },
-  live: { label: "En cours", color: "bg-rose-50 text-rose-500", dot: "bg-rose-500" },
-  done: { label: "Terminé", color: "bg-slate-100 text-slate-500", dot: "bg-slate-300" },
-};
-
-const TYPE_COLORS = {
-  Salon: "bg-indigo-50 text-indigo-600",
-  Corporate: "bg-blue-50 text-blue-600",
-  Mariage: "bg-pink-50 text-pink-500",
-  Festival: "bg-orange-50 text-orange-600",
+  confirmed: { label: "Confirmé", dot: "bg-blue-500" },
+  design: { label: "Créa", dot: "bg-violet-500" },
+  logistics: { label: "Logistique", dot: "bg-amber-500" },
+  ready: { label: "Prêt", dot: "bg-emerald-500" },
+  live: { label: "En cours", dot: "bg-rose-500" },
+  done: { label: "Terminé", dot: "bg-slate-300" },
 };
 
 const STATUS_TABS = [
@@ -46,32 +50,53 @@ const STATUS_TABS = [
   { key: "done", label: "Terminés" },
 ];
 
-function formatDate(d) {
-  return new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "short" });
-}
+const ALL_VILLES = [...new Set(EVENTS.map(e => e.ville))].sort();
 
 /* ── Page ──────────────────────────────────────────── */
 
 export default function EventsList() {
   const [tab, setTab] = useState("all");
   const [search, setSearch] = useState("");
-  const [menuOpen, setMenuOpen] = useState(null);
+  const [actionMenu, setActionMenu] = useState(null);
+  const [villeFilter, setVilleFilter] = useState("all");
+  const [provenanceFilter, setProvenanceFilter] = useState("all");
+  const [personneFilter, setPersonneFilter] = useState("all");
+  const [villeDropdownOpen, setVilleDropdownOpen] = useState(false);
+  const [villeSearch, setVilleSearch] = useState("");
+  const actionMenuRef = useRef(null);
+  const villeRef = useRef(null);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (actionMenuRef.current && !actionMenuRef.current.contains(e.target)) setActionMenu(null);
+      if (villeRef.current && !villeRef.current.contains(e.target)) setVilleDropdownOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   const filtered = EVENTS.filter(e => {
     if (search) {
       const q = search.toLowerCase();
-      if (!e.name.toLowerCase().includes(q) && !e.client.toLowerCase().includes(q) && !e.id.toLowerCase().includes(q)) return false;
+      if (!e.name.toLowerCase().includes(q) && !e.client.toLowerCase().includes(q) && !e.id.toLowerCase().includes(q) && !e.code.toLowerCase().includes(q)) return false;
     }
     if (tab === "active") return e.status !== "done";
     if (tab === "done") return e.status === "done";
     return true;
-  });
+  }).filter(e =>
+    (villeFilter === "all" || e.ville === villeFilter) &&
+    (provenanceFilter === "all" || (e.provenances || []).includes(provenanceFilter)) &&
+    (personneFilter === "all" || e.commercial === personneFilter || (e.chefsProjets || []).includes(personneFilter))
+  );
+
+  const hasFilters = villeFilter !== "all" || provenanceFilter !== "all" || personneFilter !== "all";
+  const clearFilters = () => { setVilleFilter("all"); setProvenanceFilter("all"); setPersonneFilter("all"); };
 
   return (
     <AppShell currentApp="Events Manager" activeKey="events-list">
       <PageHeader
         title="Événements"
-        subtitle={`${EVENTS.length} événements`}
+        subtitle={`${filtered.length} événement${filtered.length > 1 ? "s" : ""} sur ${EVENTS.length}`}
         actions={
           <a href="/events/create" className="flex h-8 items-center gap-1.5 rounded-lg bg-[--k-primary] px-3 text-white text-[12px] font-medium hover:brightness-110 transition shadow-sm">
             <Plus className="h-4 w-4" />
@@ -110,104 +135,204 @@ export default function EventsList() {
             />
           </div>
           <button className="flex h-8 items-center gap-1.5 rounded-lg border border-[--k-border] px-2.5 text-[12px] font-medium text-[--k-muted] hover:bg-[--k-surface-2] transition">
-            <Filter className="h-3.5 w-3.5" /> Filtres
-          </button>
-          <button className="flex h-8 items-center gap-1.5 rounded-lg border border-[--k-border] px-2.5 text-[12px] font-medium text-[--k-muted] hover:bg-[--k-surface-2] transition">
             <Download className="h-3.5 w-3.5" /> Export
           </button>
         </div>
 
-        {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-[13px]">
-            <thead>
-              <tr className="border-b border-[--k-border] bg-rose-50/20">
-                <th className="px-4 py-2.5 text-left font-semibold text-[--k-muted]">Événement</th>
-                <th className="px-4 py-2.5 text-left font-semibold text-[--k-muted]">Client</th>
-                <th className="px-4 py-2.5 text-left font-semibold text-[--k-muted]">Dates</th>
-                <th className="px-4 py-2.5 text-left font-semibold text-[--k-muted]">Lieu</th>
-                <th className="px-4 py-2.5 text-center font-semibold text-[--k-muted]">Bornes</th>
-                <th className="px-4 py-2.5 text-left font-semibold text-[--k-muted]">Type</th>
-                <th className="px-4 py-2.5 text-left font-semibold text-[--k-muted]">Statut</th>
+        {/* Filters */}
+        <div className="flex flex-wrap items-center gap-2 border-b border-[--k-border] px-4 py-2">
+          <Filter className="h-3.5 w-3.5 text-[--k-muted]" />
 
-                <th className="px-4 py-2.5 w-10"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map(evt => {
-                const st = STATUS_MAP[evt.status];
-                const tc = TYPE_COLORS[evt.type] || "bg-slate-50 text-slate-600";
-                return (
-                  <tr key={evt.id} className="border-b border-[--k-border] last:border-0 hover:bg-[--k-surface-2]/30 transition group">
-                    <td className="px-4 py-2.5">
-                      <a href={`/events/${evt.id}`} className="font-medium text-[--k-text] hover:text-[--k-primary] transition">{evt.name}</a>
-                      <div className="text-[11px] text-[--k-muted]">{evt.id}</div>
-                    </td>
-                    <td className="px-4 py-2.5">
-                      <div className="text-[--k-text]">{evt.client}</div>
-                      <div className="text-[11px] text-[--k-muted]">{evt.contact}</div>
-                    </td>
-                    <td className="px-4 py-2.5 whitespace-nowrap">
-                      <div className="font-medium">{formatDate(evt.dateStart)}</div>
-                      {evt.dateStart !== evt.dateEnd && <div className="text-[11px] text-[--k-muted]">→ {formatDate(evt.dateEnd)}</div>}
-                    </td>
-                    <td className="px-4 py-2.5">
-                      <div className="flex items-center gap-1 text-[--k-muted]">
-                        <MapPin className="h-3 w-3 shrink-0" />
-                        <span className="truncate max-w-[160px]">{evt.location}</span>
-                      </div>
-                      <div className="text-[11px] text-[--k-muted]">{evt.antenne}</div>
-                    </td>
-                    <td className="px-4 py-2.5 text-center">
-                      <span className="inline-flex items-center gap-1 font-semibold">
-                        <Camera className="h-3 w-3 text-[--k-muted]" />
-                        {evt.bornes}
-                      </span>
-                    </td>
-                    <td className="px-4 py-2.5">
-                      <span className={cn("inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold", tc)}>{evt.type}</span>
-                    </td>
-                    <td className="px-4 py-2.5">
-                      <span className={cn("inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-semibold", st.color)}>
-                        <span className={cn("h-1.5 w-1.5 rounded-full", st.dot)} />
-                        {st.label}
-                      </span>
-                    </td>
+          {/* Ville */}
+          <div ref={villeRef} className="relative">
+            <button
+              onClick={() => setVilleDropdownOpen(v => !v)}
+              className={cn(
+                "flex items-center gap-1.5 h-7 w-[130px] rounded-lg border bg-white px-2 text-[11px] font-medium transition",
+                villeFilter !== "all" ? "border-[--k-primary] text-[--k-primary]" : "border-[--k-border] text-[--k-text]"
+              )}
+            >
+              <span className="truncate">{villeFilter === "all" ? "Ville : Toutes" : villeFilter}</span>
+              <ChevronDown className="h-3 w-3 shrink-0 ml-auto" />
+            </button>
+            {villeDropdownOpen && (
+              <div className="absolute left-0 z-20 mt-1 w-48 rounded-lg border border-[--k-border] bg-white shadow-lg">
+                <div className="p-2 border-b border-[--k-border]">
+                  <div className="flex items-center gap-1.5 px-2 py-1 bg-[--k-surface-2] rounded text-[11px] text-[--k-muted]">
+                    <Search className="h-3 w-3" />
+                    <input value={villeSearch} onChange={e => setVilleSearch(e.target.value)} placeholder="Filtrer..." className="bg-transparent border-none outline-none flex-1 text-[--k-text] text-[11px]" autoFocus />
+                  </div>
+                </div>
+                <div className="max-h-48 overflow-auto py-1">
+                  <button onClick={() => { setVilleFilter("all"); setVilleDropdownOpen(false); setVilleSearch(""); }} className={cn("w-full text-left px-3 py-1.5 text-[11px] hover:bg-[--k-surface-2] transition", villeFilter === "all" && "font-semibold text-[--k-primary]")}>Toutes les villes</button>
+                  {ALL_VILLES.filter(v => !villeSearch || v.toLowerCase().includes(villeSearch.toLowerCase())).map(v => (
+                    <button key={v} onClick={() => { setVilleFilter(v); setVilleDropdownOpen(false); setVilleSearch(""); }} className={cn("w-full text-left px-3 py-1.5 text-[11px] hover:bg-[--k-surface-2] transition", villeFilter === v && "font-semibold text-[--k-primary]")}>{v}</button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
 
-                    <td className="px-4 py-2.5 relative">
-                      <button
-                        className="opacity-0 group-hover:opacity-100 flex h-7 w-7 items-center justify-center rounded-lg hover:bg-[--k-surface-2] transition text-[--k-muted]"
-                        onClick={() => setMenuOpen(menuOpen === evt.id ? null : evt.id)}
-                      >
-                        <MoreHorizontal className="h-4 w-4" />
-                      </button>
-                      {menuOpen === evt.id && (
-                        <>
-                          <div className="fixed inset-0 z-30" onClick={() => setMenuOpen(null)} />
-                          <div className="absolute right-4 z-40 mt-1 w-[160px] rounded-xl border border-[--k-border] bg-white shadow-lg py-1">
-                            <a href={`/events/${evt.id}`} className="flex items-center gap-2 px-3 py-1.5 text-[12px] text-[--k-text] hover:bg-[--k-surface-2]">
-                              <Eye className="h-3.5 w-3.5" /> Voir détail
-                            </a>
-                            <a href={`/events/${evt.id}/edit`} className="flex items-center gap-2 px-3 py-1.5 text-[12px] text-[--k-text] hover:bg-[--k-surface-2]">
-                              <Edit className="h-3.5 w-3.5" /> Modifier
-                            </a>
-                            <button className="flex w-full items-center gap-2 px-3 py-1.5 text-[12px] text-[--k-text] hover:bg-[--k-surface-2]">
-                              <Copy className="h-3.5 w-3.5" /> Dupliquer
-                            </button>
-                            <div className="mx-2 my-1 border-t border-[--k-border]" />
-                            <button className="flex w-full items-center gap-2 px-3 py-1.5 text-[12px] text-[--k-danger] hover:bg-red-50">
-                              <Trash2 className="h-3.5 w-3.5" /> Supprimer
-                            </button>
-                          </div>
-                        </>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          <select
+            value={provenanceFilter}
+            onChange={e => setProvenanceFilter(e.target.value)}
+            className={cn("h-7 w-[155px] rounded-lg border bg-white px-2 text-[11px] font-medium text-[--k-text] outline-none transition", provenanceFilter !== "all" ? "border-[--k-primary] text-[--k-primary]" : "border-[--k-border]")}
+          >
+            <option value="all">Provenance : Toutes</option>
+            <option value="antenne">Antenne locale</option>
+            <option value="transporteur">Transporteur</option>
+          </select>
+
+          <select
+            value={personneFilter}
+            onChange={e => setPersonneFilter(e.target.value)}
+            className={cn("h-7 w-[145px] rounded-lg border bg-white px-2 text-[11px] font-medium text-[--k-text] outline-none transition", personneFilter !== "all" ? "border-[--k-primary] text-[--k-primary]" : "border-[--k-border]")}
+          >
+            <option value="all">Personne : Toutes</option>
+            {Object.entries(TEAM_MEMBERS).map(([k, m]) => <option key={k} value={k}>{m.name}</option>)}
+          </select>
+
+          {hasFilters && (
+            <button onClick={clearFilters} className="flex items-center gap-1 text-[11px] text-[--k-muted] hover:text-[--k-danger] transition">
+              <X className="h-3 w-3" /> Effacer
+            </button>
+          )}
         </div>
+
+        {/* Event rows */}
+        {filtered.length === 0 ? (
+          <div className="px-4 py-8 text-center text-[13px] text-[--k-muted]">Aucun événement ne correspond aux filtres.</div>
+        ) : (
+          <div className="divide-y divide-[--k-border]">
+            {filtered.map(evt => {
+              const st = STATUS_MAP[evt.status] || { label: evt.status, dot: "bg-slate-300" };
+              return (
+                <div key={evt.id} className="flex items-center gap-3 px-4 py-2.5 hover:bg-[--k-surface-2]/30 transition w-full text-left cursor-pointer" onClick={() => window.location.href = `/events/${evt.id}`}>
+                  {/* Date + heures */}
+                  <div className="shrink-0 w-[80px]">
+                    <div className="text-[12px] font-semibold text-[--k-text]">{evt.dateLabel}</div>
+                    <div className="text-[10px] text-[--k-muted]">{evt.heureDebut} – {evt.heureFin}</div>
+                  </div>
+                  <span className={cn("h-2 w-2 rounded-full shrink-0", st.dot)} />
+                  {/* Nom / Client */}
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[12px] font-medium text-[--k-text] truncate">{evt.name}</div>
+                    <div className="text-[11px] text-[--k-muted] truncate">{evt.client}</div>
+                  </div>
+                  {/* Code */}
+                  <span className="text-[11px] font-mono text-[--k-muted] shrink-0 w-10">{evt.code}</span>
+                  {/* Ville */}
+                  <span className="shrink-0 flex items-center gap-1 text-[11px] text-[--k-muted] w-[80px]">
+                    <MapPin className="h-3 w-3 shrink-0" />{evt.ville}
+                  </span>
+                  {/* Commercial */}
+                  <div className="shrink-0 w-[34px] flex items-center justify-center">
+                    {evt.commercial && TEAM_MEMBERS[evt.commercial] && (
+                      <div className="relative group/com">
+                        <img src={TEAM_MEMBERS[evt.commercial].photo} alt={TEAM_MEMBERS[evt.commercial].name} className="h-6 w-6 rounded-full ring-2 ring-white shadow-sm object-cover" />
+                        <div className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 z-50 opacity-0 group-hover/com:opacity-100 transition-opacity">
+                          <div className="whitespace-nowrap rounded-lg bg-slate-900 px-2.5 py-1.5 text-[10px] text-white shadow-lg">
+                            <span className="font-medium">{TEAM_MEMBERS[evt.commercial].name}</span>
+                            <span className="text-white/50 ml-1">• Commercial</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  {/* Chef(s) de projet */}
+                  <div className="shrink-0 w-[52px] flex items-center -space-x-1.5">
+                    {(evt.chefsProjets || []).map(cp => TEAM_MEMBERS[cp] && (
+                      <div key={cp} className="relative group/cp">
+                        <img src={TEAM_MEMBERS[cp].photo} alt={TEAM_MEMBERS[cp].name} className="h-6 w-6 rounded-full ring-2 ring-white shadow-sm object-cover" />
+                        <div className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 z-50 opacity-0 group-hover/cp:opacity-100 transition-opacity">
+                          <div className="whitespace-nowrap rounded-lg bg-slate-900 px-2.5 py-1.5 text-[10px] text-white shadow-lg">
+                            <span className="font-medium">{TEAM_MEMBERS[cp].name}</span>
+                            <span className="text-white/50 ml-1">• {TEAM_MEMBERS[cp].role}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  {/* Bornes */}
+                  <div className="shrink-0 w-[170px] flex items-center gap-1.5">
+                    <div className="flex items-center justify-center h-6 w-6 rounded-md bg-slate-100 shrink-0">
+                      <Monitor className="h-3.5 w-3.5 text-slate-500" />
+                    </div>
+                    {evt.borneNums && evt.borneNums.length > 0 ? (
+                      <div className="min-w-0">
+                        <div className="text-[11px] font-semibold text-[--k-text] leading-tight">{evt.borneNums.length}/{evt.bornes} affectée{evt.borneNums.length > 1 ? "s" : ""}</div>
+                        <div className="text-[10px] font-mono text-[--k-muted] truncate leading-tight" title={evt.borneNums.join(", ")}>
+                          {evt.borneNums.length <= 4 ? evt.borneNums.join(", ") : `${evt.borneNums.slice(0, 3).join(", ")} +${evt.borneNums.length - 3}`}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="min-w-0">
+                        <div className="text-[11px] font-semibold text-amber-600 leading-tight">0/{evt.bornes} affectée{evt.bornes > 1 ? "s" : ""}</div>
+                        <div className="text-[10px] italic text-[--k-muted]/60 leading-tight">Non affecté</div>
+                      </div>
+                    )}
+                  </div>
+                  {/* Provenance */}
+                  <div className="shrink-0 w-[150px] flex items-center gap-1.5 flex-wrap">
+                    {(evt.provenances || []).includes("antenne") && (
+                      evt.antenne ? (
+                        <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 border border-emerald-200/60 px-1.5 py-0.5" title={evt.antenne.name}>
+                          <img src={evt.antenne.photo} alt={evt.antenne.name} className="h-3.5 w-3.5 rounded-full object-cover" />
+                          <span className="text-[10px] font-medium text-emerald-700 truncate max-w-[70px]">{evt.antenne.name.split(" ")[0]}</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 rounded-md bg-slate-50 border border-dashed border-slate-300 px-1.5 py-0.5" title="Antenne à affecter">
+                          <Building2 className="h-3 w-3 text-slate-400" />
+                          <span className="text-[10px] font-medium text-slate-400 italic">À affecter</span>
+                        </span>
+                      )
+                    )}
+                    {(evt.provenances || []).includes("transporteur") && (
+                      <span className="inline-flex items-center gap-1 rounded-md bg-amber-50 border border-amber-200/60 px-1.5 py-0.5">
+                        <Truck className="h-3 w-3 text-amber-600" />
+                        <span className="text-[10px] font-medium text-amber-700">Expéd.</span>
+                      </span>
+                    )}
+                  </div>
+                  <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-semibold shrink-0 w-[42px] text-center", evt.clientType === "Pro" ? "bg-blue-100 text-blue-700" : "bg-pink-100 text-pink-700")}>{evt.clientType}</span>
+                  {/* Lien fiche */}
+                  <a href={`/events/${evt.id}`} onClick={e => e.stopPropagation()} className="shrink-0 flex items-center gap-1 text-[11px] text-[--k-primary] hover:underline font-medium">
+                    <Eye className="h-3 w-3" /> Fiche
+                  </a>
+                  {/* Menu actions */}
+                  <div className="shrink-0 relative" ref={actionMenu === evt.id ? actionMenuRef : undefined}>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setActionMenu(actionMenu === evt.id ? null : evt.id); }}
+                      className="flex h-7 w-7 items-center justify-center rounded-md text-[--k-muted] hover:bg-[--k-surface-2] hover:text-[--k-text] transition"
+                    >
+                      <MoreHorizontal className="h-4 w-4" />
+                    </button>
+                    {actionMenu === evt.id && (
+                      <div className="absolute right-0 z-30 mt-1 w-48 rounded-lg border border-[--k-border] bg-white shadow-lg py-1">
+                        <a href={`/events/${evt.id}`} className="flex items-center gap-2 px-3 py-2 text-[12px] text-[--k-text] hover:bg-[--k-surface-2] transition">
+                          <Eye className="h-3.5 w-3.5 text-[--k-muted]" /> Voir la fiche
+                        </a>
+                        <a href="/events/create" className="flex items-center gap-2 px-3 py-2 text-[12px] text-[--k-text] hover:bg-[--k-surface-2] transition">
+                          <Edit className="h-3.5 w-3.5 text-[--k-muted]" /> Modifier
+                        </a>
+                        <button className="w-full flex items-center gap-2 px-3 py-2 text-[12px] text-[--k-text] hover:bg-[--k-surface-2] transition text-left">
+                          <Copy className="h-3.5 w-3.5 text-[--k-muted]" /> Dupliquer
+                        </button>
+                        <button className="w-full flex items-center gap-2 px-3 py-2 text-[12px] text-[--k-text] hover:bg-[--k-surface-2] transition text-left">
+                          <FileText className="h-3.5 w-3.5 text-[--k-muted]" /> Exporter PDF
+                        </button>
+                        <div className="border-t border-[--k-border] my-1" />
+                        <button className="w-full flex items-center gap-2 px-3 py-2 text-[12px] text-red-500 hover:bg-red-50 transition text-left">
+                          <Trash2 className="h-3.5 w-3.5" /> Supprimer
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* Footer */}
         <div className="flex items-center justify-between border-t border-[--k-border] px-4 py-2.5 text-[12px] text-[--k-muted]">

@@ -39,9 +39,9 @@ const BORNE = {
 };
 
 const TEAM = {
-  commercial: { name: "Seb Mahé", initials: "SM", color: "bg-indigo-500", role: "Commercial", email: "seb@selfizee.com", phone: "+33 6 12 34 56 78" },
-  chef: { name: "Julie Martin", initials: "JM", color: "bg-pink-500", role: "Cheffe de projet", email: "julie@selfizee.com", phone: "+33 6 98 76 54 32" },
-  tech: { name: "Lucas Dubois", initials: "LD", color: "bg-amber-500", role: "Technicien", email: "lucas@selfizee.com", phone: "+33 6 55 44 33 22" },
+  commercial: { name: "Seb Mahé", initials: "SM", color: "bg-indigo-500", role: "Commercial", email: "seb@selfizee.com", phone: "+33 6 12 34 56 78", photo: "https://i.pravatar.cc/150?u=seb" },
+  chef: { name: "Julie Martin", initials: "JM", color: "bg-pink-500", role: "Cheffe de projet", email: "julie@selfizee.com", phone: "+33 6 98 76 54 32", photo: "https://i.pravatar.cc/150?u=julie" },
+  tech: { name: "Lucas Dubois", initials: "LD", color: "bg-amber-500", role: "Technicien", email: "lucas@selfizee.com", phone: "+33 6 55 44 33 22", photo: "https://i.pravatar.cc/150?u=lucas-dubois" },
 };
 
 const CURRENT_EVENT = {
@@ -88,17 +88,17 @@ const DERNIERS_EVENTS = [
 
 const COMMENTS = [
   {
-    id: 1, user: { name: "Seb Mahé", initials: "SM", color: "bg-indigo-500" },
+    id: 1, user: { name: "Seb Mahé", initials: "SM", color: "bg-indigo-500", photo: "https://i.pravatar.cc/150?u=seb" },
     date: "05/02/2026 14:30", text: "RAS, borne fonctionnelle après remplacement batterie. Client satisfait.",
     reactions: [{ emoji: "👍", count: 1 }], pinned: false,
   },
   {
-    id: 2, user: { name: "Lucas Dubois", initials: "LD", color: "bg-amber-500" },
+    id: 2, user: { name: "Lucas Dubois", initials: "LD", color: "bg-amber-500", photo: "https://i.pravatar.cc/150?u=lucas-dubois" },
     date: "15/01/2026 16:00", text: "Batterie remplacée suite alerte usure >80%. Ancien modèle BAT-33012 retourné en recyclage. Test impression OK.",
     reactions: [{ emoji: "✅", count: 1 }], pinned: true,
   },
   {
-    id: 3, user: { name: "Julie Martin", initials: "JM", color: "bg-pink-500" },
+    id: 3, user: { name: "Julie Martin", initials: "JM", color: "bg-pink-500", photo: "https://i.pravatar.cc/150?u=julie" },
     date: "28/12/2025 09:15", text: "Borne prête pour livraison Mairie de Rennes. Contrat signé pour 6 mois renouvelable. Contact client : Jean-Marc Leroy.",
     reactions: [], pinned: false,
   },
@@ -200,9 +200,7 @@ export default function BorneDetail() {
               <div className="flex items-center">
                 {Object.entries(TEAM).map(([key, member], i) => (
                   <div key={key} className="group relative" style={{ marginLeft: i > 0 ? "-8px" : 0, zIndex: Object.keys(TEAM).length - i }}>
-                    <div className={cn("flex h-9 w-9 items-center justify-center rounded-full text-[11px] font-bold text-white ring-2 ring-white shadow-sm cursor-pointer hover:scale-110 transition-transform", member.color)}>
-                      {member.initials}
-                    </div>
+                    <img src={member.photo} alt={member.name} className="h-9 w-9 rounded-full ring-2 ring-white shadow-sm object-cover cursor-pointer hover:scale-110 transition-transform" />
                     <div className="pointer-events-none absolute -bottom-12 left-1/2 -translate-x-1/2 z-50 opacity-0 group-hover:opacity-100 transition-opacity">
                       <div className="whitespace-nowrap rounded-lg bg-slate-900 px-2.5 py-1.5 text-[11px] text-white shadow-lg">
                         <div className="font-medium">{member.name}</div>
@@ -342,9 +340,7 @@ export default function BorneDetail() {
               <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
                 <div className="p-4">
                   <div className="flex gap-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-500 text-[11px] font-bold text-white ring-2 ring-white">
-                      SM
-                    </div>
+                    <img src="https://i.pravatar.cc/150?u=seb" alt="Seb Mahé" className="h-9 w-9 shrink-0 rounded-full ring-2 ring-white object-cover" />
                     <div className="flex-1 min-w-0">
                       <textarea
                         value={newComment}
@@ -385,9 +381,7 @@ export default function BorneDetail() {
                     )}
                     <div className="p-4">
                       <div className="flex gap-3">
-                        <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-white", c.user.color)}>
-                          {c.user.initials}
-                        </div>
+                        <img src={c.user.photo} alt={c.user.name} className="h-9 w-9 shrink-0 rounded-full object-cover" />
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="text-[13px] font-semibold text-[--k-text]">{c.user.name}</span>
@@ -469,9 +463,7 @@ export default function BorneDetail() {
             <div className="p-4 space-y-3">
               {Object.entries(TEAM).map(([key, member]) => (
                 <div key={key} className="flex items-center gap-3">
-                  <div className={cn("flex h-9 w-9 items-center justify-center rounded-full text-[11px] font-bold text-white shadow-sm", member.color)}>
-                    {member.initials}
-                  </div>
+                  <img src={member.photo} alt={member.name} className="h-9 w-9 rounded-full shadow-sm object-cover" />
                   <div className="min-w-0 flex-1">
                     <div className="text-[12px] font-semibold text-[--k-text]">{member.name}</div>
                     <div className="text-[10px] text-[--k-muted]">{member.role}</div>

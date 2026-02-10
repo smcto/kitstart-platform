@@ -78,9 +78,7 @@ export default function MonCompte() {
           <div className="absolute -right-2 -top-2 h-20 w-20 rounded-full bg-white/[0.04]" />
           <div className="relative flex items-center gap-5">
             <div className="relative group">
-              <span className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white/20 text-2xl font-bold text-white backdrop-blur-sm">
-                SM
-              </span>
+              <img src="https://i.pravatar.cc/150?u=seb" alt="Seb Mahé" className="h-20 w-20 rounded-2xl object-cover ring-2 ring-white/30" />
               <button className="absolute inset-0 flex items-center justify-center rounded-2xl bg-black/30 opacity-0 group-hover:opacity-100 transition">
                 <Camera className="h-5 w-5 text-white" />
               </button>
