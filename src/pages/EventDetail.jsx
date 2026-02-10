@@ -1399,7 +1399,7 @@ export default function EventDetail() {
           )}
 
           {/* Contextual: Config shortcut — on updates, config, crea, evenement */}
-          {(activeTab === "updates" || activeTab === "config" || activeTab === "crea" || activeTab === "evenement") && (
+          {(activeTab === "updates" || activeTab === "config" || activeTab === "crea") && (
             <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Settings className="h-4 w-4 text-slate-500" />
