@@ -293,56 +293,24 @@ export default function EventDetail() {
 
       {/* ── Header card ── */}
       <div className="mb-5 rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
-        {/* Top subtle stripe */}
-        <div className="h-1 bg-gradient-to-r from-slate-200 to-slate-100" />
 
-        <div className="p-5">
+        <div className="p-5 pb-0">
+          {/* Row 1: Title + Status + Actions (right) */}
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="flex-1 min-w-0">
-              {/* Title row */}
-              <div className="flex items-center gap-3 mb-2">
+              <div className="flex items-center gap-3">
                 <h1 className="text-[20px] font-bold text-[--k-text] truncate">{EVENT.name}</h1>
                 <span className={cn("shrink-0 rounded-md px-2.5 py-1 text-[11px] font-bold", st.color)}>{st.label}</span>
-              </div>
-
-              {/* Meta row */}
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[12px] text-[--k-muted]">
-                <span className="font-mono text-[11px] text-[--k-muted]/70">{EVENT.id}</span>
-                <span className="flex items-center gap-1"><CalendarDays className="h-3 w-3" />{new Date(EVENT.dateStart).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })} → {new Date(EVENT.dateEnd).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}</span>
-                <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{EVENT.location}</span>
-                <span className="flex items-center gap-1"><Camera className="h-3 w-3" />{BORNES_ASSIGNED.length} bornes</span>
-                <span className="flex items-center gap-1"><Truck className="h-3 w-3" />{EVENT.provenance}{EVENT.provenance === "Antenne locale" && EVENT.antenne ? ` — ${EVENT.antenne}` : ""}</span>
-                <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-bold", EVENT.clientType === "Pro" ? "bg-blue-50 text-blue-600" : "bg-pink-50 text-pink-500")}>{EVENT.clientType}</span>
-              </div>
-
-              {/* Config code */}
-              <div className="mt-3 flex items-center gap-2">
-                <div className="flex items-center gap-2 rounded-lg bg-slate-50 border border-slate-200 px-3 py-1.5">
-                  <Hash className="h-3.5 w-3.5 text-slate-400" />
-                  <span className="font-mono text-[13px] font-bold text-slate-700 tracking-wider">{EVENT.configCode}</span>
-                  <span className="text-[10px] text-slate-400">Code config</span>
-                </div>
-                <a
-                  href={EVENT.configUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 rounded-lg bg-slate-50 border border-slate-200 px-3 py-1.5 text-[12px] font-medium text-slate-600 hover:bg-slate-100 transition"
-                >
-                  <ExternalLink className="h-3.5 w-3.5" />
-                  Ouvrir la config
-                </a>
+                <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold", EVENT.clientType === "Pro" ? "bg-blue-50 text-blue-600" : "bg-pink-50 text-pink-500")}>{EVENT.clientType}</span>
               </div>
             </div>
-
-            {/* Right: team avatars + actions */}
-            <div className="flex flex-col items-end gap-3">
+            <div className="flex items-center gap-2 shrink-0">
               {/* Team avatars */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center -space-x-2 mr-2">
                 {Object.entries(TEAM).map(([key, member]) => (
-                  <div key={key} className="group relative flex flex-col items-center">
-                    <img src={member.photo} alt={member.name} className="h-9 w-9 rounded-full ring-2 ring-white shadow-sm object-cover" />
-                    {/* Tooltip */}
-                    <div className="pointer-events-none absolute -bottom-10 z-50 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div key={key} className="group relative">
+                    <img src={member.photo} alt={member.name} className="h-8 w-8 rounded-full ring-2 ring-white shadow-sm object-cover" />
+                    <div className="pointer-events-none absolute -bottom-10 left-1/2 -translate-x-1/2 z-50 opacity-0 group-hover:opacity-100 transition-opacity">
                       <div className="whitespace-nowrap rounded-lg bg-slate-900 px-2.5 py-1.5 text-[11px] text-white shadow-lg">
                         <span className="font-medium">{member.name}</span>
                         <span className="text-white/60 ml-1">• {member.role}</span>
@@ -351,65 +319,91 @@ export default function EventDetail() {
                   </div>
                 ))}
               </div>
-              {/* Actions */}
-              <div className="flex gap-2">
-                <a href="/events/create" className="flex h-8 items-center gap-1.5 rounded-lg border border-[--k-border] bg-white px-3 text-[12px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition shadow-sm">
-                  <Edit className="h-3.5 w-3.5" /> Modifier
-                </a>
-                <button className="flex h-8 items-center gap-1.5 rounded-lg border border-[--k-border] bg-white px-3 text-[12px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition shadow-sm">
-                  <MoreHorizontal className="h-3.5 w-3.5" />
-                </button>
-              </div>
+              <a href="/events/create" className="flex h-8 items-center gap-1.5 rounded-lg border border-[--k-border] bg-white px-3 text-[12px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition shadow-sm">
+                <Edit className="h-3.5 w-3.5" /> Modifier
+              </a>
+              <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-[--k-border] bg-white text-[--k-text] hover:bg-[--k-surface-2] transition shadow-sm">
+                <MoreHorizontal className="h-3.5 w-3.5" />
+              </button>
             </div>
           </div>
 
-          {/* Objectifs & Tags */}
-          <div className="mt-3 flex flex-wrap items-center gap-1.5">
+          {/* Row 2: Date prominent + location + meta */}
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-5">
+              <div className="flex items-center gap-2">
+                <CalendarDays className="h-4 w-4 text-[--k-primary]" />
+                <span className="text-[14px] font-bold text-[--k-text]">
+                  {new Date(EVENT.dateStart).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })} → {new Date(EVENT.dateEnd).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                </span>
+              </div>
+              <span className="hidden sm:flex items-center gap-1.5 text-[12px] text-[--k-muted]">
+                <MapPin className="h-3.5 w-3.5" />{EVENT.location}
+              </span>
+              <span className="hidden sm:flex items-center gap-1.5 text-[12px] text-[--k-muted]">
+                <Camera className="h-3.5 w-3.5" />{BORNES_ASSIGNED.length} bornes
+              </span>
+            </div>
+            {/* Config code — right side */}
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 rounded-md bg-slate-50 border border-slate-200 px-2.5 py-1">
+                <Hash className="h-3 w-3 text-slate-400" />
+                <span className="font-mono text-[13px] font-bold text-slate-700 tracking-wider">{EVENT.configCode}</span>
+              </div>
+              <a
+                href={EVENT.configUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 rounded-md bg-slate-50 border border-slate-200 px-2.5 py-1 text-[11px] font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition"
+              >
+                <ExternalLink className="h-3 w-3" />
+                Config
+              </a>
+            </div>
+          </div>
+
+          {/* Row 3: Tags — no border, just text pills */}
+          <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
             {EVENT.objectifs.map(o => (
-              <span key={o} className="rounded-md bg-slate-50 border border-slate-200 px-2 py-0.5 text-[10px] font-semibold text-slate-500">{o}</span>
+              <span key={o} className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] font-medium text-slate-500">{o}</span>
             ))}
             {EVENT.tags.map(t => (
-              <span key={t} className="rounded-md bg-slate-50 border border-slate-200 px-2 py-0.5 text-[10px] font-semibold text-slate-500">{t}</span>
+              <span key={t} className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] font-medium text-slate-500">{t}</span>
             ))}
           </div>
+        </div>
 
-          {/* Phase status indicators */}
-          <div className="mt-4 flex flex-wrap items-center gap-2">
-            {PHASES.map(phase => {
-              const allDone = phase.checks.every(ck => CHECKLIST.find(c => c.key === ck)?.done);
-              const someDone = phase.checks.some(ck => CHECKLIST.find(c => c.key === ck)?.done);
-              return (
-                <div
-                  key={phase.key}
-                  className={cn(
-                    "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11px] font-semibold border transition",
-                    allDone
-                      ? "bg-slate-50 border-slate-200 text-slate-600"
-                      : someDone
-                        ? "bg-slate-50 border-slate-200 text-slate-500"
-                        : "bg-white border-slate-200 text-slate-300"
-                  )}
-                >
+        {/* Stepper — phases as a proper pipeline */}
+        <div className="mt-4 border-t border-[--k-border] px-5 py-3 flex items-center">
+          {PHASES.map((phase, i) => {
+            const allDone = phase.checks.every(ck => CHECKLIST.find(c => c.key === ck)?.done);
+            const someDone = phase.checks.some(ck => CHECKLIST.find(c => c.key === ck)?.done);
+            return (
+              <React.Fragment key={phase.key}>
+                {i > 0 && (
+                  <div className={cn("flex-1 h-px mx-1", allDone || someDone ? "bg-emerald-300" : "bg-slate-200")} />
+                )}
+                <div className="flex items-center gap-1.5">
                   {allDone ? (
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
                   ) : someDone ? (
-                    <Clock className="h-3.5 w-3.5 text-amber-400" />
+                    <div className="h-4 w-4 rounded-full border-2 border-amber-400 flex items-center justify-center shrink-0">
+                      <div className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+                    </div>
                   ) : (
-                    <Circle className="h-3.5 w-3.5 text-slate-200" />
+                    <Circle className="h-4 w-4 text-slate-300 shrink-0" />
                   )}
-                  {phase.label}
+                  <span className={cn(
+                    "text-[11px] font-semibold whitespace-nowrap",
+                    allDone ? "text-emerald-600" : someDone ? "text-amber-600" : "text-slate-400"
+                  )}>
+                    {phase.label}
+                  </span>
                 </div>
-              );
-            })}
-          </div>
-
-          {/* Progress bar */}
-          <div className="mt-3 flex items-center gap-3">
-            <div className="flex-1 h-1.5 rounded-full bg-slate-100 overflow-hidden">
-              <div className="h-full rounded-full bg-slate-400 transition-all" style={{ width: `${progress}%` }} />
-            </div>
-            <span className="text-[11px] font-semibold text-slate-500 tabular-nums whitespace-nowrap">{progress}%</span>
-          </div>
+              </React.Fragment>
+            );
+          })}
+          <span className="ml-auto pl-4 text-[11px] font-bold text-slate-400 tabular-nums">{progress}%</span>
         </div>
       </div>
 
