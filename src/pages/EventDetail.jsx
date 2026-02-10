@@ -327,78 +327,77 @@ export default function EventDetail() {
   return (
     <AppShell currentApp="Events Manager" activeKey="events-list">
       {/* Breadcrumb */}
-      <div className="mb-3 flex items-center gap-1.5 text-[12px] text-[--k-muted]">
-        <a href="/events/list" className="hover:text-[--k-primary] transition flex items-center gap-1">
+      <div className="mb-4 flex items-center gap-1.5 text-[12px] text-slate-400">
+        <a href="/events/list" className="hover:text-[--k-primary] transition-colors flex items-center gap-1">
           <ArrowLeft className="h-3 w-3" /> Événements
         </a>
-        <ChevronRight className="h-3 w-3" />
-        <span className="text-[--k-text] font-medium">{EVENT.id}</span>
+        <ChevronRight className="h-3 w-3 text-slate-300" />
+        <span className="text-slate-500 font-medium">{EVENT.id}</span>
       </div>
 
       {/* ── Header card ── */}
-      <div className="mb-5 rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
+      <div className="mb-5 rounded-2xl border border-slate-200/70 bg-white overflow-hidden">
 
         <div className="p-5 pb-0">
-          {/* Row 1: Title + Status + Actions (right) */}
+          {/* Row 1: Title + Status + Actions */}
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-3">
                 <h1 className="text-[20px] font-bold text-[--k-text] truncate">{EVENT.name}</h1>
-                <span className={cn("shrink-0 rounded-md px-2.5 py-1 text-[11px] font-bold", st.color)}>{st.label}</span>
-                <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold", EVENT.clientType === "Pro" ? "bg-blue-50 text-blue-600" : "bg-pink-50 text-pink-500")}>{EVENT.clientType}</span>
+                <span className={cn("shrink-0 rounded-lg px-2.5 py-1 text-[10px] font-bold tracking-wide", st.color)}>{st.label}</span>
+                <span className={cn("shrink-0 rounded-lg px-2 py-0.5 text-[10px] font-semibold", EVENT.clientType === "Pro" ? "bg-blue-50/80 text-blue-500" : "bg-pink-50/80 text-pink-400")}>{EVENT.clientType}</span>
               </div>
             </div>
             <div className="flex items-center gap-2 shrink-0">
               {/* Team avatars */}
-              <div className="flex items-center -space-x-2 mr-2">
+              <div className="flex items-center -space-x-2 mr-1">
                 {Object.entries(TEAM).map(([key, member]) => (
                   <div key={key} className="group relative">
-                    <img src={member.photo} alt={member.name} className="h-8 w-8 rounded-full ring-2 ring-white shadow-sm object-cover" />
-                    <div className="pointer-events-none absolute -bottom-10 left-1/2 -translate-x-1/2 z-50 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <div className="whitespace-nowrap rounded-lg bg-slate-900 px-2.5 py-1.5 text-[11px] text-white shadow-lg">
+                    <img src={member.photo} alt={member.name} className="h-7 w-7 rounded-full ring-2 ring-white object-cover transition-transform hover:scale-110 hover:z-10" />
+                    <div className="pointer-events-none absolute -bottom-9 left-1/2 -translate-x-1/2 z-50 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="whitespace-nowrap rounded-lg bg-slate-900 px-2.5 py-1.5 text-[10px] text-white shadow-lg">
                         <span className="font-medium">{member.name}</span>
-                        <span className="text-white/60 ml-1">• {member.role}</span>
+                        <span className="text-white/50 ml-1">· {member.role}</span>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
-              <a href="/events/create" className="flex h-8 items-center gap-1.5 rounded-lg border border-[--k-border] bg-white px-3 text-[12px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition shadow-sm">
-                <Edit className="h-3.5 w-3.5" /> Modifier
+              <a href="/events/create" className="flex h-8 items-center gap-1.5 rounded-xl border border-slate-200/80 bg-white px-3 text-[12px] font-medium text-[--k-text] hover:bg-slate-50 hover:border-slate-300 transition-all">
+                <Edit className="h-3.5 w-3.5 text-slate-400" /> Modifier
               </a>
-              <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-[--k-border] bg-white text-[--k-text] hover:bg-[--k-surface-2] transition shadow-sm">
+              <button className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200/80 bg-white text-slate-400 hover:bg-slate-50 hover:text-slate-600 transition-all">
                 <MoreHorizontal className="h-3.5 w-3.5" />
               </button>
             </div>
           </div>
 
-          {/* Row 2: Date prominent + location + meta */}
+          {/* Row 2: Date + location + meta */}
           <div className="mt-3 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-5">
               <div className="flex items-center gap-2">
-                <CalendarDays className="h-4 w-4 text-[--k-primary]" />
-                <span className="text-[14px] font-bold text-[--k-text]">
+                <CalendarDays className="h-3.5 w-3.5 text-[--k-primary]" />
+                <span className="text-[13px] font-semibold text-[--k-text]">
                   {new Date(EVENT.dateStart).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })} → {new Date(EVENT.dateEnd).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
                 </span>
               </div>
-              <span className="hidden sm:flex items-center gap-1.5 text-[12px] text-[--k-muted]">
-                <MapPin className="h-3.5 w-3.5" />{EVENT.location}
+              <span className="hidden sm:flex items-center gap-1.5 text-[12px] text-slate-400">
+                <MapPin className="h-3 w-3" />{EVENT.location}
               </span>
-              <span className="hidden sm:flex items-center gap-1.5 text-[12px] text-[--k-muted]">
-                <Package className="h-3.5 w-3.5" />{BORNES_ASSIGNED.length} bornes
+              <span className="hidden sm:flex items-center gap-1.5 text-[12px] text-slate-400">
+                <Package className="h-3 w-3" />{BORNES_ASSIGNED.length} bornes
               </span>
             </div>
-            {/* Config code — right side */}
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1.5 rounded-md bg-slate-50 border border-slate-200 px-2.5 py-1">
+            <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1.5 rounded-lg bg-slate-50/80 border border-slate-200/60 px-2.5 py-1">
                 <Hash className="h-3 w-3 text-slate-400" />
-                <span className="font-mono text-[13px] font-bold text-slate-700 tracking-wider">{EVENT.configCode}</span>
+                <span className="font-mono text-[12px] font-bold text-slate-600 tracking-wider">{EVENT.configCode}</span>
               </div>
               <a
                 href={EVENT.configUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 rounded-md bg-slate-50 border border-slate-200 px-2.5 py-1 text-[11px] font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition"
+                className="flex items-center gap-1 rounded-lg bg-slate-50/80 border border-slate-200/60 px-2.5 py-1 text-[11px] font-medium text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all"
               >
                 <ExternalLink className="h-3 w-3" />
                 Config
@@ -406,40 +405,40 @@ export default function EventDetail() {
             </div>
           </div>
 
-          {/* Row 3: Tags — no border, just text pills */}
-          <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+          {/* Row 3: Tags */}
+          <div className="mt-3 flex flex-wrap items-center gap-1.5">
             {EVENT.objectifs.map(o => (
-              <span key={o} className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] font-medium text-slate-500">{o}</span>
+              <span key={o} className="rounded-lg bg-slate-50 px-2.5 py-0.5 text-[10px] font-medium text-slate-400">{o}</span>
             ))}
             {EVENT.tags.map(t => (
-              <span key={t} className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] font-medium text-slate-500">{t}</span>
+              <span key={t} className="rounded-lg bg-[--k-primary-2]/40 px-2.5 py-0.5 text-[10px] font-semibold text-[--k-primary]">{t}</span>
             ))}
           </div>
         </div>
 
-        {/* Stepper — phases as a proper pipeline */}
-        <div className="mt-4 border-t border-[--k-border] px-5 py-3 flex items-center">
+        {/* Stepper */}
+        <div className="mt-4 border-t border-slate-100 px-5 py-3 flex items-center">
           {PHASES.map((phase, i) => {
             const allDone = phase.checks.every(ck => CHECKLIST.find(c => c.key === ck)?.done);
             const someDone = phase.checks.some(ck => CHECKLIST.find(c => c.key === ck)?.done);
             return (
               <React.Fragment key={phase.key}>
                 {i > 0 && (
-                  <div className={cn("flex-1 h-px mx-1", allDone || someDone ? "bg-emerald-300" : "bg-slate-200")} />
+                  <div className={cn("flex-1 h-px mx-1.5 transition-colors", allDone || someDone ? "bg-emerald-200" : "bg-slate-100")} />
                 )}
                 <div className="flex items-center gap-1.5">
                   {allDone ? (
-                    <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
                   ) : someDone ? (
-                    <div className="h-4 w-4 rounded-full border-2 border-amber-400 flex items-center justify-center shrink-0">
+                    <div className="h-3.5 w-3.5 rounded-full border-[1.5px] border-amber-400 flex items-center justify-center shrink-0">
                       <div className="h-1.5 w-1.5 rounded-full bg-amber-400" />
                     </div>
                   ) : (
-                    <Circle className="h-4 w-4 text-slate-300 shrink-0" />
+                    <Circle className="h-3.5 w-3.5 text-slate-200 shrink-0" />
                   )}
                   <span className={cn(
-                    "text-[11px] font-semibold whitespace-nowrap",
-                    allDone ? "text-emerald-600" : someDone ? "text-amber-600" : "text-slate-400"
+                    "text-[11px] font-medium whitespace-nowrap",
+                    allDone ? "text-emerald-600" : someDone ? "text-amber-500" : "text-slate-300"
                   )}>
                     {phase.label}
                   </span>
@@ -447,12 +446,12 @@ export default function EventDetail() {
               </React.Fragment>
             );
           })}
-          <span className="ml-auto pl-4 text-[11px] font-bold text-slate-400 tabular-nums">{progress}%</span>
+          <span className="ml-auto pl-4 text-[11px] font-semibold text-slate-300 tabular-nums">{progress}%</span>
         </div>
       </div>
 
-      {/* ── Tabs bar ── Monday-style */}
-      <div className="mb-5 flex items-center gap-1 border-b border-[--k-border]">
+      {/* ── Tabs bar ── */}
+      <div className="mb-5 flex items-center gap-0.5 border-b border-slate-100">
         {TABS.map(tab => {
           const Icon = tab.icon;
           const active = activeTab === tab.key;
@@ -461,14 +460,14 @@ export default function EventDetail() {
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
               className={cn(
-                "relative flex items-center gap-1.5 px-4 py-2.5 text-[13px] font-semibold transition",
-                active ? "text-[--k-primary]" : "text-[--k-muted] hover:text-[--k-text]",
+                "relative flex items-center gap-1.5 px-4 py-2.5 text-[12px] font-medium rounded-t-lg transition-all",
+                active ? "text-[--k-primary] bg-[--k-primary-2]/20" : "text-slate-400 hover:text-[--k-text] hover:bg-slate-50",
               )}
             >
-              <Icon className="h-3.5 w-3.5" />
+              <Icon className={cn("h-3.5 w-3.5", active ? "text-[--k-primary]" : "text-slate-300")} />
               {tab.label}
               {tab.count != null && (
-                <span className={cn("rounded-full px-1.5 py-0.5 text-[10px] font-bold", active ? "bg-[--k-primary-2] text-[--k-primary]" : "bg-slate-100 text-slate-400")}>
+                <span className={cn("rounded-full px-1.5 py-0.5 text-[9px] font-bold", active ? "bg-[--k-primary-2] text-[--k-primary]" : "bg-slate-100 text-slate-400")}>
                   {tab.count}
                 </span>
               )}
@@ -488,7 +487,7 @@ export default function EventDetail() {
           {activeTab === "updates" && (
             <>
               {/* Comment composer */}
-              <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
+              <div className="rounded-2xl border border-slate-200/70 bg-white overflow-hidden">
                 <div className="p-4">
                   <div className="flex gap-3">
                     <img src="https://i.pravatar.cc/150?u=seb" alt="Seb Mahé" className="h-9 w-9 shrink-0 rounded-full ring-2 ring-white object-cover" />
@@ -499,7 +498,7 @@ export default function EventDetail() {
                         onChange={e => setNewComment(e.target.value)}
                         placeholder="Écrire une mise à jour..."
                         rows={3}
-                        className="w-full resize-none rounded-xl border border-[--k-border] bg-[--k-surface-2]/30 px-4 py-3 text-[13px] outline-none placeholder:text-[--k-muted]/60 focus:border-slate-400 focus:bg-white transition"
+                        className="w-full resize-none rounded-xl border border-slate-200 bg-[--k-surface-2]/30 px-4 py-3 text-[13px] outline-none placeholder:text-[--k-muted]/60 focus:border-slate-400 focus:bg-white transition"
                       />
                       <div className="mt-2 flex items-center justify-between">
                         <div className="flex items-center gap-1">
@@ -513,7 +512,7 @@ export default function EventDetail() {
                             <Smile className="h-3.5 w-3.5" />
                           </button>
                         </div>
-                        <button className="flex items-center gap-1.5 rounded-lg bg-[--k-primary] px-4 py-1.5 text-[12px] font-semibold text-white hover:brightness-110 transition shadow-sm">
+                        <button className="flex items-center gap-1.5 rounded-xl bg-[--k-primary] px-4 py-1.5 text-[12px] font-semibold text-white hover:brightness-110 transition-all">
                           <Send className="h-3.5 w-3.5" /> Publier
                         </button>
                       </div>
@@ -525,7 +524,7 @@ export default function EventDetail() {
               {/* Comments list */}
               <div className="space-y-3">
                 {COMMENTS.map(c => (
-                  <div key={c.id} className={cn("rounded-2xl border bg-white shadow-sm overflow-hidden", c.pinned ? "border-slate-300" : "border-[--k-border]")}>
+                  <div key={c.id} className={cn("rounded-2xl border bg-white overflow-hidden transition-all hover:shadow-sm", c.pinned ? "border-slate-300/80" : "border-slate-200/70")}>
                     {c.pinned && (
                       <div className="flex items-center gap-1.5 bg-slate-50 px-4 py-1.5 text-[11px] font-medium text-slate-500">
                         <Pin className="h-3 w-3" /> Épinglé
@@ -546,7 +545,7 @@ export default function EventDetail() {
                           {/* Reactions & actions */}
                           <div className="mt-2.5 flex items-center gap-2">
                             {c.reactions.map((r, i) => (
-                              <button key={i} className="flex items-center gap-1 rounded-full border border-[--k-border] bg-slate-50 px-2 py-0.5 text-[11px] hover:bg-slate-100 transition">
+                              <button key={i} className="flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] hover:bg-slate-100 transition">
                                 <span>{r.emoji}</span>
                                 <span className="font-medium text-[--k-muted]">{r.count}</span>
                               </button>
@@ -570,7 +569,7 @@ export default function EventDetail() {
 
                           {/* Reply composer */}
                           {replyingTo === c.id && (
-                            <div className="mt-3 flex gap-2.5 rounded-xl border border-[--k-border] bg-[--k-surface-2]/20 p-3">
+                            <div className="mt-3 flex gap-2.5 rounded-xl border border-slate-200 bg-[--k-surface-2]/20 p-3">
                               <img src="https://i.pravatar.cc/150?u=seb" alt="Seb Mahé" className="h-7 w-7 shrink-0 rounded-full object-cover mt-0.5" />
                               <div className="flex-1 min-w-0">
                                 <div className="text-[11px] text-[--k-muted] mb-1.5">
@@ -582,7 +581,7 @@ export default function EventDetail() {
                                   placeholder={`Répondre à ${c.user.name.split(" ")[0]}...`}
                                   rows={2}
                                   autoFocus
-                                  className="w-full resize-none rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[12px] outline-none placeholder:text-[--k-muted]/60 focus:border-slate-400 transition"
+                                  className="w-full resize-none rounded-lg border border-slate-200 bg-white px-3 py-2 text-[12px] outline-none placeholder:text-[--k-muted]/60 focus:border-slate-400 transition"
                                 />
                                 <div className="mt-2 flex items-center justify-between">
                                   <div className="flex items-center gap-1">
@@ -630,19 +629,19 @@ export default function EventDetail() {
           {activeTab === "client" && (
             <>
               {/* ── Client identity ── */}
-              <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm overflow-hidden">
-                <div className="border-b border-[--k-border] px-5 py-3 flex items-center justify-between">
+              <div className="bg-white rounded-2xl border border-slate-200/70 overflow-hidden">
+                <div className="px-5 py-3.5 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Building2 className="h-4 w-4 text-slate-400" />
-                    <h2 className="text-[15px] font-bold text-[--k-text]">Coordonnées</h2>
+                    <Building2 className="h-4 w-4 text-slate-300" />
+                    <h2 className="text-[14px] font-semibold text-[--k-text]">Coordonnées</h2>
                   </div>
                   <div className="flex items-center gap-2">
                     {editing !== "client" ? (
-                      <button onClick={() => setEditing("client")} className="flex items-center gap-1.5 rounded-lg border border-[--k-border] px-3 py-1.5 text-[12px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition">
+                      <button onClick={() => setEditing("client")} className="flex items-center gap-1.5 rounded-xl border border-slate-200/80 px-3 py-1.5 text-[12px] font-medium text-[--k-text] hover:bg-slate-50 hover:border-slate-300 transition-all">
                         <Edit className="h-3.5 w-3.5 text-[--k-muted]" /> Compléter
                       </button>
                     ) : (
-                      <button onClick={() => setEditing(null)} className="flex items-center gap-1.5 rounded-lg bg-[--k-primary] px-3 py-1.5 text-[12px] font-medium text-white hover:brightness-110 transition shadow-sm">
+                      <button onClick={() => setEditing(null)} className="flex items-center gap-1.5 rounded-xl bg-[--k-primary] px-3 py-1.5 text-[12px] font-medium text-white hover:brightness-110 transition-all">
                         <CheckCircle2 className="h-3.5 w-3.5" /> Valider
                       </button>
                     )}
@@ -651,12 +650,12 @@ export default function EventDetail() {
                 <div className="p-5">
                   {editing === "client" ? (
                     <div className="space-y-4">
-                      <Field label="Société"><input type="text" defaultValue={CLIENT.company} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
-                      <Field label="Secteur d'activité"><input type="text" defaultValue={CLIENT.secteur} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
-                      <Field label="SIRET"><input type="text" defaultValue={CLIENT.siret} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
-                      <Field label="Adresse"><input type="text" defaultValue={CLIENT.address} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
-                      <Field label="Site web"><input type="text" defaultValue={CLIENT.website} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
-                      <Field label="Groupe"><input type="text" defaultValue={CLIENT.groupe} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
+                      <Field label="Société"><input type="text" defaultValue={CLIENT.company} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all" /></Field>
+                      <Field label="Secteur d'activité"><input type="text" defaultValue={CLIENT.secteur} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all" /></Field>
+                      <Field label="SIRET"><input type="text" defaultValue={CLIENT.siret} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all" /></Field>
+                      <Field label="Adresse"><input type="text" defaultValue={CLIENT.address} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all" /></Field>
+                      <Field label="Site web"><input type="text" defaultValue={CLIENT.website} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all" /></Field>
+                      <Field label="Groupe"><input type="text" defaultValue={CLIENT.groupe} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all" /></Field>
                     </div>
                   ) : (
                     <div className="space-y-0">
@@ -668,7 +667,7 @@ export default function EventDetail() {
                       <InfoRow label="Groupe" value={<span className="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">{CLIENT.groupe}</span>} />
                     </div>
                   )}
-                  <div className="mt-4 pt-3 border-t border-[--k-border]">
+                  <div className="mt-4 pt-3 border-t border-slate-100">
                     <a href={`/clients/${CLIENT.id}`} className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-[--k-primary] hover:underline">
                       <ExternalLink className="h-3.5 w-3.5" /> Voir la fiche client complète
                     </a>
@@ -677,18 +676,18 @@ export default function EventDetail() {
               </div>
 
               {/* ── Contacts ── */}
-              <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm overflow-hidden">
-                <div className="border-b border-[--k-border] px-5 py-3 flex items-center justify-between">
+              <div className="bg-white rounded-2xl border border-slate-200/70 overflow-hidden">
+                <div className="px-5 py-3.5 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Users className="h-4 w-4 text-slate-400" />
-                    <h2 className="text-[15px] font-bold text-[--k-text]">Contacts</h2>
+                    <Users className="h-4 w-4 text-slate-300" />
+                    <h2 className="text-[14px] font-semibold text-[--k-text]">Contacts</h2>
                   </div>
                   {!addingContact ? (
-                    <button onClick={() => setAddingContact(true)} className="flex items-center gap-1.5 rounded-lg border border-[--k-border] px-3 py-1.5 text-[12px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition">
+                    <button onClick={() => setAddingContact(true)} className="flex items-center gap-1.5 rounded-xl border border-slate-200/80 px-3 py-1.5 text-[12px] font-medium text-[--k-text] hover:bg-slate-50 hover:border-slate-300 transition-all">
                       <Plus className="h-3.5 w-3.5 text-[--k-muted]" /> Ajouter
                     </button>
                   ) : (
-                    <button onClick={() => setAddingContact(false)} className="flex items-center gap-1.5 rounded-lg border border-[--k-border] px-3 py-1.5 text-[12px] font-medium text-[--k-muted] hover:bg-[--k-surface-2] transition">
+                    <button onClick={() => setAddingContact(false)} className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-[12px] font-medium text-[--k-muted] hover:bg-[--k-surface-2] transition">
                       <X className="h-3.5 w-3.5" /> Annuler
                     </button>
                   )}
@@ -708,10 +707,10 @@ export default function EventDetail() {
                         ))}
                       </div>
                       <div className="grid gap-3 sm:grid-cols-2">
-                        <Field label="Nom complet"><input type="text" placeholder="Prénom Nom" className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
-                        <Field label="Fonction"><input type="text" placeholder="Ex: Chef de projet" className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
-                        <Field label="Email"><input type="email" placeholder="email@exemple.fr" className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
-                        <Field label="Téléphone"><input type="tel" placeholder="+33 6 00 00 00 00" className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
+                        <Field label="Nom complet"><input type="text" placeholder="Prénom Nom" className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all" /></Field>
+                        <Field label="Fonction"><input type="text" placeholder="Ex: Chef de projet" className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all" /></Field>
+                        <Field label="Email"><input type="email" placeholder="email@exemple.fr" className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all" /></Field>
+                        <Field label="Téléphone"><input type="tel" placeholder="+33 6 00 00 00 00" className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all" /></Field>
                       </div>
                       <div className="flex justify-end gap-2 pt-1">
                         <button onClick={() => setAddingContact(false)} className="rounded-lg px-3 py-1.5 text-[12px] font-medium text-[--k-muted] hover:bg-[--k-surface-2] transition">
@@ -731,7 +730,7 @@ export default function EventDetail() {
                     </div>
                     <div className="space-y-3">
                       {CLIENT_CONTACTS.filter(c => c.type === "projet").map(contact => (
-                        <div key={contact.id} className="flex items-start gap-3 rounded-xl border border-[--k-border] bg-[--k-surface-2]/20 p-3">
+                        <div key={contact.id} className="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50/30 p-3">
                           <img src={contact.photo} alt={contact.name} className="h-9 w-9 rounded-full object-cover shrink-0" />
                           <div className="flex-1 min-w-0">
                             <div className="text-[13px] font-semibold text-[--k-text]">{contact.name}</div>
@@ -757,7 +756,7 @@ export default function EventDetail() {
                     </div>
                     <div className="space-y-3">
                       {CLIENT_CONTACTS.filter(c => c.type === "facturation").map(contact => (
-                        <div key={contact.id} className="flex items-start gap-3 rounded-xl border border-[--k-border] bg-[--k-surface-2]/20 p-3">
+                        <div key={contact.id} className="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50/30 p-3">
                           <img src={contact.photo} alt={contact.name} className="h-9 w-9 rounded-full object-cover shrink-0" />
                           <div className="flex-1 min-w-0">
                             <div className="text-[13px] font-semibold text-[--k-text]">{contact.name}</div>
@@ -793,7 +792,7 @@ export default function EventDetail() {
                 <InfoRow label="Ville" value={EVENT.ville} />
                 <InfoRow label="Créé le" value={new Date(EVENT.createdAt).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })} />
                 {EVENT.notes && (
-                  <div className="mt-2 pt-2 border-t border-[--k-border]">
+                  <div className="mt-2 pt-2 border-t border-slate-100">
                     <div className="text-[11px] font-semibold text-[--k-muted] mb-1 flex items-center gap-1">
                       <FileText className="h-3 w-3" /> Notes internes
                     </div>
@@ -803,11 +802,11 @@ export default function EventDetail() {
               </Card>
 
               {/* Localisation / Map */}
-              <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm overflow-hidden">
-                <div className="border-b border-[--k-border] px-5 py-3 flex items-center justify-between">
+              <div className="bg-white rounded-2xl border border-slate-200/70 overflow-hidden">
+                <div className="px-5 py-3.5 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-slate-400" />
-                    <h2 className="text-[15px] font-bold text-[--k-text]">Localisation</h2>
+                    <MapPin className="h-4 w-4 text-slate-300" />
+                    <h2 className="text-[14px] font-semibold text-[--k-text]">Localisation</h2>
                   </div>
                   <a
                     href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(EVENT.address)}`}
@@ -819,7 +818,7 @@ export default function EventDetail() {
                   </a>
                 </div>
                 <div className="p-3">
-                  <div className="rounded-xl overflow-hidden border border-[--k-border]">
+                  <div className="rounded-xl overflow-hidden border border-slate-200">
                     <iframe
                       title="Localisation événement"
                       width="100%"
@@ -840,19 +839,19 @@ export default function EventDetail() {
               </div>
 
               {/* Devis associés */}
-              <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm overflow-hidden">
-                <div className="border-b border-[--k-border] px-5 py-3 flex items-center justify-between">
+              <div className="bg-white rounded-2xl border border-slate-200/70 overflow-hidden">
+                <div className="px-5 py-3.5 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Receipt className="h-4 w-4 text-slate-400" />
-                    <h2 className="text-[15px] font-bold text-[--k-text]">Devis associés</h2>
+                    <Receipt className="h-4 w-4 text-slate-300" />
+                    <h2 className="text-[14px] font-semibold text-[--k-text]">Devis associés</h2>
                     <span className="rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold text-slate-500">{DEVIS.length}</span>
                   </div>
                 </div>
-                <div className="divide-y divide-[--k-border]">
+                <div className="divide-y divide-slate-100">
                   {DEVIS.map(devis => {
                     const ds = DEVIS_STATUS[devis.status];
                     return (
-                      <div key={devis.id} className="px-5 py-4 hover:bg-slate-50/50 transition">
+                      <div key={devis.id} className="px-5 py-4 hover:bg-slate-50/40 transition-colors">
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
@@ -870,7 +869,7 @@ export default function EventDetail() {
                             <span className="text-[16px] font-bold text-[--k-text] tabular-nums">{devis.montant.toLocaleString("fr-FR")} €</span>
                             <button
                               onClick={() => setShowDevis(devis)}
-                              className="flex items-center gap-1.5 rounded-lg border border-[--k-border] px-3 py-1.5 text-[11px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition"
+                              className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-[11px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition"
                             >
                               <Eye className="h-3.5 w-3.5 text-[--k-muted]" /> Voir
                             </button>
@@ -885,14 +884,14 @@ export default function EventDetail() {
               {/* Devis PDF popup/modal */}
               {showDevis && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowDevis(null)}>
-                  <div className="relative w-full max-w-lg mx-4 rounded-2xl bg-white shadow-2xl border border-[--k-border] overflow-hidden" onClick={e => e.stopPropagation()}>
-                    <div className="flex items-center justify-between border-b border-[--k-border] px-6 py-4">
+                  <div className="relative w-full max-w-lg mx-4 rounded-2xl bg-white shadow-2xl border border-slate-200/70 overflow-hidden" onClick={e => e.stopPropagation()}>
+                    <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
                       <div>
                         <div className="text-[15px] font-bold text-[--k-text]">{showDevis.id}</div>
                         <div className="text-[12px] text-[--k-muted]">{showDevis.label}</div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <button className="flex h-8 items-center gap-1.5 rounded-lg border border-[--k-border] bg-white px-3 text-[12px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition">
+                        <button className="flex h-8 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 text-[12px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition">
                           <Download className="h-3.5 w-3.5" /> PDF
                         </button>
                         <button onClick={() => setShowDevis(null)} className="flex h-8 w-8 items-center justify-center rounded-lg text-[--k-muted] hover:bg-slate-100 transition">
@@ -919,7 +918,7 @@ export default function EventDetail() {
                       </div>
                       <table className="w-full text-[12px] mb-4">
                         <thead>
-                          <tr className="border-b-2 border-[--k-border]">
+                          <tr className="border-b-2 border-slate-100">
                             <th className="py-2 text-left text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide">Description</th>
                             <th className="py-2 text-right text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide w-16">Qté</th>
                             <th className="py-2 text-right text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide w-24">Prix HT</th>
@@ -927,7 +926,7 @@ export default function EventDetail() {
                         </thead>
                         <tbody>
                           {showDevis.lignes.map((l, i) => (
-                            <tr key={i} className="border-b border-[--k-border] last:border-0 hover:bg-[--k-surface-2]/40 transition">
+                            <tr key={i} className="border-b border-slate-100 last:border-0 hover:bg-[--k-surface-2]/40 transition">
                               <td className="py-2.5 text-[--k-text]">{l.desc}</td>
                               <td className="py-2.5 text-right text-[--k-muted] tabular-nums">{l.qty}</td>
                               <td className="py-2.5 text-right font-medium text-[--k-text] tabular-nums">{l.pu.toLocaleString("fr-FR")} €</td>
@@ -935,7 +934,7 @@ export default function EventDetail() {
                           ))}
                         </tbody>
                       </table>
-                      <div className="flex justify-end border-t-2 border-[--k-border] pt-3">
+                      <div className="flex justify-end border-t-2 border-slate-100 pt-3">
                         <div className="text-right">
                           <div className="text-[11px] text-[--k-muted] mb-0.5">Total HT</div>
                           <div className="text-[18px] font-bold text-[--k-text] tabular-nums">{showDevis.montant.toLocaleString("fr-FR")} €</div>
@@ -952,18 +951,16 @@ export default function EventDetail() {
           {/* ── CRÉA TAB ── */}
           {activeTab === "crea" && (
             <>
-              <PhaseStatus checks={["briefing", "design"]} checklist={CHECKLIST} />
-
               {/* Créa / Supports graphiques */}
-              <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
-                <div className="border-b border-[--k-border] px-5 py-3 flex items-center justify-between">
-                  <h2 className="text-[15px] font-bold text-[--k-text]">Créa / Supports graphiques</h2>
+              <div className="bg-white rounded-2xl border border-slate-200/70">
+                <div className="px-5 py-3.5 flex items-center justify-between">
+                  <h2 className="text-[14px] font-semibold text-[--k-text]">Créa / Supports graphiques</h2>
                   {editing !== "crea" ? (
-                    <button onClick={() => setEditing("crea")} className="flex items-center gap-1.5 rounded-lg border border-[--k-border] px-3 py-1.5 text-[12px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition">
+                    <button onClick={() => setEditing("crea")} className="flex items-center gap-1.5 rounded-xl border border-slate-200/80 px-3 py-1.5 text-[12px] font-medium text-[--k-text] hover:bg-slate-50 hover:border-slate-300 transition-all">
                       <Edit className="h-3.5 w-3.5 text-[--k-muted]" /> Modifier
                     </button>
                   ) : (
-                    <button onClick={() => setEditing(null)} className="flex items-center gap-1.5 rounded-lg bg-[--k-primary] px-3 py-1.5 text-[12px] font-medium text-white hover:brightness-110 transition shadow-sm">
+                    <button onClick={() => setEditing(null)} className="flex items-center gap-1.5 rounded-xl bg-[--k-primary] px-3 py-1.5 text-[12px] font-medium text-white hover:brightness-110 transition-all">
                       <CheckCircle2 className="h-3.5 w-3.5" /> Valider
                     </button>
                   )}
@@ -1008,7 +1005,7 @@ export default function EventDetail() {
                       </div>
                       <div>
                         <label className="block text-[12px] font-semibold text-[--k-muted] mb-1.5">Informations complémentaires</label>
-                        <textarea value={infosComplementairesCrea} onChange={e => setInfosComplementairesCrea(e.target.value)} placeholder="Informations complémentaires..." rows={3} className="w-full rounded-lg border border-[--k-border] bg-[--k-surface-2]/30 px-4 py-2.5 text-[13px] outline-none focus:border-slate-400 focus:bg-white transition" />
+                        <textarea value={infosComplementairesCrea} onChange={e => setInfosComplementairesCrea(e.target.value)} placeholder="Informations complémentaires..." rows={3} className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-[13px] outline-none focus:border-slate-300 focus:bg-white transition-all" />
                       </div>
                     </div>
                   ) : (
@@ -1023,12 +1020,12 @@ export default function EventDetail() {
               </div>
 
               {/* Pièce(s) jointe(s) */}
-              <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
-                <div className="border-b border-[--k-border] px-5 py-3">
-                  <h2 className="text-[15px] font-bold text-[--k-text]">Pièce(s) jointe(s)</h2>
+              <div className="bg-white rounded-2xl border border-slate-200/70">
+                <div className="px-5 py-3.5">
+                  <h2 className="text-[14px] font-semibold text-[--k-text]">Pièce(s) jointe(s)</h2>
                 </div>
                 <div className="p-5">
-                  <div className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-[--k-border] bg-[--k-surface-2]/20 py-8 hover:border-[--k-primary] hover:bg-[--k-primary-2]/10 transition cursor-pointer">
+                  <div className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-200 bg-[--k-surface-2]/20 py-8 hover:border-[--k-primary] hover:bg-[--k-primary-2]/10 transition cursor-pointer">
                     <Upload className="h-6 w-6 text-[--k-muted]" />
                     <p className="text-[13px] text-[--k-muted]">Glisser-déposer ou <span className="text-[--k-primary] font-medium">parcourir</span></p>
                     <p className="text-[10px] text-[--k-muted]/60">PDF, JPG, PNG — Max 10 Mo</p>
@@ -1036,29 +1033,23 @@ export default function EventDetail() {
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-2">
-                <ActionPill icon={Send} label="Envoyer les maquettes au client" />
-                <ActionPill icon={Eye} label="Voir le rendu" />
-              </div>
             </>
           )}
 
           {/* ── CONFIG TAB ── */}
           {activeTab === "config" && (
             <>
-              <PhaseStatus checks={["test"]} checklist={CHECKLIST} />
-
               {/* Code config + lien */}
-              <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-5">
+              <div className="rounded-2xl border border-slate-200/70 bg-gradient-to-r from-slate-50/80 to-white p-5">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div>
-                    <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide mb-1">Code configuration</div>
+                    <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-1">Code configuration</div>
                     <div className="flex items-center gap-3">
-                      <span className="font-mono text-[22px] font-black text-[--k-text] tracking-[0.15em]">{EVENT.configCode}</span>
-                      <button className="flex h-7 w-7 items-center justify-center rounded-md border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-white transition"><Copy className="h-3.5 w-3.5" /></button>
+                      <span className="font-mono text-[20px] font-black text-[--k-text] tracking-[0.15em]">{EVENT.configCode}</span>
+                      <button className="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200/80 text-slate-300 hover:text-slate-600 hover:bg-white transition-all"><Copy className="h-3.5 w-3.5" /></button>
                     </div>
                   </div>
-                  <a href={EVENT.configUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 rounded-lg bg-[--k-primary] px-4 py-2.5 text-[12px] font-semibold text-white hover:brightness-110 transition shadow-sm">
+                  <a href={EVENT.configUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 rounded-xl bg-[--k-primary] px-4 py-2.5 text-[12px] font-semibold text-white hover:brightness-110 transition-all shadow-sm">
                     <ExternalLink className="h-3.5 w-3.5" /> Ouvrir l'app de config
                   </a>
                 </div>
@@ -1069,11 +1060,11 @@ export default function EventDetail() {
                 <InfoRow label="Template" value={BRIEFING.template} />
                 <InfoRow label="Texte accueil" value={BRIEFING.texteAccueil} />
                 <InfoRow label="Texte partage" value={BRIEFING.textePartage} />
-                <div className="flex items-center gap-2 py-1.5 border-b border-[--k-border]">
+                <div className="flex items-center gap-2 py-1.5 border-b border-slate-100">
                   <span className="w-24 shrink-0 text-[11px] text-[--k-muted]">Couleurs</span>
                   <div className="flex gap-1.5">
                     {BRIEFING.couleurs.map(c => (
-                      <span key={c} className="h-5 w-5 rounded-md border border-[--k-border] shadow-sm" style={{ backgroundColor: c }} title={c} />
+                      <span key={c} className="h-5 w-5 rounded-md border border-slate-200 shadow-sm" style={{ backgroundColor: c }} title={c} />
                     ))}
                   </div>
                 </div>
@@ -1083,7 +1074,7 @@ export default function EventDetail() {
               {/* Animations configurées */}
               <Card title="Animations configurées" icon={Camera} accent="violet">
                 {ANIMATIONS.map((a, i) => (
-                  <div key={i} className={cn("py-2", i > 0 && "border-t border-[--k-border]")}>
+                  <div key={i} className={cn("py-2", i > 0 && "border-t border-slate-100")}>
                     <div className="text-[12px] font-semibold text-[--k-text] mb-1">{a.type}</div>
                     <div className="flex flex-wrap gap-1">
                       {[...a.options, ...a.perso, ...a.partage].map(o => (
@@ -1095,18 +1086,15 @@ export default function EventDetail() {
               </Card>
 
               {/* Notes config */}
-              <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
-                <div className="border-b border-[--k-border] px-5 py-3">
-                  <h2 className="text-[15px] font-bold text-[--k-text]">Notes de configuration</h2>
+              <div className="bg-white rounded-2xl border border-slate-200/70">
+                <div className="px-5 py-3.5">
+                  <h2 className="text-[14px] font-semibold text-[--k-text]">Notes de configuration</h2>
                 </div>
                 <div className="p-5">
-                  <textarea value={configNotes} onChange={e => setConfigNotes(e.target.value)} placeholder="Notes sur la configuration, points d'attention techniques..." rows={3} className="w-full rounded-lg border border-[--k-border] bg-[--k-surface-2]/30 px-4 py-2.5 text-[13px] outline-none focus:border-slate-400 focus:bg-white transition" />
+                  <textarea value={configNotes} onChange={e => setConfigNotes(e.target.value)} placeholder="Notes sur la configuration, points d'attention techniques..." rows={3} className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-[13px] outline-none focus:border-slate-300 focus:bg-white transition-all" />
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-2">
-                <ActionPill icon={Send} label="Envoyer la config au technicien" />
-              </div>
             </>
           )}
 
@@ -1114,38 +1102,38 @@ export default function EventDetail() {
           {activeTab === "logistique" && (
             <>
               {/* ── Acheminement — provenance + aller + retour unified ── */}
-              <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm overflow-hidden">
-                <div className="border-b border-[--k-border] px-5 py-3 flex items-center justify-between">
+              <div className="bg-white rounded-2xl border border-slate-200/70 overflow-hidden">
+                <div className="px-5 py-3.5 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Truck className="h-4 w-4 text-slate-400" />
-                    <h2 className="text-[15px] font-bold text-[--k-text]">Acheminement</h2>
+                    <Truck className="h-4 w-4 text-slate-300" />
+                    <h2 className="text-[14px] font-semibold text-[--k-text]">Acheminement</h2>
                   </div>
                   {editing !== "logistique" ? (
-                    <button onClick={() => setEditing("logistique")} className="flex items-center gap-1.5 rounded-lg border border-[--k-border] px-3 py-1.5 text-[12px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition">
+                    <button onClick={() => setEditing("logistique")} className="flex items-center gap-1.5 rounded-xl border border-slate-200/80 px-3 py-1.5 text-[12px] font-medium text-[--k-text] hover:bg-slate-50 hover:border-slate-300 transition-all">
                       <Edit className="h-3.5 w-3.5 text-[--k-muted]" /> Modifier
                     </button>
                   ) : (
-                    <button onClick={() => setEditing(null)} className="flex items-center gap-1.5 rounded-lg bg-[--k-primary] px-3 py-1.5 text-[12px] font-medium text-white hover:brightness-110 transition shadow-sm">
+                    <button onClick={() => setEditing(null)} className="flex items-center gap-1.5 rounded-xl bg-[--k-primary] px-3 py-1.5 text-[12px] font-medium text-white hover:brightness-110 transition-all">
                       <CheckCircle2 className="h-3.5 w-3.5" /> Valider
                     </button>
                   )}
                 </div>
 
                 {editing === "logistique" ? (
-                  <div className="divide-y divide-[--k-border]">
+                  <div className="divide-y divide-slate-100">
                     {/* Provenance section — edit */}
                     <div className="p-5 space-y-4">
                       <div className="text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide flex items-center gap-1.5">
                         <Building2 className="h-3 w-3" /> Provenance
                       </div>
                       <Field label="Type de provenance" required>
-                        <select value={provenance} onChange={e => setProvenance(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition">
+                        <select value={provenance} onChange={e => setProvenance(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all">
                           {PROVENANCES.map(p => <option key={p} value={p}>{p}</option>)}
                         </select>
                       </Field>
                       {provenance === "Antenne locale" && (
                         <Field label="Antenne" required>
-                          <select value={selectedAntenne} onChange={e => setSelectedAntenne(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition">
+                          <select value={selectedAntenne} onChange={e => setSelectedAntenne(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all">
                             <option value="">Sélectionner une antenne</option>
                             {ANTENNES.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
                           </select>
@@ -1159,7 +1147,7 @@ export default function EventDetail() {
                         <ChevronRight className="h-3 w-3" /> Aller
                       </div>
                       <Field label="Type d'installation / envoi" required>
-                        <select value={typeInstallation} onChange={e => setTypeInstallation(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition">
+                        <select value={typeInstallation} onChange={e => setTypeInstallation(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all">
                           <option value="">Sélectionner</option>
                           {TYPES_INSTALLATION.map(t => <option key={t} value={t}>{t}</option>)}
                         </select>
@@ -1167,7 +1155,7 @@ export default function EventDetail() {
                       {(typeInstallation === "Pick-up" || typeInstallation === "Livraison & installation" || typeInstallation === "Livraison seulement") && (
                         <>
                           <Field label="Jour de retrait / livraison">
-                            <input type="date" value={jourAller} onChange={e => setJourAller(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" />
+                            <input type="date" value={jourAller} onChange={e => setJourAller(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all" />
                           </Field>
                           <div className="flex items-center gap-3">
                             {[{ v: "aDefinir", l: "À définir" }, { v: "precise", l: "Heure précise" }, { v: "tranche", l: "Tranche horaire" }].map(o => (
@@ -1179,20 +1167,20 @@ export default function EventDetail() {
                           </div>
                           {heureAllerMode === "precise" && (
                             <Field label="Heure">
-                              <input type="time" value={heureAller} onChange={e => setHeureAller(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" />
+                              <input type="time" value={heureAller} onChange={e => setHeureAller(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all" />
                             </Field>
                           )}
                           {heureAllerMode === "tranche" && (
                             <div className="grid gap-3 grid-cols-2">
-                              <Field label="Début"><input type="time" value={heureAllerDebut} onChange={e => setHeureAllerDebut(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
-                              <Field label="Fin"><input type="time" value={heureAllerFin} onChange={e => setHeureAllerFin(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
+                              <Field label="Début"><input type="time" value={heureAllerDebut} onChange={e => setHeureAllerDebut(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all" /></Field>
+                              <Field label="Fin"><input type="time" value={heureAllerFin} onChange={e => setHeureAllerFin(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all" /></Field>
                             </div>
                           )}
                         </>
                       )}
                       <div>
                         <label className="block text-[12px] font-semibold text-[--k-muted] mb-1.5">Commentaire interne</label>
-                        <textarea value={commentaireAllerInterne} onChange={e => setCommentaireAllerInterne(e.target.value)} placeholder="Commentaire interne..." rows={2} className="w-full rounded-lg border border-[--k-border] bg-[--k-surface-2]/30 px-4 py-2 text-[13px] outline-none focus:border-slate-400 focus:bg-white transition" />
+                        <textarea value={commentaireAllerInterne} onChange={e => setCommentaireAllerInterne(e.target.value)} placeholder="Commentaire interne..." rows={2} className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2 text-[13px] outline-none focus:border-slate-300 focus:bg-white transition-all" />
                       </div>
                     </div>
 
@@ -1202,7 +1190,7 @@ export default function EventDetail() {
                         <ArrowLeft className="h-3 w-3" /> Retour
                       </div>
                       <Field label="Type de désinstallation / retour" required>
-                        <select value={typeRetour} onChange={e => setTypeRetour(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition">
+                        <select value={typeRetour} onChange={e => setTypeRetour(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all">
                           <option value="">Sélectionner</option>
                           {TYPES_RETOUR.map(t => <option key={t} value={t}>{t}</option>)}
                         </select>
@@ -1210,7 +1198,7 @@ export default function EventDetail() {
                       {typeRetour && (
                         <>
                           <Field label="Jour retour">
-                            <input type="date" value={jourRetour} onChange={e => setJourRetour(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" />
+                            <input type="date" value={jourRetour} onChange={e => setJourRetour(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all" />
                           </Field>
                           <div className="flex items-center gap-3">
                             {[{ v: "aDefinir", l: "À définir" }, { v: "precise", l: "Heure précise" }, { v: "tranche", l: "Tranche horaire" }].map(o => (
@@ -1222,25 +1210,25 @@ export default function EventDetail() {
                           </div>
                           {heureRetourMode === "precise" && (
                             <Field label="Heure retour">
-                              <input type="time" value={heureRetour} onChange={e => setHeureRetour(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" />
+                              <input type="time" value={heureRetour} onChange={e => setHeureRetour(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all" />
                             </Field>
                           )}
                           {heureRetourMode === "tranche" && (
                             <div className="grid gap-3 grid-cols-2">
-                              <Field label="Début"><input type="time" value={heureRetourDebut} onChange={e => setHeureRetourDebut(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
-                              <Field label="Fin"><input type="time" value={heureRetourFin} onChange={e => setHeureRetourFin(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
+                              <Field label="Début"><input type="time" value={heureRetourDebut} onChange={e => setHeureRetourDebut(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all" /></Field>
+                              <Field label="Fin"><input type="time" value={heureRetourFin} onChange={e => setHeureRetourFin(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all" /></Field>
                             </div>
                           )}
                         </>
                       )}
                       <div>
                         <label className="block text-[12px] font-semibold text-[--k-muted] mb-1.5">Commentaire interne</label>
-                        <textarea value={commentaireRetourInterne} onChange={e => setCommentaireRetourInterne(e.target.value)} placeholder="Commentaire interne..." rows={2} className="w-full rounded-lg border border-[--k-border] bg-[--k-surface-2]/30 px-4 py-2 text-[13px] outline-none focus:border-slate-400 focus:bg-white transition" />
+                        <textarea value={commentaireRetourInterne} onChange={e => setCommentaireRetourInterne(e.target.value)} placeholder="Commentaire interne..." rows={2} className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2 text-[13px] outline-none focus:border-slate-300 focus:bg-white transition-all" />
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="divide-y divide-[--k-border]">
+                  <div className="divide-y divide-slate-100">
                     {/* Provenance section — read */}
                     <div className="p-5">
                       <div className="text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide mb-3 flex items-center gap-1.5">
@@ -1262,7 +1250,7 @@ export default function EventDetail() {
                           </div>
                         ) : null;
                         return (
-                          <div className="mt-3 flex items-start gap-3 rounded-lg border border-[--k-border] bg-[--k-surface-2]/20 p-3">
+                          <div className="mt-3 flex items-start gap-3 rounded-lg border border-slate-200 bg-[--k-surface-2]/20 p-3">
                             <img src={ant.contact.photo} alt={ant.contact.name} className="h-8 w-8 rounded-full object-cover shrink-0" />
                             <div className="flex-1 min-w-0">
                               <div className="text-[12px] font-semibold text-[--k-text]">{ant.contact.name}</div>
@@ -1278,7 +1266,7 @@ export default function EventDetail() {
                     </div>
 
                     {/* Aller + Retour — read — side by side */}
-                    <div className="grid lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-[--k-border]">
+                    <div className="grid lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-slate-100">
                       <div className="p-5">
                         <div className="text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide mb-3 flex items-center gap-1.5">
                           <ChevronRight className="h-3 w-3" /> Aller
@@ -1303,43 +1291,43 @@ export default function EventDetail() {
               </div>
 
               {/* ── Bornes assignées ── */}
-              <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm overflow-hidden">
-                <div className="border-b border-[--k-border] px-5 py-3 flex items-center justify-between">
+              <div className="bg-white rounded-2xl border border-slate-200/70 overflow-hidden">
+                <div className="px-5 py-3.5 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Package className="h-4 w-4 text-slate-400" />
-                    <h2 className="text-[15px] font-bold text-[--k-text]">Bornes assignées</h2>
-                    <span className="rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold text-slate-500">{BORNES_ASSIGNED.length}</span>
+                    <Package className="h-4 w-4 text-slate-300" />
+                    <h2 className="text-[14px] font-semibold text-[--k-text]">Bornes assignées</h2>
+                    <span className="rounded-lg bg-slate-100/80 px-1.5 py-0.5 text-[10px] font-bold text-slate-400">{BORNES_ASSIGNED.length}</span>
                   </div>
-                  <div className="flex items-center gap-3 text-[11px] text-[--k-muted]">
-                    <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-emerald-500" />{BORNES_ASSIGNED.filter(b => b.status === "ready").length} prêtes</span>
-                    <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-amber-500" />{BORNES_ASSIGNED.filter(b => b.status === "transit").length} en transit</span>
+                  <div className="flex items-center gap-3 text-[11px] text-slate-400">
+                    <span className="flex items-center gap-1"><span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />{BORNES_ASSIGNED.filter(b => b.status === "ready").length} prêtes</span>
+                    <span className="flex items-center gap-1"><span className="h-1.5 w-1.5 rounded-full bg-amber-400" />{BORNES_ASSIGNED.filter(b => b.status === "transit").length} en transit</span>
                   </div>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-[12px]">
                     <thead>
-                      <tr className="border-b border-[--k-border] bg-slate-50/50">
-                        <th className="px-5 py-2.5 text-left text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide">ID</th>
-                        <th className="px-3 py-2.5 text-left text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide">Modèle</th>
-                        <th className="px-3 py-2.5 text-left text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide">Provenance</th>
-                        <th className="px-3 py-2.5 text-left text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide">Expédition</th>
-                        <th className="px-3 py-2.5 text-left text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide">Statut</th>
+                      <tr className="border-t border-slate-100">
+                        <th className="px-5 py-2 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-wider">ID</th>
+                        <th className="px-3 py-2 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Modèle</th>
+                        <th className="px-3 py-2 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Provenance</th>
+                        <th className="px-3 py-2 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Expédition</th>
+                        <th className="px-3 py-2 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Statut</th>
                       </tr>
                     </thead>
                     <tbody>
                       {BORNES_ASSIGNED.map(b => {
                         const bs = BORNE_STATUS[b.status];
                         return (
-                          <tr key={b.id} className="border-b border-[--k-border] last:border-0 hover:bg-[--k-surface-2]/40 transition">
+                          <tr key={b.id} className="border-t border-slate-50 hover:bg-slate-50/50 transition-colors">
                             <td className="px-5 py-2.5"><a href={`/bornes/${b.id}`} className="font-mono font-semibold text-[--k-primary] hover:underline">{b.id}</a></td>
                             <td className="px-3 py-2.5 text-[--k-text]">{b.model}</td>
-                            <td className="px-3 py-2.5 text-[--k-muted]">{b.location}</td>
+                            <td className="px-3 py-2.5 text-slate-400">{b.location}</td>
                             <td className="px-3 py-2.5">
                               {b.shipping.startsWith("UPS") || b.shipping.startsWith("TNT") ? (
-                                <span className="flex items-center gap-1 text-amber-600"><Truck className="h-3 w-3" /><span className="text-[11px] font-mono">{b.shipping}</span></span>
-                              ) : (<span className="text-[--k-muted]">{b.shipping}</span>)}
+                                <span className="flex items-center gap-1 text-amber-500"><Truck className="h-3 w-3" /><span className="text-[11px] font-mono">{b.shipping}</span></span>
+                              ) : (<span className="text-slate-400">{b.shipping}</span>)}
                             </td>
-                            <td className="px-3 py-2.5"><span className={cn("inline-flex rounded-md px-2 py-0.5 text-[10px] font-bold", bs.color)}>{bs.label}</span></td>
+                            <td className="px-3 py-2.5"><span className={cn("inline-flex rounded-lg px-2 py-0.5 text-[10px] font-semibold", bs.color)}>{bs.label}</span></td>
                           </tr>
                         );
                       })}
@@ -1348,11 +1336,6 @@ export default function EventDetail() {
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-2">
-                <ActionPill icon={FileText} label="Générer bon de livraison" />
-                <ActionPill icon={Printer} label="Imprimer les étiquettes" />
-                <ActionPill icon={Mail} label="Envoyer tracking au client" />
-              </div>
             </>
           )}
 
@@ -1360,7 +1343,7 @@ export default function EventDetail() {
           {activeTab === "activity" && (
             <Card title="Journal d'activité" icon={Clock} accent="slate">
               <div className="relative pl-6">
-                <div className="absolute left-[9px] top-2 bottom-2 w-px bg-[--k-border]" />
+                <div className="absolute left-[9px] top-2 bottom-2 w-px bg-slate-100" />
                 {ACTIVITY_LOG.map((a, i) => (
                   <div key={i} className="relative flex items-start gap-3 pb-4 last:pb-0">
                     <span className={cn(
@@ -1392,17 +1375,17 @@ export default function EventDetail() {
 
           {/* Checklist — visible on all tabs except client */}
           {activeTab !== "client" && (
-            <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
-              <div className="border-b border-[--k-border] px-4 py-3 flex items-center justify-between">
+            <div className="rounded-2xl border border-slate-200/70 bg-white overflow-hidden">
+              <div className="px-4 py-3 flex items-center justify-between">
                 <span className="text-[13px] font-semibold text-[--k-text]">Avancement</span>
-                <span className="text-[11px] font-bold text-slate-500 tabular-nums">{progress}%</span>
+                <span className="text-[11px] font-semibold text-slate-300 tabular-nums">{progress}%</span>
               </div>
-              <div className="p-4 space-y-1">
+              <div className="px-4 pb-4 space-y-0.5">
                 {CHECKLIST.map(c => (
-                  <div key={c.key} className={cn("flex items-center gap-2 rounded-lg px-2 py-1.5 text-[12px] transition", c.done ? "text-[--k-muted]" : "text-[--k-text]")}>
+                  <div key={c.key} className={cn("flex items-center gap-2 rounded-lg px-2 py-1.5 text-[12px] transition-colors", c.done ? "text-slate-400" : "text-[--k-text]")}>
                     {c.done
-                      ? <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
-                      : <Circle className="h-4 w-4 text-slate-300 shrink-0" />
+                      ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                      : <Circle className="h-3.5 w-3.5 text-slate-200 shrink-0" />
                     }
                     <span className={cn(c.done && "line-through")}>{c.label}</span>
                   </div>
@@ -1413,17 +1396,17 @@ export default function EventDetail() {
 
           {/* To-do custom — visible on all tabs except client */}
           {activeTab !== "client" && (
-            <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
-              <div className="border-b border-[--k-border] px-4 py-2.5 flex items-center justify-between">
+            <div className="rounded-2xl border border-slate-200/70 bg-white overflow-hidden">
+              <div className="px-4 py-2.5 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-slate-400" />
+                  <CheckCircle2 className="h-3.5 w-3.5 text-slate-300" />
                   <span className="text-[13px] font-semibold text-[--k-text]">To-do</span>
                   <span className="rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold text-slate-500">
                     {todos.filter(t => t.done).length}/{todos.length}
                   </span>
                 </div>
                 {!addingTodo && (
-                  <button onClick={() => setAddingTodo(true)} className="flex items-center gap-1 rounded-md border border-[--k-border] px-2 py-1 text-[11px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition">
+                  <button onClick={() => setAddingTodo(true)} className="flex items-center gap-1 rounded-md border border-slate-200 px-2 py-1 text-[11px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition">
                     <Plus className="h-3 w-3 text-[--k-muted]" /> Ajouter
                   </button>
                 )}
@@ -1442,7 +1425,7 @@ export default function EventDetail() {
               )}
 
               {/* Todo list */}
-              <div className="divide-y divide-[--k-border]">
+              <div className="divide-y divide-slate-100">
                 {todos.map(todo => {
                   const pr = TODO_PRIORITIES[todo.priority];
                   const assignee = todo.assignee ? TEAM[todo.assignee] : null;
@@ -1450,19 +1433,20 @@ export default function EventDetail() {
                   return (
                     <div
                       key={todo.id}
+                      onClick={() => toggleTodo(todo.id)}
                       className={cn(
-                        "group flex items-start gap-2 px-4 py-2 hover:bg-[--k-surface-2]/20 transition",
+                        "group flex items-start gap-2 px-4 py-2 hover:bg-slate-50/60 transition-colors cursor-pointer select-none",
                         todo.done && "opacity-60"
                       )}
                     >
-                      <button onClick={() => toggleTodo(todo.id)} className="mt-0.5 shrink-0">
+                      <div className="mt-0.5 shrink-0">
                         {todo.done
-                          ? <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                          : <Circle className="h-4 w-4 text-slate-300 hover:text-emerald-400 transition" />
+                          ? <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                          : <Circle className="h-4 w-4 text-slate-200 group-hover:text-emerald-300 transition-colors" />
                         }
-                      </button>
+                      </div>
                       <div className="flex-1 min-w-0">
-                        <div className={cn("text-[12px] leading-snug text-[--k-text]", todo.done && "line-through text-[--k-muted]")}>
+                        <div className={cn("text-[12px] leading-snug text-[--k-text]", todo.done && "line-through text-slate-400")}>
                           {todo.text}
                         </div>
                         <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
@@ -1470,7 +1454,7 @@ export default function EventDetail() {
                             <Flag className="h-2 w-2" /> {pr.label}
                           </span>
                           {todo.dueDate && (
-                            <span className={cn("flex items-center gap-0.5 text-[9px] font-medium", isOverdue ? "text-red-500" : "text-[--k-muted]")}>
+                            <span className={cn("flex items-center gap-0.5 text-[9px] font-medium", isOverdue ? "text-red-500" : "text-slate-400")}>
                               <CalendarDays className="h-2 w-2" />
                               {new Date(todo.dueDate).toLocaleDateString("fr-FR", { day: "numeric", month: "short" })}
                               {isOverdue && <span className="text-red-500 font-bold">!</span>}
@@ -1482,8 +1466,8 @@ export default function EventDetail() {
                         </div>
                       </div>
                       <button
-                        onClick={() => deleteTodo(todo.id)}
-                        className="shrink-0 opacity-0 group-hover:opacity-100 flex h-5 w-5 items-center justify-center rounded text-[--k-muted] hover:text-red-500 hover:bg-red-50 transition"
+                        onClick={(e) => { e.stopPropagation(); deleteTodo(todo.id); }}
+                        className="shrink-0 opacity-0 group-hover:opacity-100 flex h-5 w-5 items-center justify-center rounded text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all"
                       >
                         <Trash2 className="h-2.5 w-2.5" />
                       </button>
@@ -1494,7 +1478,7 @@ export default function EventDetail() {
 
               {/* Add todo form */}
               {addingTodo && (
-                <div className="border-t border-[--k-border] p-3 bg-[--k-surface-2]/10">
+                <div className="border-t border-slate-100 p-3 bg-[--k-surface-2]/10">
                   <div className="space-y-2">
                     <input
                       type="text"
@@ -1503,13 +1487,13 @@ export default function EventDetail() {
                       placeholder="Que faut-il faire ?"
                       autoFocus
                       onKeyDown={e => { if (e.key === "Enter" && newTodoText.trim()) addTodo(); }}
-                      className="w-full rounded-lg border border-[--k-border] bg-white px-2.5 py-2 text-[12px] outline-none focus:border-slate-400 transition placeholder:text-[--k-muted]/50"
+                      className="w-full rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-[12px] outline-none focus:border-slate-400 transition placeholder:text-[--k-muted]/50"
                     />
                     <div className="flex flex-wrap items-center gap-2">
                       <select
                         value={newTodoPriority}
                         onChange={e => setNewTodoPriority(e.target.value)}
-                        className="h-6 rounded border border-[--k-border] bg-white px-1.5 text-[10px] font-medium outline-none"
+                        className="h-6 rounded border border-slate-200 bg-white px-1.5 text-[10px] font-medium outline-none"
                       >
                         <option value="haute">Haute</option>
                         <option value="moyenne">Moyenne</option>
@@ -1518,7 +1502,7 @@ export default function EventDetail() {
                       <select
                         value={newTodoAssignee}
                         onChange={e => setNewTodoAssignee(e.target.value)}
-                        className="h-6 rounded border border-[--k-border] bg-white px-1.5 text-[10px] font-medium outline-none"
+                        className="h-6 rounded border border-slate-200 bg-white px-1.5 text-[10px] font-medium outline-none"
                       >
                         <option value="">Non assigné</option>
                         {Object.entries(TEAM).map(([k, m]) => (
@@ -1529,7 +1513,7 @@ export default function EventDetail() {
                         type="date"
                         value={newTodoDueDate}
                         onChange={e => setNewTodoDueDate(e.target.value)}
-                        className="h-6 rounded border border-[--k-border] bg-white px-1.5 text-[10px] font-medium outline-none"
+                        className="h-6 rounded border border-slate-200 bg-white px-1.5 text-[10px] font-medium outline-none"
                       />
                     </div>
                     <div className="flex items-center justify-end gap-1.5">
@@ -1574,9 +1558,9 @@ export default function EventDetail() {
 
           {/* Contextual: Client stats — on client tab */}
           {activeTab === "client" && (
-            <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
-              <div className="border-b border-[--k-border] px-4 py-3 flex items-center gap-2">
-                <BarChart3 className="h-4 w-4 text-slate-400" />
+            <div className="rounded-2xl border border-slate-200/70 bg-white overflow-hidden">
+              <div className="px-4 py-3 flex items-center gap-2">
+                <BarChart3 className="h-4 w-4 text-slate-300" />
                 <span className="text-[13px] font-semibold text-[--k-text]">Statistiques client</span>
               </div>
               <div className="p-4 space-y-3">
@@ -1624,12 +1608,12 @@ export default function EventDetail() {
 
           {/* Contextual: Derniers events — on client tab */}
           {activeTab === "client" && (
-            <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
-              <div className="border-b border-[--k-border] px-4 py-3 flex items-center gap-2">
-                <CalendarDays className="h-4 w-4 text-slate-400" />
+            <div className="rounded-2xl border border-slate-200/70 bg-white overflow-hidden">
+              <div className="px-4 py-3 flex items-center gap-2">
+                <CalendarDays className="h-4 w-4 text-slate-300" />
                 <span className="text-[13px] font-semibold text-[--k-text]">Derniers événements</span>
               </div>
-              <div className="divide-y divide-[--k-border]">
+              <div className="divide-y divide-slate-100">
                 {CLIENT_EVENTS_HISTORY.map(evt => {
                   const evtSt = STATUS_MAP[evt.status];
                   return (
@@ -1650,7 +1634,7 @@ export default function EventDetail() {
                   );
                 })}
               </div>
-              <div className="px-4 py-2.5 border-t border-[--k-border]">
+              <div className="px-4 py-2.5 border-t border-slate-100">
                 <a href={`/clients/${CLIENT.id}`} className="text-[11px] font-semibold text-[--k-primary] hover:underline">
                   Voir tous les événements ({CLIENT_STATS.nbEvents})
                 </a>
@@ -1658,11 +1642,11 @@ export default function EventDetail() {
             </div>
           )}
 
-          {/* Contextual: Config shortcut — on updates, config, crea, evenement */}
+          {/* Contextual: Config shortcut — on updates, config, crea */}
           {(activeTab === "updates" || activeTab === "config" || activeTab === "crea") && (
-            <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-4">
+            <div className="rounded-2xl border border-slate-200/70 bg-gradient-to-b from-slate-50/60 to-white p-4">
               <div className="flex items-center gap-2 mb-2">
-                <Settings className="h-4 w-4 text-slate-500" />
+                <Settings className="h-4 w-4 text-slate-300" />
                 <span className="text-[13px] font-semibold text-[--k-text]">Configuration</span>
               </div>
               <div className="flex items-center gap-2 mb-3">
@@ -1672,7 +1656,7 @@ export default function EventDetail() {
                 href={EVENT.configUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-[--k-primary] px-4 py-2 text-[12px] font-semibold text-white hover:brightness-110 transition shadow-sm"
+                className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-[--k-primary] px-4 py-2 text-[12px] font-semibold text-white hover:brightness-110 transition-all"
               >
                 <ExternalLink className="h-3.5 w-3.5" /> Ouvrir l'app de config
               </a>
@@ -1681,8 +1665,8 @@ export default function EventDetail() {
 
           {/* Contextual: Dispositif récap — on logistique */}
           {activeTab === "logistique" && (
-            <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
-              <div className="border-b border-[--k-border] px-4 py-3">
+            <div className="rounded-2xl border border-slate-200/70 bg-white overflow-hidden">
+              <div className="px-4 py-3">
                 <span className="text-[13px] font-semibold text-[--k-text]">Dispositif</span>
               </div>
               <div className="p-4 space-y-2">
@@ -1692,7 +1676,7 @@ export default function EventDetail() {
                     {d.notes && <span className="text-[10px] text-[--k-muted]">{d.notes}</span>}
                   </div>
                 ))}
-                <div className="border-t border-[--k-border] pt-2 mt-2 text-[12px] font-semibold text-[--k-text]">
+                <div className="border-t border-slate-100 pt-2 mt-2 text-[12px] font-semibold text-[--k-text]">
                   Total : {BORNES_ASSIGNED.length} bornes
                 </div>
               </div>
@@ -1701,8 +1685,8 @@ export default function EventDetail() {
 
           {/* Contextual: Créa actions — on crea */}
           {activeTab === "crea" && (
-            <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
-              <div className="border-b border-[--k-border] px-4 py-3">
+            <div className="rounded-2xl border border-slate-200/70 bg-white overflow-hidden">
+              <div className="px-4 py-3">
                 <span className="text-[13px] font-semibold text-[--k-text]">Briefing</span>
               </div>
               <div className="p-4 space-y-1.5">
@@ -1716,8 +1700,8 @@ export default function EventDetail() {
 
           {/* Quick actions — visible on all tabs except client */}
           {activeTab !== "client" && (
-            <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
-              <div className="border-b border-[--k-border] px-4 py-3">
+            <div className="rounded-2xl border border-slate-200/70 bg-white overflow-hidden">
+              <div className="px-4 py-3">
                 <span className="text-[13px] font-semibold text-[--k-text]">Actions rapides</span>
               </div>
               <div className="p-2 space-y-0.5">
@@ -1755,29 +1739,29 @@ export default function EventDetail() {
 
 function Card({ title, icon: Icon, children }) {
   return (
-    <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm">
-      <div className="flex items-center gap-2 border-b border-[--k-border] px-4 py-3">
+    <div className="rounded-2xl border border-slate-200/70 bg-white">
+      <div className="flex items-center gap-2 px-5 pt-4 pb-3">
         {Icon && <Icon className="h-4 w-4 text-slate-400" />}
         <span className="text-[13px] font-semibold text-[--k-text]">{title}</span>
       </div>
-      <div className="px-4 py-3">{children}</div>
+      <div className="px-5 pb-4">{children}</div>
     </div>
   );
 }
 
 function InfoRow({ label, value }) {
   return (
-    <div className="flex items-start gap-2 py-1.5 border-b border-[--k-border] last:border-0 text-[12px]">
+    <div className="flex items-start gap-3 py-1.5 text-[12px]">
       <span className="w-24 shrink-0 text-[--k-muted]">{label}</span>
-      <span className="text-[--k-text] font-medium">{value}</span>
+      <span className="text-[--k-text]">{value}</span>
     </div>
   );
 }
 
 function ActionBtn({ icon: Icon, label }) {
   return (
-    <button className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-[12px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition">
-      <Icon className="h-3.5 w-3.5 text-[--k-muted]" />
+    <button className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-[12px] font-medium text-slate-500 hover:text-[--k-text] hover:bg-slate-50 transition-all">
+      <Icon className="h-3.5 w-3.5 text-slate-300" />
       {label}
     </button>
   );
@@ -1785,8 +1769,8 @@ function ActionBtn({ icon: Icon, label }) {
 
 function ActionPill({ icon: Icon, label }) {
   return (
-    <button className="flex items-center gap-1.5 rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[12px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition shadow-sm">
-      <Icon className="h-3.5 w-3.5 text-[--k-muted]" />
+    <button className="flex items-center gap-1.5 rounded-xl border border-slate-200/70 bg-white px-3.5 py-2 text-[12px] font-medium text-[--k-text] hover:bg-slate-50 hover:border-slate-300 transition-all">
+      <Icon className="h-3.5 w-3.5 text-slate-400" />
       {label}
     </button>
   );
