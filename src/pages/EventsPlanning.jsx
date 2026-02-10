@@ -5,7 +5,7 @@ import { cn } from "../components/ui/cn";
 import {
   ChevronLeft, ChevronRight, Camera, Filter, Plus,
   ChevronDown, X, Search, ExternalLink, MapPin, Monitor,
-  Truck, Building2
+  Truck, Building2, MoreHorizontal, Edit, Eye, Copy, Trash2, FileText
 } from "lucide-react";
 
 /* ── Mock data ────────────────────────────────────── */
@@ -20,17 +20,17 @@ const TEAM_MEMBERS = {
 };
 
 const EVENTS_DATA = [
-  { id: "EVT-287", name: "Salon du Mariage Paris", dateStart: 8, dateEnd: 10, clientType: "Professionnel", bornes: 12, borneTypes: ["Classik", "Prestige"], animationType: "photobooth", ville: "Paris", client: "Salon Expo SAS", status: "ready", provenances: ["antenne", "transporteur"], code: "SM26", borneNums: ["C381", "C382", "C412", "C415", "C420", "C421", "P455", "P460", "P501", "P502", "P510", "P511"], commercial: "BL", chefsProjets: ["BG", "ER"], antenne: { name: "Yann Le Goff", initials: "YG", color: "bg-teal-500" } },
-  { id: "EVT-291", name: "Soirée L'Oréal", dateStart: 10, dateEnd: 10, clientType: "Professionnel", bornes: 4, borneTypes: ["Prestige"], animationType: "photobooth", ville: "Paris", client: "L'Oréal Group", status: "logistics", provenances: ["transporteur"], code: "LO26", borneNums: ["P455", "P460"], commercial: "BL", chefsProjets: ["ER"] },
-  { id: "EVT-294", name: "Mariage Dupont", dateStart: 14, dateEnd: 14, clientType: "Particulier", bornes: 2, borneTypes: ["Spherik"], animationType: "photobooth", ville: "Rennes", client: "Famille Dupont", status: "design", provenances: ["antenne"], code: "MD26", borneNums: [], antenne: { name: "Yann Le Goff", initials: "YG", color: "bg-teal-500" }, commercial: "LL", chefsProjets: ["PT"] },
-  { id: "EVT-298", name: "Festival Nantes Digital", dateStart: 15, dateEnd: 17, clientType: "Professionnel", bornes: 8, borneTypes: ["Classik"], animationType: "mosaique", ville: "Nantes", client: "Nantes Métropole", status: "confirmed", provenances: ["antenne"], code: "FN26", borneNums: ["C220", "C221", "C222", "C223"], antenne: { name: "Camille Moreau", initials: "CM", color: "bg-cyan-500" }, commercial: "BL", chefsProjets: ["BG"] },
-  { id: "EVT-302", name: "Team Building Airbus", dateStart: 18, dateEnd: 18, clientType: "Professionnel", bornes: 3, borneTypes: ["Classik"], animationType: "jeux", ville: "Toulouse", client: "Airbus SE", status: "design", provenances: ["transporteur"], code: "AB26", borneNums: [], commercial: "LL", chefsProjets: ["SM"] },
-  { id: "EVT-305", name: "Gala BMW Munich", dateStart: 20, dateEnd: 20, clientType: "Professionnel", bornes: 6, borneTypes: ["Prestige", "Spherik"], animationType: "photobooth", ville: "Munich", client: "BMW AG", status: "confirmed", provenances: ["transporteur"], code: "BM26", borneNums: ["P455", "P460", "S501", "S502", "S510", "S511"], commercial: "BL", chefsProjets: ["BG", "PT"] },
-  { id: "EVT-308", name: "Mariage Cohen", dateStart: 22, dateEnd: 22, clientType: "Particulier", bornes: 2, borneTypes: ["Spherik"], animationType: "diaporama", ville: "Lyon", client: "Famille Cohen", status: "confirmed", provenances: ["antenne"], code: "MC26", borneNums: ["S330", "S331"], antenne: { name: "Sophie Renard", initials: "SR", color: "bg-rose-500" }, commercial: "LL", chefsProjets: ["SM"] },
-  { id: "EVT-312", name: "Salon Auto Lyon", dateStart: 25, dateEnd: 27, clientType: "Professionnel", bornes: 10, borneTypes: ["Classik", "Spherik"], animationType: "photobooth", ville: "Lyon", client: "Lyon Auto Events", status: "confirmed", provenances: ["antenne", "transporteur"], code: "SA26", borneNums: ["S330", "S331", "S332", "S333", "C381", "C382", "C412", "C415", "C420", "C421"], commercial: "BL", chefsProjets: ["ER", "SM"], antenne: { name: "Sophie Renard", initials: "SR", color: "bg-rose-500" } },
-  { id: "EVT-315", name: "Anniversaire Nike", dateStart: 28, dateEnd: 28, clientType: "Professionnel", bornes: 5, borneTypes: ["Prestige"], animationType: "social", ville: "Paris", client: "Nike France", status: "confirmed", provenances: ["antenne"], code: "NK26", borneNums: ["P455", "P460", "P501"], antenne: { name: "Yann Le Goff", initials: "YG", color: "bg-teal-500" }, commercial: "BL", chefsProjets: ["PT"] },
-  { id: "EVT-320", name: "Mariage Silva", dateStart: 1, dateEnd: 1, clientType: "Particulier", bornes: 1, borneTypes: ["Classik"], animationType: "photobooth", ville: "Bordeaux", client: "Famille Silva", status: "confirmed", provenances: ["antenne"], code: "MS26", borneNums: ["C120"], antenne: { name: "Lucas Petit", initials: "LP", color: "bg-orange-500" }, commercial: "LL", chefsProjets: ["PT"] },
-  { id: "EVT-322", name: "Séminaire Total", dateStart: 3, dateEnd: 4, clientType: "Professionnel", bornes: 3, borneTypes: ["Spherik"], animationType: "photobooth", ville: "Paris", client: "TotalEnergies", status: "confirmed", provenances: ["transporteur"], code: "ST26", borneNums: ["S510", "S511", "S512"], commercial: "BL", chefsProjets: ["BG"] },
+  { id: "EVT-287", name: "Salon du Mariage Paris", dateStart: 8, dateEnd: 10, heureDebut: "10:00", heureFin: "19:00", clientType: "Professionnel", bornes: 12, borneTypes: ["Classik", "Prestige"], animationType: "photobooth", ville: "Paris", client: "Salon Expo SAS", status: "ready", provenances: ["antenne", "transporteur"], code: "SM26", borneNums: ["C381", "C382", "C412", "C415", "C420", "C421", "P455", "P460", "P501", "P502", "P510", "P511"], commercial: "BL", chefsProjets: ["BG", "ER"], antenne: { name: "Yann Le Goff", initials: "YG", color: "bg-teal-500" } },
+  { id: "EVT-291", name: "Soirée L'Oréal", dateStart: 10, dateEnd: 10, heureDebut: "19:30", heureFin: "23:30", clientType: "Professionnel", bornes: 4, borneTypes: ["Prestige"], animationType: "photobooth", ville: "Paris", client: "L'Oréal Group", status: "logistics", provenances: ["transporteur"], code: "LO26", borneNums: ["P455", "P460"], commercial: "BL", chefsProjets: ["ER"] },
+  { id: "EVT-294", name: "Mariage Dupont", dateStart: 14, dateEnd: 14, heureDebut: "15:00", heureFin: "02:00", clientType: "Particulier", bornes: 2, borneTypes: ["Spherik"], animationType: "photobooth", ville: "Rennes", client: "Famille Dupont", status: "design", provenances: ["antenne"], code: "MD26", borneNums: [], antenne: { name: "Yann Le Goff", initials: "YG", color: "bg-teal-500" }, commercial: "LL", chefsProjets: ["PT"] },
+  { id: "EVT-298", name: "Festival Nantes Digital", dateStart: 15, dateEnd: 17, heureDebut: "09:00", heureFin: "18:00", clientType: "Professionnel", bornes: 8, borneTypes: ["Classik"], animationType: "mosaique", ville: "Nantes", client: "Nantes Métropole", status: "confirmed", provenances: ["antenne"], code: "FN26", borneNums: ["C220", "C221", "C222", "C223"], antenne: { name: "Camille Moreau", initials: "CM", color: "bg-cyan-500" }, commercial: "BL", chefsProjets: ["BG"] },
+  { id: "EVT-302", name: "Team Building Airbus", dateStart: 18, dateEnd: 18, heureDebut: "09:00", heureFin: "17:00", clientType: "Professionnel", bornes: 3, borneTypes: ["Classik"], animationType: "jeux", ville: "Toulouse", client: "Airbus SE", status: "design", provenances: ["transporteur"], code: "AB26", borneNums: [], commercial: "LL", chefsProjets: ["SM"] },
+  { id: "EVT-305", name: "Gala BMW Munich", dateStart: 20, dateEnd: 20, heureDebut: "20:00", heureFin: "01:00", clientType: "Professionnel", bornes: 6, borneTypes: ["Prestige", "Spherik"], animationType: "photobooth", ville: "Munich", client: "BMW AG", status: "confirmed", provenances: ["transporteur"], code: "BM26", borneNums: ["P455", "P460", "S501", "S502", "S510", "S511"], commercial: "BL", chefsProjets: ["BG", "PT"] },
+  { id: "EVT-308", name: "Mariage Cohen", dateStart: 22, dateEnd: 22, heureDebut: "16:00", heureFin: "03:00", clientType: "Particulier", bornes: 2, borneTypes: ["Spherik"], animationType: "diaporama", ville: "Lyon", client: "Famille Cohen", status: "confirmed", provenances: ["antenne"], code: "MC26", borneNums: ["S330", "S331"], antenne: { name: "Sophie Renard", initials: "SR", color: "bg-rose-500" }, commercial: "LL", chefsProjets: ["SM"] },
+  { id: "EVT-312", name: "Salon Auto Lyon", dateStart: 25, dateEnd: 27, heureDebut: "10:00", heureFin: "19:00", clientType: "Professionnel", bornes: 10, borneTypes: ["Classik", "Spherik"], animationType: "photobooth", ville: "Lyon", client: "Lyon Auto Events", status: "confirmed", provenances: ["antenne", "transporteur"], code: "SA26", borneNums: ["S330", "S331", "S332", "S333", "C381", "C382", "C412", "C415", "C420", "C421"], commercial: "BL", chefsProjets: ["ER", "SM"], antenne: { name: "Sophie Renard", initials: "SR", color: "bg-rose-500" } },
+  { id: "EVT-315", name: "Anniversaire Nike", dateStart: 28, dateEnd: 28, heureDebut: "18:00", heureFin: "23:00", clientType: "Professionnel", bornes: 5, borneTypes: ["Prestige"], animationType: "social", ville: "Paris", client: "Nike France", status: "confirmed", provenances: ["antenne"], code: "NK26", borneNums: ["P455", "P460", "P501"], antenne: { name: "Yann Le Goff", initials: "YG", color: "bg-teal-500" }, commercial: "BL", chefsProjets: ["PT"] },
+  { id: "EVT-320", name: "Mariage Silva", dateStart: 1, dateEnd: 1, heureDebut: "14:00", heureFin: "01:00", clientType: "Particulier", bornes: 1, borneTypes: ["Classik"], animationType: "photobooth", ville: "Bordeaux", client: "Famille Silva", status: "confirmed", provenances: ["antenne"], code: "MS26", borneNums: ["C120"], antenne: { name: "Lucas Petit", initials: "LP", color: "bg-orange-500" }, commercial: "LL", chefsProjets: ["PT"] },
+  { id: "EVT-322", name: "Séminaire Total", dateStart: 3, dateEnd: 4, heureDebut: "08:30", heureFin: "17:30", clientType: "Professionnel", bornes: 3, borneTypes: ["Spherik"], animationType: "photobooth", ville: "Paris", client: "TotalEnergies", status: "confirmed", provenances: ["transporteur"], code: "ST26", borneNums: ["S510", "S511", "S512"], commercial: "BL", chefsProjets: ["BG"] },
 ];
 
 const BORNE_TYPES = ["Classik", "Spherik", "Prestige"];
@@ -84,13 +84,16 @@ export default function EventsPlanning() {
   const [provenanceFilter, setProvenanceFilter] = useState("all");
   const [personneFilter, setPersonneFilter] = useState("all");
   const [popup, setPopup] = useState(null);
+  const [actionMenu, setActionMenu] = useState(null);
   const villeRef = useRef(null);
   const popupRef = useRef(null);
+  const actionMenuRef = useRef(null);
 
   useEffect(() => {
     const handler = (e) => {
       if (villeRef.current && !villeRef.current.contains(e.target)) setVilleDropdownOpen(false);
       if (popupRef.current && !popupRef.current.contains(e.target)) setPopup(null);
+      if (actionMenuRef.current && !actionMenuRef.current.contains(e.target)) setActionMenu(null);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
@@ -206,37 +209,34 @@ export default function EventsPlanning() {
 
         <div className="flex-1" />
 
+        {/* Filtered count */}
+        <span className="text-[11px] font-medium text-[--k-muted] tabular-nums">{filteredEvents.length} événement{filteredEvents.length > 1 ? "s" : ""}</span>
+
         {/* View toggle: Mois / Semaine / Aujourd'hui */}
         <div className="flex gap-1 rounded-lg border border-[--k-border] bg-white p-0.5">
-          {[{ key: "month", label: "Mois" }, { key: "week", label: "Semaine" }].map(v => (
+          {[{ key: "month", label: "Mois" }, { key: "week", label: "Semaine" }, { key: "today", label: "Aujourd'hui" }].map(v => (
             <button
               key={v.key}
               className={cn(
                 "rounded-md px-2.5 py-1.5 text-[11px] font-medium transition",
                 view === v.key ? "bg-[--k-primary] text-white shadow-sm" : "text-[--k-muted] hover:text-[--k-text] hover:bg-[--k-surface-2]"
               )}
-              onClick={() => setView(v.key)}
+              onClick={() => { setView(v.key); if (v.key === "today") setMonthIdx(CURRENT_MONTH_IDX); }}
             >
               {v.label}
             </button>
           ))}
-          <button
-            onClick={() => { setMonthIdx(CURRENT_MONTH_IDX); setView("week"); setWeekStart(Math.max(1, TODAY - ((TODAY - 1 + MONTHS[CURRENT_MONTH_IDX].offset) % 7))); }}
-            className="rounded-md px-2.5 py-1.5 text-[11px] font-medium text-[--k-muted] hover:text-[--k-text] hover:bg-[--k-surface-2] transition"
-          >
-            Aujourd'hui
-          </button>
         </div>
       </div>
 
       {/* Toolbar — Line 2: filters (right-aligned) */}
-      <div className="mb-4 flex flex-wrap items-center justify-end gap-2">
+      <div className="mb-2 flex flex-wrap items-center justify-end gap-2">
         <Filter className="h-3.5 w-3.5 text-[--k-muted]" />
 
         <select
           value={clientTypeFilter}
           onChange={e => setClientTypeFilter(e.target.value)}
-          className={cn("h-8 rounded-lg border bg-white px-2 text-[12px] font-medium text-[--k-text] outline-none transition", clientTypeFilter !== "all" ? "border-[--k-primary] text-[--k-primary]" : "border-[--k-border]")}
+          className={cn("h-8 w-[120px] rounded-lg border bg-white px-2 text-[12px] font-medium text-[--k-text] outline-none transition", clientTypeFilter !== "all" ? "border-[--k-primary] text-[--k-primary]" : "border-[--k-border]")}
         >
           <option value="all">Client : Tous</option>
           <option value="Professionnel">Pro</option>
@@ -247,12 +247,12 @@ export default function EventsPlanning() {
         <div className="relative group">
           <button
             className={cn(
-              "flex items-center gap-1.5 h-8 rounded-lg border bg-white px-2 text-[12px] font-medium transition",
+              "flex items-center gap-1.5 h-8 w-[130px] rounded-lg border bg-white px-2 text-[12px] font-medium transition",
               borneFilters.length > 0 ? "border-[--k-primary] text-[--k-primary]" : "border-[--k-border] text-[--k-text]"
             )}
           >
-            {borneFilters.length === 0 ? "Borne : Toutes" : borneFilters.join(", ")}
-            <ChevronDown className="h-3 w-3" />
+            <span className="truncate">{borneFilters.length === 0 ? "Borne : Toutes" : borneFilters.join(", ")}</span>
+            <ChevronDown className="h-3 w-3 shrink-0 ml-auto" />
           </button>
           <div className="hidden group-hover:block absolute z-20 mt-0.5 w-44 rounded-lg border border-[--k-border] bg-white shadow-lg py-1">
             {BORNE_TYPES.map(t => (
@@ -272,7 +272,7 @@ export default function EventsPlanning() {
         <select
           value={animFilter}
           onChange={e => setAnimFilter(e.target.value)}
-          className={cn("h-8 rounded-lg border bg-white px-2 text-[12px] font-medium text-[--k-text] outline-none transition", animFilter !== "all" ? "border-[--k-primary] text-[--k-primary]" : "border-[--k-border]")}
+          className={cn("h-8 w-[150px] rounded-lg border bg-white px-2 text-[12px] font-medium text-[--k-text] outline-none transition", animFilter !== "all" ? "border-[--k-primary] text-[--k-primary]" : "border-[--k-border]")}
         >
           <option value="all">Animation : Toutes</option>
           {ANIMATION_TYPES.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
@@ -283,12 +283,12 @@ export default function EventsPlanning() {
           <button
             onClick={() => setVilleDropdownOpen(v => !v)}
             className={cn(
-              "flex items-center gap-1.5 h-8 rounded-lg border bg-white px-2 text-[12px] font-medium transition",
+              "flex items-center gap-1.5 h-8 w-[130px] rounded-lg border bg-white px-2 text-[12px] font-medium transition",
               villeFilter !== "all" ? "border-[--k-primary] text-[--k-primary]" : "border-[--k-border] text-[--k-text]"
             )}
           >
-            {villeFilter === "all" ? "Ville : Toutes" : villeFilter}
-            <ChevronDown className="h-3 w-3" />
+            <span className="truncate">{villeFilter === "all" ? "Ville : Toutes" : villeFilter}</span>
+            <ChevronDown className="h-3 w-3 shrink-0 ml-auto" />
           </button>
           {villeDropdownOpen && (
             <div className="absolute right-0 z-20 mt-1 w-48 rounded-lg border border-[--k-border] bg-white shadow-lg">
@@ -317,7 +317,7 @@ export default function EventsPlanning() {
         <select
           value={provenanceFilter}
           onChange={e => setProvenanceFilter(e.target.value)}
-          className={cn("h-8 rounded-lg border bg-white px-2 text-[12px] font-medium text-[--k-text] outline-none transition", provenanceFilter !== "all" ? "border-[--k-primary] text-[--k-primary]" : "border-[--k-border]")}
+          className={cn("h-8 w-[155px] rounded-lg border bg-white px-2 text-[12px] font-medium text-[--k-text] outline-none transition", provenanceFilter !== "all" ? "border-[--k-primary] text-[--k-primary]" : "border-[--k-border]")}
         >
           <option value="all">Provenance : Toutes</option>
           <option value="antenne">Antenne locale</option>
@@ -327,7 +327,7 @@ export default function EventsPlanning() {
         <select
           value={personneFilter}
           onChange={e => setPersonneFilter(e.target.value)}
-          className={cn("h-8 rounded-lg border bg-white px-2 text-[12px] font-medium text-[--k-text] outline-none transition", personneFilter !== "all" ? "border-[--k-primary] text-[--k-primary]" : "border-[--k-border]")}
+          className={cn("h-8 w-[145px] rounded-lg border bg-white px-2 text-[12px] font-medium text-[--k-text] outline-none transition", personneFilter !== "all" ? "border-[--k-primary] text-[--k-primary]" : "border-[--k-border]")}
         >
           <option value="all">Personne : Toutes</option>
           {Object.entries(TEAM_MEMBERS).map(([k, m]) => <option key={k} value={k}>{m.name}</option>)}
@@ -338,6 +338,17 @@ export default function EventsPlanning() {
             <X className="h-3 w-3" /> Effacer
           </button>
         )}
+      </div>
+
+      {/* Legend — above calendar */}
+      <div className="mb-2 flex flex-wrap items-center gap-4 text-[11px]">
+        <span className="font-semibold text-[--k-muted]">Légende :</span>
+        {Object.entries(CLIENT_TYPE_COLORS).map(([type, colors]) => (
+          <span key={type} className="flex items-center gap-1.5">
+            <span className={cn("h-2.5 w-2.5 rounded-sm", colors.bar)} />
+            <span className="text-[--k-muted]">{type}</span>
+          </span>
+        ))}
       </div>
 
       {/* ── Month view ──────────────────────────── */}
@@ -433,30 +444,23 @@ export default function EventsPlanning() {
         </div>
       )}
 
-      {/* Legend */}
-      <div className="mt-3 flex flex-wrap items-center gap-4 text-[11px]">
-        <span className="font-semibold text-[--k-muted]">Légende :</span>
-        {Object.entries(CLIENT_TYPE_COLORS).map(([type, colors]) => (
-          <span key={type} className="flex items-center gap-1.5">
-            <span className={cn("h-2.5 w-2.5 rounded-sm", colors.bar)} />
-            <span className="text-[--k-muted]">{type}</span>
-          </span>
-        ))}
-      </div>
-
       {/* Event list — dynamic based on view & filters */}
       {(() => {
-        const visibleEvents = isCurrentMonth
-          ? (view === "week"
-            ? filteredEvents.filter(e => {
-                const weekEnd = Math.min(weekStart + 6, month.days);
-                return e.dateEnd >= weekStart && e.dateStart <= weekEnd;
-              })
-            : filteredEvents)
-          : [];
-        const listLabel = view === "week"
-          ? `Événements de la semaine (${visibleEvents.length})`
-          : `Événements — ${month.name} (${visibleEvents.length})`;
+        const visibleEvents = view === "today"
+          ? filteredEvents.filter(e => isCurrentMonth && TODAY >= e.dateStart && TODAY <= e.dateEnd)
+          : isCurrentMonth
+            ? (view === "week"
+              ? filteredEvents.filter(e => {
+                  const weekEnd = Math.min(weekStart + 6, month.days);
+                  return e.dateEnd >= weekStart && e.dateStart <= weekEnd;
+                })
+              : filteredEvents)
+            : [];
+        const listLabel = view === "today"
+          ? `Aujourd'hui — ${TODAY} fév 2026 (${visibleEvents.length})`
+          : view === "week"
+            ? `Événements de la semaine (${visibleEvents.length})`
+            : `Événements — ${month.name} (${visibleEvents.length})`;
         return (
           <div className="mt-5 rounded-2xl border border-[--k-border] bg-white shadow-sm">
             <div className="border-b border-[--k-border] bg-gradient-to-r from-rose-50/50 to-pink-50/30 px-4 py-3 rounded-t-2xl">
@@ -470,31 +474,56 @@ export default function EventsPlanning() {
                   const tc = CLIENT_TYPE_COLORS[evt.clientType] || CLIENT_TYPE_COLORS.Professionnel;
                   const st = STATUS_MAP[evt.status] || { label: evt.status, dot: "bg-slate-300" };
                   return (
-                    <button key={evt.id} onClick={(e) => handleEventClick(evt, e)} className="flex items-center gap-3 px-4 py-2.5 hover:bg-[--k-surface-2]/30 transition w-full text-left">
+                    <div key={evt.id} className="flex items-center gap-3 px-4 py-2.5 hover:bg-[--k-surface-2]/30 transition w-full text-left cursor-pointer" onClick={(e) => handleEventClick(evt, e)}>
+                      {/* Date + heures */}
+                      <div className="shrink-0 w-[80px]">
+                        <div className="text-[12px] font-semibold text-[--k-text]">
+                          {evt.dateStart === evt.dateEnd ? `${evt.dateStart} fév` : `${evt.dateStart}–${evt.dateEnd} fév`}
+                        </div>
+                        <div className="text-[10px] text-[--k-muted]">{evt.heureDebut} – {evt.heureFin}</div>
+                      </div>
                       <span className={cn("h-2 w-2 rounded-full shrink-0", st.dot)} />
-                      <span className="text-[11px] font-mono text-[--k-muted] shrink-0 w-10">{evt.code}</span>
-                      <div className="min-w-0 w-[200px] shrink-0">
+                      {/* Nom / Client */}
+                      <div className="flex-1 min-w-0">
                         <div className="text-[12px] font-medium text-[--k-text] truncate">{evt.name}</div>
                         <div className="text-[11px] text-[--k-muted] truncate">{evt.client}</div>
                       </div>
+                      {/* Code */}
+                      <span className="text-[11px] font-mono text-[--k-muted] shrink-0 w-10">{evt.code}</span>
                       {/* Ville */}
                       <span className="shrink-0 flex items-center gap-1 text-[11px] text-[--k-muted] w-[80px]">
                         <MapPin className="h-3 w-3 shrink-0" />{evt.ville}
                       </span>
-                      {/* Commercial */}
-                      <div className="shrink-0 w-[34px] flex items-center justify-center" title={evt.commercial && TEAM_MEMBERS[evt.commercial] ? `Commercial : ${TEAM_MEMBERS[evt.commercial].name}` : ""}>
+                      {/* Commercial — avec infobulle */}
+                      <div className="shrink-0 w-[34px] flex items-center justify-center">
                         {evt.commercial && TEAM_MEMBERS[evt.commercial] && (
-                          <span className={cn("flex h-6 w-6 items-center justify-center rounded-full text-[8px] font-bold text-white ring-2 ring-white shadow-sm", TEAM_MEMBERS[evt.commercial].color)}>
-                            {TEAM_MEMBERS[evt.commercial].initials}
-                          </span>
+                          <div className="relative group/com">
+                            <span className={cn("flex h-6 w-6 items-center justify-center rounded-full text-[8px] font-bold text-white ring-2 ring-white shadow-sm", TEAM_MEMBERS[evt.commercial].color)}>
+                              {TEAM_MEMBERS[evt.commercial].initials}
+                            </span>
+                            <div className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 z-50 opacity-0 group-hover/com:opacity-100 transition-opacity">
+                              <div className="whitespace-nowrap rounded-lg bg-slate-900 px-2.5 py-1.5 text-[10px] text-white shadow-lg">
+                                <span className="font-medium">{TEAM_MEMBERS[evt.commercial].name}</span>
+                                <span className="text-white/50 ml-1">• Commercial</span>
+                              </div>
+                            </div>
+                          </div>
                         )}
                       </div>
-                      {/* Chef(s) de projet */}
+                      {/* Chef(s) de projet — avec infobulles */}
                       <div className="shrink-0 w-[52px] flex items-center -space-x-1.5">
                         {(evt.chefsProjets || []).map(cp => TEAM_MEMBERS[cp] && (
-                          <span key={cp} className={cn("flex h-6 w-6 items-center justify-center rounded-full text-[8px] font-bold text-white ring-2 ring-white shadow-sm", TEAM_MEMBERS[cp].color)} title={`${TEAM_MEMBERS[cp].role} : ${TEAM_MEMBERS[cp].name}`}>
-                            {TEAM_MEMBERS[cp].initials}
-                          </span>
+                          <div key={cp} className="relative group/cp">
+                            <span className={cn("flex h-6 w-6 items-center justify-center rounded-full text-[8px] font-bold text-white ring-2 ring-white shadow-sm", TEAM_MEMBERS[cp].color)}>
+                              {TEAM_MEMBERS[cp].initials}
+                            </span>
+                            <div className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 z-50 opacity-0 group-hover/cp:opacity-100 transition-opacity">
+                              <div className="whitespace-nowrap rounded-lg bg-slate-900 px-2.5 py-1.5 text-[10px] text-white shadow-lg">
+                                <span className="font-medium">{TEAM_MEMBERS[cp].name}</span>
+                                <span className="text-white/50 ml-1">• {TEAM_MEMBERS[cp].role}</span>
+                              </div>
+                            </div>
+                          </div>
                         ))}
                       </div>
                       {/* Bornes — icône + count + numéros */}
@@ -516,12 +545,12 @@ export default function EventsPlanning() {
                           </div>
                         )}
                       </div>
-                      {/* Provenance — antenne / transporteur / les 2 */}
-                      <div className="shrink-0 w-[130px] flex items-center gap-1.5">
+                      {/* Provenance — antenne (avec nom) / transporteur / les 2 */}
+                      <div className="shrink-0 w-[150px] flex items-center gap-1.5 flex-wrap">
                         {(evt.provenances || []).includes("antenne") && (
-                          <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 border border-emerald-200/60 px-1.5 py-0.5">
+                          <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 border border-emerald-200/60 px-1.5 py-0.5" title={evt.antenne ? evt.antenne.name : "Antenne"}>
                             <Building2 className="h-3 w-3 text-emerald-600" />
-                            <span className="text-[10px] font-medium text-emerald-700">Antenne</span>
+                            <span className="text-[10px] font-medium text-emerald-700 truncate max-w-[70px]">{evt.antenne ? evt.antenne.name.split(" ")[0] : "Antenne"}</span>
                           </span>
                         )}
                         {(evt.provenances || []).includes("transporteur") && (
@@ -532,10 +561,40 @@ export default function EventsPlanning() {
                         )}
                       </div>
                       <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-semibold shrink-0 w-[42px] text-center", tc.bg, tc.text)}>{evt.clientType === "Professionnel" ? "Pro" : "Part."}</span>
-                      <span className="text-[12px] font-semibold text-[--k-text] shrink-0 w-[70px] text-right">
-                        {evt.dateStart === evt.dateEnd ? `${evt.dateStart} fév` : `${evt.dateStart}–${evt.dateEnd} fév`}
-                      </span>
-                    </button>
+                      {/* Lien fiche */}
+                      <a href={`/events/${evt.id}`} onClick={e => e.stopPropagation()} className="shrink-0 flex items-center gap-1 text-[11px] text-[--k-primary] hover:underline font-medium">
+                        <Eye className="h-3 w-3" /> Fiche
+                      </a>
+                      {/* Menu actions */}
+                      <div className="shrink-0 relative" ref={actionMenu === evt.id ? actionMenuRef : undefined}>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setActionMenu(actionMenu === evt.id ? null : evt.id); }}
+                          className="flex h-7 w-7 items-center justify-center rounded-md text-[--k-muted] hover:bg-[--k-surface-2] hover:text-[--k-text] transition"
+                        >
+                          <MoreHorizontal className="h-4 w-4" />
+                        </button>
+                        {actionMenu === evt.id && (
+                          <div className="absolute right-0 z-30 mt-1 w-48 rounded-lg border border-[--k-border] bg-white shadow-lg py-1">
+                            <a href={`/events/${evt.id}`} className="flex items-center gap-2 px-3 py-2 text-[12px] text-[--k-text] hover:bg-[--k-surface-2] transition">
+                              <Eye className="h-3.5 w-3.5 text-[--k-muted]" /> Voir la fiche
+                            </a>
+                            <a href="/events/create" className="flex items-center gap-2 px-3 py-2 text-[12px] text-[--k-text] hover:bg-[--k-surface-2] transition">
+                              <Edit className="h-3.5 w-3.5 text-[--k-muted]" /> Modifier
+                            </a>
+                            <button className="w-full flex items-center gap-2 px-3 py-2 text-[12px] text-[--k-text] hover:bg-[--k-surface-2] transition text-left">
+                              <Copy className="h-3.5 w-3.5 text-[--k-muted]" /> Dupliquer
+                            </button>
+                            <button className="w-full flex items-center gap-2 px-3 py-2 text-[12px] text-[--k-text] hover:bg-[--k-surface-2] transition text-left">
+                              <FileText className="h-3.5 w-3.5 text-[--k-muted]" /> Exporter PDF
+                            </button>
+                            <div className="border-t border-[--k-border] my-1" />
+                            <button className="w-full flex items-center gap-2 px-3 py-2 text-[12px] text-red-500 hover:bg-red-50 transition text-left">
+                              <Trash2 className="h-3.5 w-3.5" /> Supprimer
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   );
                 })}
               </div>
@@ -576,6 +635,7 @@ export default function EventsPlanning() {
                   <div className="font-medium text-[--k-text]">
                     {popup.dateStart === popup.dateEnd ? `${popup.dateStart} fév 2026` : `${popup.dateStart}–${popup.dateEnd} fév 2026`}
                   </div>
+                  <div className="text-[11px] text-[--k-muted]">{popup.heureDebut} – {popup.heureFin}</div>
                 </div>
                 <div>
                   <span className="text-[11px] text-[--k-muted]">Ville</span>
