@@ -224,6 +224,8 @@ export default function EventDetail() {
   const [newComment, setNewComment] = useState("");
   const [replyingTo, setReplyingTo] = useState(null); // comment id
   const [replyText, setReplyText] = useState("");
+  const [addingContact, setAddingContact] = useState(false);
+  const [newContactType, setNewContactType] = useState("projet");
   const commentRef = useRef(null);
 
   // Créa form state
@@ -626,11 +628,47 @@ export default function EventDetail() {
                     <Users className="h-4 w-4 text-slate-400" />
                     <h2 className="text-[15px] font-bold text-[--k-text]">Contacts</h2>
                   </div>
-                  <button className="flex items-center gap-1.5 rounded-lg border border-[--k-border] px-3 py-1.5 text-[12px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition">
-                    <Plus className="h-3.5 w-3.5 text-[--k-muted]" /> Ajouter
-                  </button>
+                  {!addingContact ? (
+                    <button onClick={() => setAddingContact(true)} className="flex items-center gap-1.5 rounded-lg border border-[--k-border] px-3 py-1.5 text-[12px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition">
+                      <Plus className="h-3.5 w-3.5 text-[--k-muted]" /> Ajouter
+                    </button>
+                  ) : (
+                    <button onClick={() => setAddingContact(false)} className="flex items-center gap-1.5 rounded-lg border border-[--k-border] px-3 py-1.5 text-[12px] font-medium text-[--k-muted] hover:bg-[--k-surface-2] transition">
+                      <X className="h-3.5 w-3.5" /> Annuler
+                    </button>
+                  )}
                 </div>
                 <div className="p-5 space-y-5">
+
+                  {/* Add contact form */}
+                  {addingContact && (
+                    <div className="rounded-xl border-2 border-dashed border-[--k-primary]/30 bg-[--k-primary-2]/10 p-4 space-y-4">
+                      <div className="text-[13px] font-semibold text-[--k-text]">Nouveau contact</div>
+                      <div className="flex items-center gap-4">
+                        {[{ v: "projet", l: "Contact projet", icon: Briefcase }, { v: "facturation", l: "Contact facturation", icon: CreditCard }].map(t => (
+                          <label key={t.v} className="flex items-center gap-2 text-[12px] text-[--k-text] cursor-pointer">
+                            <input type="radio" name="newContactType" checked={newContactType === t.v} onChange={() => setNewContactType(t.v)} className="accent-[--k-primary]" />
+                            <t.icon className="h-3 w-3 text-[--k-muted]" /> {t.l}
+                          </label>
+                        ))}
+                      </div>
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        <Field label="Nom complet"><input type="text" placeholder="Prénom Nom" className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
+                        <Field label="Fonction"><input type="text" placeholder="Ex: Chef de projet" className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
+                        <Field label="Email"><input type="email" placeholder="email@exemple.fr" className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
+                        <Field label="Téléphone"><input type="tel" placeholder="+33 6 00 00 00 00" className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
+                      </div>
+                      <div className="flex justify-end gap-2 pt-1">
+                        <button onClick={() => setAddingContact(false)} className="rounded-lg px-3 py-1.5 text-[12px] font-medium text-[--k-muted] hover:bg-[--k-surface-2] transition">
+                          Annuler
+                        </button>
+                        <button onClick={() => setAddingContact(false)} className="flex items-center gap-1.5 rounded-lg bg-[--k-primary] px-4 py-1.5 text-[12px] font-semibold text-white hover:brightness-110 transition shadow-sm">
+                          <CheckCircle2 className="h-3.5 w-3.5" /> Enregistrer
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Contacts projet */}
                   <div>
                     <div className="text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide mb-3 flex items-center gap-1.5">
