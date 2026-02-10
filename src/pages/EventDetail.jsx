@@ -211,6 +211,8 @@ export default function EventDetail() {
   const [editing, setEditing] = useState(null); // null or tab key like "crea", "config", "logistique", "client"
   const [showDevis, setShowDevis] = useState(null); // null or devis object
   const [newComment, setNewComment] = useState("");
+  const [replyingTo, setReplyingTo] = useState(null); // comment id
+  const [replyText, setReplyText] = useState("");
   const commentRef = useRef(null);
 
   // Créa form state
@@ -484,10 +486,68 @@ export default function EventDetail() {
                               <Smile className="h-3 w-3" />
                             </button>
                             <span className="flex-1" />
-                            <button className="flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] text-[--k-muted] hover:bg-slate-50 hover:text-[--k-text] transition">
+                            <button
+                              onClick={() => { setReplyingTo(replyingTo === c.id ? null : c.id); setReplyText(""); }}
+                              className={cn(
+                                "flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] transition",
+                                replyingTo === c.id
+                                  ? "bg-[--k-primary-2] text-[--k-primary] font-medium"
+                                  : "text-[--k-muted] hover:bg-slate-50 hover:text-[--k-text]"
+                              )}
+                            >
                               <Reply className="h-3 w-3" /> Répondre
                             </button>
                           </div>
+
+                          {/* Reply composer */}
+                          {replyingTo === c.id && (
+                            <div className="mt-3 flex gap-2.5 rounded-xl border border-[--k-border] bg-[--k-surface-2]/20 p-3">
+                              <img src="https://i.pravatar.cc/150?u=seb" alt="Seb Mahé" className="h-7 w-7 shrink-0 rounded-full object-cover mt-0.5" />
+                              <div className="flex-1 min-w-0">
+                                <div className="text-[11px] text-[--k-muted] mb-1.5">
+                                  En réponse à <span className="font-semibold text-[--k-text]">{c.user.name}</span>
+                                </div>
+                                <textarea
+                                  value={replyText}
+                                  onChange={e => setReplyText(e.target.value)}
+                                  placeholder={`Répondre à ${c.user.name.split(" ")[0]}...`}
+                                  rows={2}
+                                  autoFocus
+                                  className="w-full resize-none rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[12px] outline-none placeholder:text-[--k-muted]/60 focus:border-slate-400 transition"
+                                />
+                                <div className="mt-2 flex items-center justify-between">
+                                  <div className="flex items-center gap-1">
+                                    <button className="flex h-6 w-6 items-center justify-center rounded text-[--k-muted] hover:bg-white hover:text-[--k-text] transition">
+                                      <AtSign className="h-3 w-3" />
+                                    </button>
+                                    <button className="flex h-6 w-6 items-center justify-center rounded text-[--k-muted] hover:bg-white hover:text-[--k-text] transition">
+                                      <Paperclip className="h-3 w-3" />
+                                    </button>
+                                  </div>
+                                  <div className="flex items-center gap-1.5">
+                                    <button
+                                      onClick={() => setReplyingTo(null)}
+                                      className="rounded-md px-2.5 py-1 text-[11px] font-medium text-[--k-muted] hover:bg-white transition"
+                                    >
+                                      Annuler
+                                    </button>
+                                    <button
+                                      onClick={() => { setReplyingTo(null); setReplyText(""); }}
+                                      disabled={!replyText.trim()}
+                                      className={cn(
+                                        "flex items-center gap-1 rounded-md px-3 py-1 text-[11px] font-semibold transition shadow-sm",
+                                        replyText.trim()
+                                          ? "bg-[--k-primary] text-white hover:brightness-110"
+                                          : "bg-slate-200 text-slate-400 cursor-not-allowed"
+                                      )}
+                                    >
+                                      <Send className="h-3 w-3" /> Répondre
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -731,7 +791,7 @@ export default function EventDetail() {
                         </thead>
                         <tbody>
                           {showDevis.lignes.map((l, i) => (
-                            <tr key={i} className="border-b border-[--k-border] last:border-0">
+                            <tr key={i} className="border-b border-[--k-border] last:border-0 hover:bg-[--k-surface-2]/40 transition">
                               <td className="py-2.5 text-[--k-text]">{l.desc}</td>
                               <td className="py-2.5 text-right text-[--k-muted] tabular-nums">{l.qty}</td>
                               <td className="py-2.5 text-right font-medium text-[--k-text] tabular-nums">{l.pu.toLocaleString("fr-FR")} €</td>
