@@ -742,6 +742,43 @@ export default function EventDetail() {
                 <InfoRow label="Créé le" value={new Date(EVENT.createdAt).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })} />
               </Card>
 
+              {/* Localisation / Map */}
+              <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm overflow-hidden">
+                <div className="border-b border-[--k-border] px-5 py-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-slate-400" />
+                    <h2 className="text-[15px] font-bold text-[--k-text]">Localisation</h2>
+                  </div>
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(EVENT.address)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 text-[11px] font-medium text-[--k-primary] hover:underline"
+                  >
+                    <ExternalLink className="h-3 w-3" /> Ouvrir dans Maps
+                  </a>
+                </div>
+                <div className="p-3">
+                  <div className="rounded-xl overflow-hidden border border-[--k-border]">
+                    <iframe
+                      title="Localisation événement"
+                      width="100%"
+                      height="220"
+                      style={{ border: 0 }}
+                      loading="lazy"
+                      src={`https://www.openstreetmap.org/export/embed.html?bbox=2.2795,48.8285,2.2935,48.8365&layer=mapnik&marker=48.8325,2.2865`}
+                    />
+                  </div>
+                  <div className="mt-2.5 px-1 flex items-start gap-2 text-[12px]">
+                    <MapPin className="h-3.5 w-3.5 text-[--k-muted] shrink-0 mt-0.5" />
+                    <div>
+                      <div className="font-medium text-[--k-text]">{EVENT.location}</div>
+                      <div className="text-[--k-muted]">{EVENT.address}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* Devis associés */}
               <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm overflow-hidden">
                 <div className="border-b border-[--k-border] px-5 py-3 flex items-center justify-between">
