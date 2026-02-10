@@ -422,10 +422,10 @@ export default function EventDetail() {
       </div>
 
       {/* ── Tab content ── */}
-      <div className="grid gap-5 lg:grid-cols-3">
+      <div className={cn("grid gap-5", activeTab !== "activity" && "lg:grid-cols-3")}>
 
-        {/* Left column 2/3 */}
-        <div className="lg:col-span-2 space-y-5">
+        {/* Left column 2/3 (full width on activity tab) */}
+        <div className={cn("space-y-5", activeTab !== "activity" && "lg:col-span-2")}>
 
           {/* ── UPDATES TAB ── */}
           {activeTab === "updates" && (
@@ -1209,8 +1209,8 @@ export default function EventDetail() {
           )}
         </div>
 
-        {/* ── Right sidebar — contextual ── */}
-        <div className="space-y-5">
+        {/* ── Right sidebar — contextual (hidden on activity tab) ── */}
+        {activeTab !== "activity" && <div className="space-y-5">
 
           {/* Checklist — visible on all tabs except client */}
           {activeTab !== "client" && (
@@ -1370,7 +1370,7 @@ export default function EventDetail() {
               </div>
             </div>
           )}
-        </div>
+        </div>}
       </div>
     </AppShell>
   );
