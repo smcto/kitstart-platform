@@ -9,7 +9,7 @@ import {
   AtSign, Paperclip, Smile, MoreHorizontal, Heart, ThumbsUp,
   Reply, Pin, Settings, Link2, Hash, ChevronDown, Users,
   Briefcase, UserCircle, Eye, Plus, X, Upload, Globe, Receipt,
-  CreditCard, ChevronUp
+  CreditCard, ChevronUp, TrendingUp, Star, BarChart3
 } from "lucide-react";
 
 /* ── Mock data ────────────────────────────────────── */
@@ -52,6 +52,17 @@ const CLIENT_CONTACTS = [
   { id: 2, name: "Julien Moreau", role: "Chef de projet événementiel", email: "j.moreau@salonexpo.fr", phone: "+33 6 98 76 54 32", type: "projet", photo: "https://i.pravatar.cc/150?u=julien-moreau" },
   { id: 3, name: "Sophie Durand", role: "Responsable comptabilité", email: "compta@salonexpo.fr", phone: "+33 1 45 67 89 00", type: "facturation", photo: "https://i.pravatar.cc/150?u=sophie-durand" },
 ];
+
+const CLIENT_STATS = {
+  clientDepuis: "Mars 2023",
+  nbEvents: 14,
+  nbEventsAnnee: 4,
+  caTotalHT: 52400,
+  dernierEvent: "Janvier 2026",
+  tauxConversion: 82,
+  satisfaction: 4.8,
+  tauxRecurrence: 71,
+};
 
 const DEVIS = [
   { id: "DEV-2025-0412", date: "2025-12-18", montant: 8500, status: "accepted", label: "Prestation photobooth — Salon du Mariage 2026", lignes: [
@@ -242,7 +253,8 @@ export default function EventDetail() {
 
   const TABS = [
     { key: "updates", label: "Mises à jour", icon: MessageSquare, count: COMMENTS.length },
-    { key: "info", label: "Infos", icon: FileText },
+    { key: "client", label: "Client", icon: Building2 },
+    { key: "evenement", label: "Événement", icon: CalendarDays },
     { key: "crea", label: "Créa", icon: Palette },
     { key: "config", label: "Config", icon: Settings },
     { key: "logistique", label: "Logistique", icon: Truck },
@@ -557,15 +569,15 @@ export default function EventDetail() {
             </>
           )}
 
-          {/* ── INFO TAB ── */}
-          {activeTab === "info" && (
+          {/* ── CLIENT TAB ── */}
+          {activeTab === "client" && (
             <>
               {/* ── Client identity ── */}
               <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm overflow-hidden">
                 <div className="border-b border-[--k-border] px-5 py-3 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Building2 className="h-4 w-4 text-slate-400" />
-                    <h2 className="text-[15px] font-bold text-[--k-text]">Client</h2>
+                    <h2 className="text-[15px] font-bold text-[--k-text]">Coordonnées</h2>
                   </div>
                   <div className="flex items-center gap-2">
                     {editing !== "client" ? (
@@ -599,7 +611,6 @@ export default function EventDetail() {
                       <InfoRow label="Groupe" value={<span className="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">{CLIENT.groupe}</span>} />
                     </div>
                   )}
-                  {/* Link to client page */}
                   <div className="mt-4 pt-3 border-t border-[--k-border]">
                     <a href={`/clients/${CLIENT.id}`} className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-[--k-primary] hover:underline">
                       <ExternalLink className="h-3.5 w-3.5" /> Voir la fiche client complète
@@ -673,8 +684,27 @@ export default function EventDetail() {
                   </div>
                 </div>
               </div>
+            </>
+          )}
 
-              {/* ── Devis associés ── */}
+          {/* ── ÉVÉNEMENT TAB ── */}
+          {activeTab === "evenement" && (
+            <>
+              {/* Détails événement */}
+              <Card title="Détails événement" icon={CalendarDays}>
+                <InfoRow label="Type" value={
+                  <span className="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">{EVENT.type}</span>
+                } />
+                <InfoRow label="Période" value={EVENT.period} />
+                <InfoRow label="Animation" value={new Date(EVENT.dateAnimation).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })} />
+                <InfoRow label="Ville" value={EVENT.ville} />
+                <InfoRow label="Adresse" value={EVENT.address} />
+                <InfoRow label="Antenne" value={EVENT.antenne} />
+                <InfoRow label="Provenance" value={EVENT.provenance} />
+                <InfoRow label="Créé le" value={new Date(EVENT.createdAt).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })} />
+              </Card>
+
+              {/* Devis associés */}
               <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm overflow-hidden">
                 <div className="border-b border-[--k-border] px-5 py-3 flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -717,19 +747,6 @@ export default function EventDetail() {
                 </div>
               </div>
 
-              {/* ── Détails événement ── */}
-              <Card title="Détails événement" icon={CalendarDays}>
-                <InfoRow label="Type" value={
-                  <span className="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">{EVENT.type}</span>
-                } />
-                <InfoRow label="Période" value={EVENT.period} />
-                <InfoRow label="Animation" value={new Date(EVENT.dateAnimation).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })} />
-                <InfoRow label="Ville" value={EVENT.ville} />
-                <InfoRow label="Adresse" value={EVENT.address} />
-                <InfoRow label="Antenne" value={EVENT.antenne} />
-                <InfoRow label="Provenance" value={EVENT.provenance} />
-              </Card>
-
               {/* Notes internes */}
               {EVENT.notes && (
                 <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-4">
@@ -740,11 +757,10 @@ export default function EventDetail() {
                 </div>
               )}
 
-              {/* ── Devis PDF popup/modal ── */}
+              {/* Devis PDF popup/modal */}
               {showDevis && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowDevis(null)}>
                   <div className="relative w-full max-w-lg mx-4 rounded-2xl bg-white shadow-2xl border border-[--k-border] overflow-hidden" onClick={e => e.stopPropagation()}>
-                    {/* Header */}
                     <div className="flex items-center justify-between border-b border-[--k-border] px-6 py-4">
                       <div>
                         <div className="text-[15px] font-bold text-[--k-text]">{showDevis.id}</div>
@@ -759,10 +775,7 @@ export default function EventDetail() {
                         </button>
                       </div>
                     </div>
-
-                    {/* Devis content */}
                     <div className="px-6 py-5">
-                      {/* Client + date info */}
                       <div className="flex justify-between mb-5">
                         <div>
                           <div className="text-[11px] text-[--k-muted] uppercase tracking-wide mb-0.5">Client</div>
@@ -779,8 +792,6 @@ export default function EventDetail() {
                           </div>
                         </div>
                       </div>
-
-                      {/* Lines table */}
                       <table className="w-full text-[12px] mb-4">
                         <thead>
                           <tr className="border-b-2 border-[--k-border]">
@@ -799,8 +810,6 @@ export default function EventDetail() {
                           ))}
                         </tbody>
                       </table>
-
-                      {/* Total */}
                       <div className="flex justify-end border-t-2 border-[--k-border] pt-3">
                         <div className="text-right">
                           <div className="text-[11px] text-[--k-muted] mb-0.5">Total HT</div>
@@ -1203,27 +1212,79 @@ export default function EventDetail() {
         {/* ── Right sidebar — contextual ── */}
         <div className="space-y-5">
 
-          {/* Checklist — always visible */}
-          <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
-            <div className="border-b border-[--k-border] px-4 py-3 flex items-center justify-between">
-              <span className="text-[13px] font-semibold text-[--k-text]">Avancement</span>
-              <span className="text-[11px] font-bold text-slate-500 tabular-nums">{progress}%</span>
+          {/* Checklist — visible on all tabs except client */}
+          {activeTab !== "client" && (
+            <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
+              <div className="border-b border-[--k-border] px-4 py-3 flex items-center justify-between">
+                <span className="text-[13px] font-semibold text-[--k-text]">Avancement</span>
+                <span className="text-[11px] font-bold text-slate-500 tabular-nums">{progress}%</span>
+              </div>
+              <div className="p-4 space-y-1">
+                {CHECKLIST.map(c => (
+                  <div key={c.key} className={cn("flex items-center gap-2 rounded-lg px-2 py-1.5 text-[12px] transition", c.done ? "text-[--k-muted]" : "text-[--k-text]")}>
+                    {c.done
+                      ? <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                      : <Circle className="h-4 w-4 text-slate-300 shrink-0" />
+                    }
+                    <span className={cn(c.done && "line-through")}>{c.label}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="p-4 space-y-1">
-              {CHECKLIST.map(c => (
-                <div key={c.key} className={cn("flex items-center gap-2 rounded-lg px-2 py-1.5 text-[12px] transition", c.done ? "text-[--k-muted]" : "text-[--k-text]")}>
-                  {c.done
-                    ? <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
-                    : <Circle className="h-4 w-4 text-slate-300 shrink-0" />
-                  }
-                  <span className={cn(c.done && "line-through")}>{c.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+          )}
 
-          {/* Contextual: Config shortcut — on updates, config, crea */}
-          {(activeTab === "updates" || activeTab === "config" || activeTab === "crea") && (
+          {/* Contextual: Client stats — on client tab */}
+          {activeTab === "client" && (
+            <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
+              <div className="border-b border-[--k-border] px-4 py-3 flex items-center gap-2">
+                <BarChart3 className="h-4 w-4 text-slate-400" />
+                <span className="text-[13px] font-semibold text-[--k-text]">Statistiques client</span>
+              </div>
+              <div className="p-4 space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-xl bg-[--k-surface-2]/40 p-3 text-center">
+                    <div className="text-[20px] font-bold text-[--k-text] tabular-nums">{CLIENT_STATS.nbEvents}</div>
+                    <div className="text-[10px] text-[--k-muted] font-medium">événements</div>
+                  </div>
+                  <div className="rounded-xl bg-[--k-surface-2]/40 p-3 text-center">
+                    <div className="text-[20px] font-bold text-[--k-text] tabular-nums">{CLIENT_STATS.nbEventsAnnee}</div>
+                    <div className="text-[10px] text-[--k-muted] font-medium">cette année</div>
+                  </div>
+                </div>
+                <div className="rounded-xl bg-[--k-surface-2]/40 p-3 text-center">
+                  <div className="text-[20px] font-bold text-[--k-text] tabular-nums">{CLIENT_STATS.caTotalHT.toLocaleString("fr-FR")} €</div>
+                  <div className="text-[10px] text-[--k-muted] font-medium">CA total HT</div>
+                </div>
+                <div className="space-y-2 pt-1">
+                  <div className="flex items-center justify-between text-[12px]">
+                    <span className="text-[--k-muted]">Client depuis</span>
+                    <span className="font-medium text-[--k-text]">{CLIENT_STATS.clientDepuis}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-[12px]">
+                    <span className="text-[--k-muted]">Dernier event</span>
+                    <span className="font-medium text-[--k-text]">{CLIENT_STATS.dernierEvent}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-[12px]">
+                    <span className="text-[--k-muted]">Taux conversion devis</span>
+                    <span className="font-semibold text-emerald-600">{CLIENT_STATS.tauxConversion}%</span>
+                  </div>
+                  <div className="flex items-center justify-between text-[12px]">
+                    <span className="text-[--k-muted]">Récurrence</span>
+                    <span className="font-semibold text-[--k-text]">{CLIENT_STATS.tauxRecurrence}%</span>
+                  </div>
+                  <div className="flex items-center justify-between text-[12px]">
+                    <span className="text-[--k-muted]">Satisfaction</span>
+                    <span className="flex items-center gap-1 font-semibold text-amber-500">
+                      <Star className="h-3 w-3 fill-amber-400" /> {CLIENT_STATS.satisfaction}/5
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Contextual: Config shortcut — on updates, config, crea, evenement */}
+          {(activeTab === "updates" || activeTab === "config" || activeTab === "crea" || activeTab === "evenement") && (
             <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Settings className="h-4 w-4 text-slate-500" />
@@ -1263,34 +1324,6 @@ export default function EventDetail() {
             </div>
           )}
 
-          {/* Contextual: Contact rapide — on info */}
-          {activeTab === "info" && (
-            <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
-              <div className="border-b border-[--k-border] px-4 py-3">
-                <span className="text-[13px] font-semibold text-[--k-text]">Contact rapide</span>
-              </div>
-              <div className="p-4 space-y-3">
-                {CLIENT_CONTACTS.filter(c => c.type === "projet").map(contact => (
-                  <div key={contact.id} className="flex items-center gap-2.5">
-                    <img src={contact.photo} alt={contact.name} className="h-7 w-7 rounded-full object-cover shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <div className="text-[12px] font-medium text-[--k-text] truncate">{contact.name}</div>
-                      <div className="flex items-center gap-2">
-                        <a href={`mailto:${contact.email}`} className="text-[--k-primary] hover:underline"><Mail className="h-3 w-3" /></a>
-                        <a href={`tel:${contact.phone}`} className="text-[--k-primary] hover:underline"><Phone className="h-3 w-3" /></a>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                <div className="pt-2 border-t border-[--k-border]">
-                  <a href={`/clients/${CLIENT.id}`} className="flex items-center gap-1.5 text-[11px] font-semibold text-[--k-primary] hover:underline">
-                    <ExternalLink className="h-3 w-3" /> Fiche client
-                  </a>
-                </div>
-              </div>
-            </div>
-          )}
-
           {/* Contextual: Créa actions — on crea */}
           {activeTab === "crea" && (
             <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
@@ -1306,35 +1339,37 @@ export default function EventDetail() {
             </div>
           )}
 
-          {/* Quick actions — always visible */}
-          <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
-            <div className="border-b border-[--k-border] px-4 py-3">
-              <span className="text-[13px] font-semibold text-[--k-text]">Actions rapides</span>
+          {/* Quick actions — visible on all tabs except client */}
+          {activeTab !== "client" && (
+            <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
+              <div className="border-b border-[--k-border] px-4 py-3">
+                <span className="text-[13px] font-semibold text-[--k-text]">Actions rapides</span>
+              </div>
+              <div className="p-2 space-y-0.5">
+                {activeTab === "logistique" ? (
+                  <>
+                    <ActionBtn icon={FileText} label="Générer bon de livraison" />
+                    <ActionBtn icon={Printer} label="Imprimer les étiquettes" />
+                    <ActionBtn icon={Mail} label="Envoyer tracking au client" />
+                  </>
+                ) : activeTab === "crea" ? (
+                  <>
+                    <ActionBtn icon={Send} label="Envoyer maquettes au client" />
+                    <ActionBtn icon={Eye} label="Voir le rendu" />
+                    <ActionBtn icon={Download} label="Exporter fiche PDF" />
+                  </>
+                ) : (
+                  <>
+                    <ActionBtn icon={Mail} label="Envoyer recap au client" />
+                    <ActionBtn icon={FileText} label="Générer bon de livraison" />
+                    <ActionBtn icon={Download} label="Exporter fiche PDF" />
+                    <ActionBtn icon={Copy} label="Dupliquer l'événement" />
+                    <ActionBtn icon={Printer} label="Imprimer la fiche" />
+                  </>
+                )}
+              </div>
             </div>
-            <div className="p-2 space-y-0.5">
-              {activeTab === "logistique" ? (
-                <>
-                  <ActionBtn icon={FileText} label="Générer bon de livraison" />
-                  <ActionBtn icon={Printer} label="Imprimer les étiquettes" />
-                  <ActionBtn icon={Mail} label="Envoyer tracking au client" />
-                </>
-              ) : activeTab === "crea" ? (
-                <>
-                  <ActionBtn icon={Send} label="Envoyer maquettes au client" />
-                  <ActionBtn icon={Eye} label="Voir le rendu" />
-                  <ActionBtn icon={Download} label="Exporter fiche PDF" />
-                </>
-              ) : (
-                <>
-                  <ActionBtn icon={Mail} label="Envoyer recap au client" />
-                  <ActionBtn icon={FileText} label="Générer bon de livraison" />
-                  <ActionBtn icon={Download} label="Exporter fiche PDF" />
-                  <ActionBtn icon={Copy} label="Dupliquer l'événement" />
-                  <ActionBtn icon={Printer} label="Imprimer la fiche" />
-                </>
-              )}
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </AppShell>
