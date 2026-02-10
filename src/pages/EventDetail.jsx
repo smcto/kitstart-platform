@@ -746,6 +746,14 @@ export default function EventDetail() {
                 <InfoRow label="Antenne" value={EVENT.antenne} />
                 <InfoRow label="Provenance" value={EVENT.provenance} />
                 <InfoRow label="Créé le" value={new Date(EVENT.createdAt).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })} />
+                {EVENT.notes && (
+                  <div className="mt-2 pt-2 border-t border-[--k-border]">
+                    <div className="text-[11px] font-semibold text-[--k-muted] mb-1 flex items-center gap-1">
+                      <FileText className="h-3 w-3" /> Notes internes
+                    </div>
+                    <div className="text-[12px] text-[--k-text] leading-relaxed">{EVENT.notes}</div>
+                  </div>
+                )}
               </Card>
 
               {/* Localisation / Map */}
@@ -827,16 +835,6 @@ export default function EventDetail() {
                   })}
                 </div>
               </div>
-
-              {/* Notes internes */}
-              {EVENT.notes && (
-                <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-4">
-                  <div className="text-[11px] font-semibold text-slate-500 mb-1.5 flex items-center gap-1.5">
-                    <FileText className="h-3.5 w-3.5" /> Notes internes
-                  </div>
-                  <div className="text-[12px] text-[--k-text] leading-relaxed">{EVENT.notes}</div>
-                </div>
-              )}
 
               {/* Devis PDF popup/modal */}
               {showDevis && (
