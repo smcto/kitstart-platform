@@ -64,6 +64,12 @@ const CLIENT_STATS = {
   tauxRecurrence: 71,
 };
 
+const CLIENT_EVENTS_HISTORY = [
+  { id: "EVT-2026-0287", name: "Salon du Mariage Paris", date: "08/02/2026", status: "ready", current: true },
+  { id: "EVT-2026-0134", name: "Congrès RH Lyon", date: "15/01/2026", status: "done", current: false },
+  { id: "EVT-2025-0892", name: "Salon Franchise Expo", date: "22/11/2025", status: "done", current: false },
+];
+
 const DEVIS = [
   { id: "DEV-2025-0412", date: "2025-12-18", montant: 8500, status: "accepted", label: "Prestation photobooth — Salon du Mariage 2026", lignes: [
     { desc: "Location 3x Spherik + 2x Prestige (3 jours)", qty: 1, pu: 5200 },
@@ -1354,6 +1360,42 @@ export default function EventDetail() {
                     </span>
                   </div>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* Contextual: Derniers events — on client tab */}
+          {activeTab === "client" && (
+            <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
+              <div className="border-b border-[--k-border] px-4 py-3 flex items-center gap-2">
+                <CalendarDays className="h-4 w-4 text-slate-400" />
+                <span className="text-[13px] font-semibold text-[--k-text]">Derniers événements</span>
+              </div>
+              <div className="divide-y divide-[--k-border]">
+                {CLIENT_EVENTS_HISTORY.map(evt => {
+                  const evtSt = STATUS_MAP[evt.status];
+                  return (
+                    <a
+                      key={evt.id}
+                      href={evt.current ? "#" : `/events/${evt.id}`}
+                      className={cn("block px-4 py-3 hover:bg-[--k-surface-2]/40 transition", evt.current && "bg-[--k-primary-2]/20")}
+                    >
+                      <div className="flex items-center justify-between gap-2 mb-0.5">
+                        <span className="text-[12px] font-semibold text-[--k-text] truncate">{evt.name}</span>
+                        {evt.current && <span className="shrink-0 rounded bg-[--k-primary-2] px-1.5 py-0.5 text-[9px] font-bold text-[--k-primary]">En cours</span>}
+                      </div>
+                      <div className="flex items-center gap-2 text-[11px]">
+                        <span className="text-[--k-muted]">{evt.date}</span>
+                        <span className={cn("rounded-md px-1.5 py-0.5 text-[9px] font-bold", evtSt.color)}>{evtSt.label}</span>
+                      </div>
+                    </a>
+                  );
+                })}
+              </div>
+              <div className="px-4 py-2.5 border-t border-[--k-border]">
+                <a href={`/clients/${CLIENT.id}`} className="text-[11px] font-semibold text-[--k-primary] hover:underline">
+                  Voir tous les événements ({CLIENT_STATS.nbEvents})
+                </a>
               </div>
             </div>
           )}
