@@ -341,7 +341,7 @@ export default function EventDetail() {
                 <MapPin className="h-3.5 w-3.5" />{EVENT.location}
               </span>
               <span className="hidden sm:flex items-center gap-1.5 text-[12px] text-[--k-muted]">
-                <Camera className="h-3.5 w-3.5" />{BORNES_ASSIGNED.length} bornes
+                <Package className="h-3.5 w-3.5" />{BORNES_ASSIGNED.length} bornes
               </span>
             </div>
             {/* Config code — right side */}
