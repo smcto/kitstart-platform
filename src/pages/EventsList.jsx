@@ -62,8 +62,16 @@ const PROGRESS_PHASES = [
 
 const STATUS_TABS = [
   { key: "all", label: "Tous" },
-  { key: "active", label: "En production" },
+  { key: "active", label: "En cours" },
   { key: "done", label: "Terminés" },
+];
+
+const PERIOD_OPTIONS = [
+  { key: "all", label: "Toute période" },
+  { key: "today", label: "Aujourd'hui" },
+  { key: "week", label: "Cette semaine" },
+  { key: "month", label: "Ce mois" },
+  { key: "custom", label: "Personnalisé" },
 ];
 
 const VIEW_MODES = [
@@ -113,6 +121,9 @@ export default function EventsList() {
   const [villeFilter, setVilleFilter] = useState("all");
   const [provenanceFilter, setProvenanceFilter] = useState("all");
   const [personneFilter, setPersonneFilter] = useState("all");
+  const [periodFilter, setPeriodFilter] = useState("all");
+  const [customDateFrom, setCustomDateFrom] = useState("");
+  const [customDateTo, setCustomDateTo] = useState("");
   const [villeDropdownOpen, setVilleDropdownOpen] = useState(false);
   const [villeSearch, setVilleSearch] = useState("");
   const [calMonth, setCalMonth] = useState(() => { const n = new Date(); return { year: n.getFullYear(), month: n.getMonth() }; });
@@ -128,13 +139,31 @@ export default function EventsList() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  // Period helpers
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const todayStr = today.toISOString().slice(0, 10);
+  const weekStart = new Date(today); weekStart.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1));
+  const weekEnd = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 6);
+  const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+  const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
   const filtered = EVENTS.filter(e => {
     if (search) {
       const q = search.toLowerCase();
       if (!e.name.toLowerCase().includes(q) && !e.client.toLowerCase().includes(q) && !e.id.toLowerCase().includes(q) && !e.code.toLowerCase().includes(q)) return false;
     }
-    if (tab === "active") return e.status !== "done";
-    if (tab === "done") return e.status === "done";
+    if (tab === "active") { if (e.status === "done") return false; }
+    if (tab === "done") { if (e.status !== "done") return false; }
+    return true;
+  }).filter(e => {
+    // Period filter
+    if (periodFilter === "today") return e.date === todayStr;
+    if (periodFilter === "week") return e.date >= weekStart.toISOString().slice(0, 10) && e.date <= weekEnd.toISOString().slice(0, 10);
+    if (periodFilter === "month") return e.date >= monthStart.toISOString().slice(0, 10) && e.date <= monthEnd.toISOString().slice(0, 10);
+    if (periodFilter === "custom") {
+      if (customDateFrom && e.date < customDateFrom) return false;
+      if (customDateTo && e.date > customDateTo) return false;
+    }
     return true;
   }).filter(e =>
     (villeFilter === "all" || e.ville === villeFilter) &&
@@ -142,8 +171,8 @@ export default function EventsList() {
     (personneFilter === "all" || e.commercial === personneFilter || (e.chefsProjets || []).includes(personneFilter))
   );
 
-  const hasFilters = villeFilter !== "all" || provenanceFilter !== "all" || personneFilter !== "all";
-  const clearFilters = () => { setVilleFilter("all"); setProvenanceFilter("all"); setPersonneFilter("all"); };
+  const hasFilters = villeFilter !== "all" || provenanceFilter !== "all" || personneFilter !== "all" || periodFilter !== "all";
+  const clearFilters = () => { setVilleFilter("all"); setProvenanceFilter("all"); setPersonneFilter("all"); setPeriodFilter("all"); setCustomDateFrom(""); setCustomDateTo(""); };
 
   // Group by month for table view
   const grouped = {};
@@ -223,8 +252,49 @@ export default function EventsList() {
           </button>
         </div>
 
-        {/* Filters */}
+        {/* Filters row 1: period + classic filters */}
         <div className="flex flex-wrap items-center gap-2 border-b border-[--k-border] px-4 py-2">
+          {/* Period pills */}
+          <div className="flex items-center gap-1 border-r border-[--k-border] pr-3 mr-1">
+            {PERIOD_OPTIONS.filter(p => p.key !== "custom").map(p => (
+              <button
+                key={p.key}
+                onClick={() => setPeriodFilter(periodFilter === p.key ? "all" : p.key)}
+                className={cn(
+                  "rounded-md px-2.5 py-1 text-[11px] font-medium transition",
+                  periodFilter === p.key
+                    ? "bg-[--k-primary] text-white shadow-sm"
+                    : "text-[--k-muted] hover:bg-[--k-surface-2] hover:text-[--k-text]"
+                )}
+              >
+                {p.label}
+              </button>
+            ))}
+            <button
+              onClick={() => setPeriodFilter(periodFilter === "custom" ? "all" : "custom")}
+              className={cn(
+                "rounded-md px-2.5 py-1 text-[11px] font-medium transition",
+                periodFilter === "custom"
+                  ? "bg-[--k-primary] text-white shadow-sm"
+                  : "text-[--k-muted] hover:bg-[--k-surface-2] hover:text-[--k-text]"
+              )}
+            >
+              Personnalisé
+            </button>
+          </div>
+
+          {/* Custom date range (visible when custom selected) */}
+          {periodFilter === "custom" && (
+            <div className="flex items-center gap-1.5">
+              <input type="date" value={customDateFrom} onChange={e => setCustomDateFrom(e.target.value)} className="h-7 rounded-md border border-[--k-border] bg-white px-2 text-[11px] font-medium outline-none focus:border-[--k-primary] transition" />
+              <span className="text-[10px] text-[--k-muted]">→</span>
+              <input type="date" value={customDateTo} onChange={e => setCustomDateTo(e.target.value)} className="h-7 rounded-md border border-[--k-border] bg-white px-2 text-[11px] font-medium outline-none focus:border-[--k-primary] transition" />
+            </div>
+          )}
+
+          <div className="flex-1" />
+
+          {/* Classic filters */}
           <Filter className="h-3.5 w-3.5 text-[--k-muted]" />
 
           {/* Ville */}
@@ -267,20 +337,51 @@ export default function EventsList() {
             <option value="transporteur">Transporteur</option>
           </select>
 
-          <select
-            value={personneFilter}
-            onChange={e => setPersonneFilter(e.target.value)}
-            className={cn("h-7 w-[145px] rounded-lg border bg-white px-2 text-[11px] font-medium text-[--k-text] outline-none transition", personneFilter !== "all" ? "border-[--k-primary] text-[--k-primary]" : "border-[--k-border]")}
-          >
-            <option value="all">Personne : Toutes</option>
-            {Object.entries(TEAM_MEMBERS).map(([k, m]) => <option key={k} value={k}>{m.name}</option>)}
-          </select>
-
           {hasFilters && (
             <button onClick={clearFilters} className="flex items-center gap-1 text-[11px] text-[--k-muted] hover:text-[--k-danger] transition">
               <X className="h-3 w-3" /> Effacer
             </button>
           )}
+        </div>
+
+        {/* Filters row 2: Person avatar pills */}
+        <div className="flex items-center gap-2 border-b border-[--k-border] px-4 py-2">
+          <span className="text-[11px] text-[--k-muted] font-medium shrink-0">Équipe :</span>
+          <div className="flex items-center gap-1.5 overflow-x-auto">
+            <button
+              onClick={() => setPersonneFilter("all")}
+              className={cn(
+                "shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium transition",
+                personneFilter === "all"
+                  ? "bg-[--k-primary-2] text-[--k-primary] ring-1 ring-[--k-primary]/30"
+                  : "text-[--k-muted] hover:bg-[--k-surface-2]"
+              )}
+            >
+              Tous
+            </button>
+            {Object.entries(TEAM_MEMBERS).map(([k, m]) => {
+              const count = EVENTS.filter(e => e.commercial === k || (e.chefsProjets || []).includes(k)).length;
+              return (
+                <button
+                  key={k}
+                  onClick={() => setPersonneFilter(personneFilter === k ? "all" : k)}
+                  className={cn(
+                    "shrink-0 flex items-center gap-1.5 rounded-full pl-1 pr-2.5 py-0.5 text-[11px] font-medium transition border",
+                    personneFilter === k
+                      ? "bg-[--k-primary-2] border-[--k-primary]/30 text-[--k-primary]"
+                      : "border-transparent hover:bg-[--k-surface-2] text-[--k-text]"
+                  )}
+                >
+                  <img src={m.photo} alt={m.name} className="h-5 w-5 rounded-full object-cover ring-1 ring-white" />
+                  <span>{m.name}</span>
+                  <span className={cn(
+                    "rounded-full px-1.5 py-0.5 text-[9px] font-bold",
+                    personneFilter === k ? "bg-[--k-primary]/10 text-[--k-primary]" : "bg-slate-100 text-slate-400"
+                  )}>{count}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* ── TABLE VIEW ── */}
