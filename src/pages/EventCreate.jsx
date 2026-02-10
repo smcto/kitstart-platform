@@ -1352,7 +1352,7 @@ export default function EventCreate() {
                       </thead>
                       <tbody>
                         {contactsSurPlace.map(c => (
-                          <tr key={c.id} className="border-b border-[--k-border] last:border-0">
+                          <tr key={c.id} className="border-b border-[--k-border] last:border-0 hover:bg-[--k-surface-2]/40 transition">
                             <td className="py-2 px-2">
                               <input value={c.prenom} onChange={e => updateContactSurPlace(c.id, "prenom", e.target.value)} className="input-field" />
                             </td>
