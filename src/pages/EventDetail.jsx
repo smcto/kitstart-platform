@@ -64,6 +64,15 @@ const CLIENT_STATS = {
   tauxRecurrence: 71,
 };
 
+const ANTENNES = [
+  { id: "idf", name: "IDF Paris", contact: { name: "David Renaud", role: "Responsable antenne", phone: "+33 6 55 44 33 22", email: "d.renaud@selfizee.com", photo: "https://i.pravatar.cc/150?u=david-renaud" }},
+  { id: "bretagne", name: "Bretagne", contact: { name: "Élodie Guyot", role: "Responsable antenne", phone: "+33 6 77 88 99 00", email: "e.guyot@selfizee.com", photo: "https://i.pravatar.cc/150?u=elodie-guyot" }},
+  { id: "lyon", name: "Lyon Rhône-Alpes", contact: null },
+  { id: "sud", name: "Sud Marseille", contact: null },
+];
+
+const PROVENANCES = ["Antenne locale", "Transporteur", "Stock central", "Autre"];
+
 const CLIENT_EVENTS_HISTORY = [
   { id: "EVT-2026-0287", name: "Salon du Mariage Paris", date: "08/02/2026", status: "ready", current: true },
   { id: "EVT-2026-0134", name: "Congrès RH Lyon", date: "15/01/2026", status: "done", current: false },
@@ -258,6 +267,8 @@ export default function EventDetail() {
   const [heureRetourFin, setHeureRetourFin] = useState("19:00");
   const [commentaireAllerInterne, setCommentaireAllerInterne] = useState("");
   const [commentaireRetourInterne, setCommentaireRetourInterne] = useState("");
+  const [provenance, setProvenance] = useState("Antenne locale");
+  const [selectedAntenne, setSelectedAntenne] = useState("idf");
 
   const TABS = [
     { key: "updates", label: "Mises à jour", icon: MessageSquare, count: COMMENTS.length },
@@ -742,8 +753,6 @@ export default function EventDetail() {
                 <InfoRow label="Période" value={EVENT.period} />
                 <InfoRow label="Animation" value={new Date(EVENT.dateAnimation).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })} />
                 <InfoRow label="Ville" value={EVENT.ville} />
-                <InfoRow label="Antenne" value={EVENT.antenne} />
-                <InfoRow label="Provenance" value={EVENT.provenance} />
                 <InfoRow label="Créé le" value={new Date(EVENT.createdAt).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })} />
                 {EVENT.notes && (
                   <div className="mt-2 pt-2 border-t border-[--k-border]">
@@ -1074,6 +1083,86 @@ export default function EventDetail() {
                 <p className="text-[13px] font-semibold text-[--k-text]">
                   Événement : {new Date(EVENT.dateStart).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })} — {EVENT.location}
                 </p>
+              </div>
+
+              {/* Provenance / Antenne */}
+              <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+                <div className="border-b border-[--k-border] px-5 py-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Building2 className="h-4 w-4 text-slate-400" />
+                    <h2 className="text-[15px] font-bold text-[--k-text]">Provenance</h2>
+                  </div>
+                  {editing !== "provenance" ? (
+                    <button onClick={() => setEditing("provenance")} className="flex items-center gap-1.5 rounded-lg border border-[--k-border] px-2.5 py-1 text-[11px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition">
+                      <Edit className="h-3 w-3 text-[--k-muted]" /> Modifier
+                    </button>
+                  ) : (
+                    <button onClick={() => setEditing(null)} className="flex items-center gap-1.5 rounded-lg bg-[--k-primary] px-2.5 py-1 text-[11px] font-medium text-white hover:brightness-110 transition shadow-sm">
+                      <CheckCircle2 className="h-3 w-3" /> Valider
+                    </button>
+                  )}
+                </div>
+                <div className="p-5">
+                  {editing === "provenance" ? (
+                    <div className="space-y-4">
+                      <Field label="Type de provenance" required>
+                        <select value={provenance} onChange={e => setProvenance(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition">
+                          {PROVENANCES.map(p => <option key={p} value={p}>{p}</option>)}
+                        </select>
+                      </Field>
+                      {provenance === "Antenne locale" && (
+                        <Field label="Antenne" required>
+                          <select value={selectedAntenne} onChange={e => setSelectedAntenne(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition">
+                            <option value="">Sélectionner une antenne</option>
+                            {ANTENNES.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
+                          </select>
+                        </Field>
+                      )}
+                    </div>
+                  ) : (
+                    <div>
+                      <InfoRow label="Provenance" value={provenance} />
+                      {provenance === "Antenne locale" && (() => {
+                        const ant = ANTENNES.find(a => a.id === selectedAntenne);
+                        if (!ant) return null;
+                        return (
+                          <>
+                            <InfoRow label="Antenne" value={ant.name} />
+                            {ant.contact ? (
+                              <div className="mt-3 pt-3 border-t border-[--k-border]">
+                                <div className="text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide mb-2.5 flex items-center gap-1.5">
+                                  <User className="h-3 w-3" /> Contact antenne
+                                </div>
+                                <div className="flex items-start gap-3 rounded-xl border border-[--k-border] bg-[--k-surface-2]/20 p-3">
+                                  <img src={ant.contact.photo} alt={ant.contact.name} className="h-9 w-9 rounded-full object-cover shrink-0" />
+                                  <div className="flex-1 min-w-0">
+                                    <div className="text-[13px] font-semibold text-[--k-text]">{ant.contact.name}</div>
+                                    <div className="text-[11px] text-[--k-muted] mb-1.5">{ant.contact.role}</div>
+                                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+                                      <a href={`mailto:${ant.contact.email}`} className="flex items-center gap-1 text-[11px] text-[--k-primary] hover:underline">
+                                        <Mail className="h-3 w-3" /> {ant.contact.email}
+                                      </a>
+                                      <a href={`tel:${ant.contact.phone}`} className="flex items-center gap-1 text-[11px] text-[--k-primary] hover:underline">
+                                        <Phone className="h-3 w-3" /> {ant.contact.phone}
+                                      </a>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="mt-3 pt-3 border-t border-[--k-border]">
+                                <div className="flex items-center gap-2 rounded-xl border border-dashed border-slate-300 bg-slate-50/50 p-3">
+                                  <User className="h-4 w-4 text-slate-400" />
+                                  <span className="text-[12px] text-slate-400 italic">Aucun contact affecté à cette antenne</span>
+                                </div>
+                              </div>
+                            )}
+                          </>
+                        );
+                      })()}
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Logistique aller / retour */}
