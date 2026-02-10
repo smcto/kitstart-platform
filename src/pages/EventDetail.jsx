@@ -742,7 +742,6 @@ export default function EventDetail() {
                 <InfoRow label="Période" value={EVENT.period} />
                 <InfoRow label="Animation" value={new Date(EVENT.dateAnimation).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })} />
                 <InfoRow label="Ville" value={EVENT.ville} />
-                <InfoRow label="Adresse" value={EVENT.address} />
                 <InfoRow label="Antenne" value={EVENT.antenne} />
                 <InfoRow label="Provenance" value={EVENT.provenance} />
                 <InfoRow label="Créé le" value={new Date(EVENT.createdAt).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })} />
