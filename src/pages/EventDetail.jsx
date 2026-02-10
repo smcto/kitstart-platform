@@ -48,9 +48,9 @@ const CLIENT = {
 };
 
 const TEAM = {
-  commercial: { name: "Seb Mahé", initials: "SM", color: "bg-indigo-500", role: "Commercial" },
-  chef: { name: "Thomas Lefebvre", initials: "TL", color: "bg-emerald-500", role: "Chef de projet" },
-  tech: { name: "Lucas Faure", initials: "LF", color: "bg-amber-500", role: "Technicien terrain" },
+  commercial: { name: "Seb Mahé", initials: "SM", color: "bg-indigo-500", role: "Commercial", photo: "https://i.pravatar.cc/150?u=seb" },
+  chef: { name: "Thomas Lefebvre", initials: "TL", color: "bg-emerald-500", role: "Chef de projet", photo: "https://i.pravatar.cc/150?u=thomas" },
+  tech: { name: "Lucas Faure", initials: "LF", color: "bg-amber-500", role: "Technicien terrain", photo: "https://i.pravatar.cc/150?u=lucas-faure" },
 };
 
 const ANIMATIONS = [
@@ -103,32 +103,32 @@ const CHECKLIST = [
 
 const COMMENTS = [
   {
-    id: 1, user: { name: "Seb Mahé", initials: "SM", color: "bg-indigo-500" },
+    id: 1, user: { name: "Seb Mahé", initials: "SM", color: "bg-indigo-500", photo: "https://i.pravatar.cc/150?u=seb" },
     date: "07/02/2026 09:42", text: "Briefing client finalisé avec Marie. Elle veut un rendu très élégant, couleurs dorées. RAS côté logistique, les bornes sont prêtes.",
     reactions: [{ emoji: "👍", count: 2 }], pinned: true,
   },
   {
-    id: 2, user: { name: "Thomas Lefebvre", initials: "TL", color: "bg-emerald-500" },
+    id: 2, user: { name: "Thomas Lefebvre", initials: "TL", color: "bg-emerald-500", photo: "https://i.pravatar.cc/150?u=thomas" },
     date: "06/02/2026 16:15", text: "Les 5 bornes antenne IDF sont testées et prêtes. @Lucas peux-tu confirmer les expéditions UPS/TNT pour demain ?",
     reactions: [], pinned: false,
   },
   {
-    id: 3, user: { name: "Lucas Faure", initials: "LF", color: "bg-amber-500" },
+    id: 3, user: { name: "Lucas Faure", initials: "LF", color: "bg-amber-500", photo: "https://i.pravatar.cc/150?u=lucas-faure" },
     date: "06/02/2026 17:30", text: "Confirmé ! UPS et TNT partent demain matin. Tracking envoyé au client. Les 3 bornes Bretagne seront livrées vendredi avant 14h.",
     reactions: [{ emoji: "✅", count: 1 }], pinned: false,
   },
   {
-    id: 4, user: { name: "Léa Martin", initials: "LM", color: "bg-pink-500" },
+    id: 4, user: { name: "Léa Martin", initials: "LM", color: "bg-pink-500", photo: "https://i.pravatar.cc/150?u=lea" },
     date: "05/02/2026 14:20", text: "Maquettes validées par le client ! Le template est prêt côté config. J'ai uploadé le logo et configuré les couleurs.",
     reactions: [{ emoji: "🎉", count: 3 }, { emoji: "👍", count: 1 }], pinned: false,
   },
   {
-    id: 5, user: { name: "Seb Mahé", initials: "SM", color: "bg-indigo-500" },
+    id: 5, user: { name: "Seb Mahé", initials: "SM", color: "bg-indigo-500", photo: "https://i.pravatar.cc/150?u=seb" },
     date: "01/02/2026 10:00", text: "12 bornes affectées : 8 Antenne IDF + 4 expéditions (2 UPS entrepôt + 2 TNT Bretagne). Planning logistique validé.",
     reactions: [], pinned: false,
   },
   {
-    id: 6, user: { name: "Marie Laurent", initials: "ML", color: "bg-violet-500", external: true },
+    id: 6, user: { name: "Marie Laurent", initials: "ML", color: "bg-violet-500", photo: "https://i.pravatar.cc/150?u=marie-laurent", external: true },
     date: "22/01/2026 11:45", text: "Maquettes approuvées, c'est parfait ! On a hâte d'y être. Merci pour votre réactivité.",
     reactions: [{ emoji: "❤️", count: 2 }], pinned: false,
   },
@@ -180,6 +180,7 @@ export default function EventDetail() {
   const doneCount = CHECKLIST.filter(c => c.done).length;
   const progress = Math.round((doneCount / CHECKLIST.length) * 100);
   const [activeTab, setActiveTab] = useState("updates");
+  const [editing, setEditing] = useState(null); // null or tab key like "crea", "config", "logistique"
   const [newComment, setNewComment] = useState("");
   const commentRef = useRef(null);
 
@@ -230,8 +231,8 @@ export default function EventDetail() {
 
       {/* ── Header card ── */}
       <div className="mb-5 rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
-        {/* Top colored stripe */}
-        <div className="h-1.5 bg-gradient-to-r from-rose-500 to-pink-400" />
+        {/* Top subtle stripe */}
+        <div className="h-1 bg-gradient-to-r from-slate-200 to-slate-100" />
 
         <div className="p-5">
           <div className="flex flex-wrap items-start justify-between gap-4">
@@ -263,7 +264,7 @@ export default function EventDetail() {
                   href={EVENT.configUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 rounded-lg bg-rose-50 border border-rose-200 px-3 py-1.5 text-[12px] font-medium text-rose-600 hover:bg-rose-100 transition"
+                  className="flex items-center gap-1.5 rounded-lg bg-slate-50 border border-slate-200 px-3 py-1.5 text-[12px] font-medium text-slate-600 hover:bg-slate-100 transition"
                 >
                   <ExternalLink className="h-3.5 w-3.5" />
                   Ouvrir la config
@@ -273,13 +274,11 @@ export default function EventDetail() {
 
             {/* Right: team avatars + actions */}
             <div className="flex flex-col items-end gap-3">
-              {/* Team avatars Monday-style */}
+              {/* Team avatars */}
               <div className="flex items-center gap-3">
                 {Object.entries(TEAM).map(([key, member]) => (
                   <div key={key} className="group relative flex flex-col items-center">
-                    <div className={cn("flex h-9 w-9 items-center justify-center rounded-full text-[11px] font-bold text-white ring-2 ring-white shadow-sm", member.color)}>
-                      {member.initials}
-                    </div>
+                    <img src={member.photo} alt={member.name} className="h-9 w-9 rounded-full ring-2 ring-white shadow-sm object-cover" />
                     {/* Tooltip */}
                     <div className="pointer-events-none absolute -bottom-10 z-50 opacity-0 group-hover:opacity-100 transition-opacity">
                       <div className="whitespace-nowrap rounded-lg bg-slate-900 px-2.5 py-1.5 text-[11px] text-white shadow-lg">
@@ -305,10 +304,10 @@ export default function EventDetail() {
           {/* Objectifs & Tags */}
           <div className="mt-3 flex flex-wrap items-center gap-1.5">
             {EVENT.objectifs.map(o => (
-              <span key={o} className="rounded-md bg-amber-50 border border-amber-200/60 px-2 py-0.5 text-[10px] font-semibold text-amber-700">{o}</span>
+              <span key={o} className="rounded-md bg-slate-50 border border-slate-200 px-2 py-0.5 text-[10px] font-semibold text-slate-500">{o}</span>
             ))}
             {EVENT.tags.map(t => (
-              <span key={t} className="rounded-md bg-slate-100 border border-slate-200/60 px-2 py-0.5 text-[10px] font-semibold text-slate-600">{t}</span>
+              <span key={t} className="rounded-md bg-slate-50 border border-slate-200 px-2 py-0.5 text-[10px] font-semibold text-slate-500">{t}</span>
             ))}
           </div>
 
@@ -323,18 +322,18 @@ export default function EventDetail() {
                   className={cn(
                     "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11px] font-semibold border transition",
                     allDone
-                      ? "bg-emerald-50 border-emerald-200 text-emerald-700"
+                      ? "bg-slate-50 border-slate-200 text-slate-600"
                       : someDone
-                        ? "bg-amber-50 border-amber-200 text-amber-700"
-                        : "bg-slate-50 border-slate-200 text-slate-400"
+                        ? "bg-slate-50 border-slate-200 text-slate-500"
+                        : "bg-white border-slate-200 text-slate-300"
                   )}
                 >
                   {allDone ? (
                     <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
                   ) : someDone ? (
-                    <Clock className="h-3.5 w-3.5 text-amber-500" />
+                    <Clock className="h-3.5 w-3.5 text-amber-400" />
                   ) : (
-                    <Circle className="h-3.5 w-3.5 text-slate-300" />
+                    <Circle className="h-3.5 w-3.5 text-slate-200" />
                   )}
                   {phase.label}
                 </div>
@@ -345,9 +344,9 @@ export default function EventDetail() {
           {/* Progress bar */}
           <div className="mt-3 flex items-center gap-3">
             <div className="flex-1 h-1.5 rounded-full bg-slate-100 overflow-hidden">
-              <div className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all" style={{ width: `${progress}%` }} />
+              <div className="h-full rounded-full bg-slate-400 transition-all" style={{ width: `${progress}%` }} />
             </div>
-            <span className="text-[11px] font-semibold text-emerald-600 tabular-nums whitespace-nowrap">{progress}%</span>
+            <span className="text-[11px] font-semibold text-slate-500 tabular-nums whitespace-nowrap">{progress}%</span>
           </div>
         </div>
       </div>
@@ -362,18 +361,18 @@ export default function EventDetail() {
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
               className={cn(
-                "relative flex items-center gap-1.5 px-4 py-2.5 text-[13px] font-medium transition",
-                active ? "text-rose-500" : "text-[--k-muted] hover:text-[--k-text]",
+                "relative flex items-center gap-1.5 px-4 py-2.5 text-[13px] font-semibold transition",
+                active ? "text-[--k-primary]" : "text-[--k-muted] hover:text-[--k-text]",
               )}
             >
               <Icon className="h-3.5 w-3.5" />
               {tab.label}
               {tab.count != null && (
-                <span className={cn("rounded-full px-1.5 py-0.5 text-[10px] font-bold", active ? "bg-rose-50 text-rose-500" : "bg-slate-100 text-slate-500")}>
+                <span className={cn("rounded-full px-1.5 py-0.5 text-[10px] font-bold", active ? "bg-[--k-primary-2] text-[--k-primary]" : "bg-slate-100 text-slate-400")}>
                   {tab.count}
                 </span>
               )}
-              {active && <span className="absolute bottom-0 left-2 right-2 h-[2px] rounded-full bg-rose-500" />}
+              {active && <span className="absolute bottom-0 left-2 right-2 h-[2px] rounded-full bg-[--k-primary]" />}
             </button>
           );
         })}
@@ -392,9 +391,7 @@ export default function EventDetail() {
               <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
                 <div className="p-4">
                   <div className="flex gap-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-500 text-[11px] font-bold text-white ring-2 ring-white">
-                      SM
-                    </div>
+                    <img src="https://i.pravatar.cc/150?u=seb" alt="Seb Mahé" className="h-9 w-9 shrink-0 rounded-full ring-2 ring-white object-cover" />
                     <div className="flex-1 min-w-0">
                       <textarea
                         ref={commentRef}
@@ -402,7 +399,7 @@ export default function EventDetail() {
                         onChange={e => setNewComment(e.target.value)}
                         placeholder="Écrire une mise à jour..."
                         rows={3}
-                        className="w-full resize-none rounded-xl border border-[--k-border] bg-[--k-surface-2]/30 px-4 py-3 text-[13px] outline-none placeholder:text-[--k-muted]/60 focus:border-rose-300 focus:bg-white transition"
+                        className="w-full resize-none rounded-xl border border-[--k-border] bg-[--k-surface-2]/30 px-4 py-3 text-[13px] outline-none placeholder:text-[--k-muted]/60 focus:border-slate-400 focus:bg-white transition"
                       />
                       <div className="mt-2 flex items-center justify-between">
                         <div className="flex items-center gap-1">
@@ -416,7 +413,7 @@ export default function EventDetail() {
                             <Smile className="h-3.5 w-3.5" />
                           </button>
                         </div>
-                        <button className="flex items-center gap-1.5 rounded-lg bg-rose-500 px-4 py-1.5 text-[12px] font-semibold text-white hover:bg-rose-600 transition shadow-sm">
+                        <button className="flex items-center gap-1.5 rounded-lg bg-[--k-primary] px-4 py-1.5 text-[12px] font-semibold text-white hover:brightness-110 transition shadow-sm">
                           <Send className="h-3.5 w-3.5" /> Publier
                         </button>
                       </div>
@@ -428,17 +425,15 @@ export default function EventDetail() {
               {/* Comments list */}
               <div className="space-y-3">
                 {COMMENTS.map(c => (
-                  <div key={c.id} className={cn("rounded-2xl border bg-white shadow-sm overflow-hidden", c.pinned ? "border-rose-200" : "border-[--k-border]")}>
+                  <div key={c.id} className={cn("rounded-2xl border bg-white shadow-sm overflow-hidden", c.pinned ? "border-slate-300" : "border-[--k-border]")}>
                     {c.pinned && (
-                      <div className="flex items-center gap-1.5 bg-rose-50 px-4 py-1.5 text-[11px] font-medium text-rose-500">
+                      <div className="flex items-center gap-1.5 bg-slate-50 px-4 py-1.5 text-[11px] font-medium text-slate-500">
                         <Pin className="h-3 w-3" /> Épinglé
                       </div>
                     )}
                     <div className="p-4">
                       <div className="flex gap-3">
-                        <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-white", c.user.color)}>
-                          {c.user.initials}
-                        </div>
+                        <img src={c.user.photo} alt={c.user.name} className="h-9 w-9 shrink-0 rounded-full object-cover" />
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="text-[13px] font-semibold text-[--k-text]">{c.user.name}</span>
@@ -476,37 +471,35 @@ export default function EventDetail() {
           {/* ── INFO TAB ── */}
           {activeTab === "info" && (
             <>
-              <div className="grid gap-5 md:grid-cols-2">
-                <Card title="Client" icon={Building2} accent="blue">
-                  <InfoRow label="Société" value={
-                    <a href={`/clients/${CLIENT.id}`} className="text-[--k-primary] hover:underline font-medium flex items-center gap-1">
-                      {CLIENT.company} <ExternalLink className="h-3 w-3" />
-                    </a>
-                  } />
-                  <InfoRow label="Groupe" value={CLIENT.groupe} />
-                  <InfoRow label="Contact" value={CLIENT.contact} />
-                  <InfoRow label="Fonction" value={CLIENT.role} />
-                  <InfoRow label="Email" value={<a href={`mailto:${CLIENT.email}`} className="text-[--k-primary] hover:underline">{CLIENT.email}</a>} />
-                  <InfoRow label="Téléphone" value={CLIENT.phone} />
-                </Card>
+              <Card title="Client" icon={Building2}>
+                <InfoRow label="Société" value={
+                  <a href={`/clients/${CLIENT.id}`} className="text-[--k-primary] hover:underline font-medium flex items-center gap-1">
+                    {CLIENT.company} <ExternalLink className="h-3 w-3" />
+                  </a>
+                } />
+                <InfoRow label="Groupe" value={CLIENT.groupe} />
+                <InfoRow label="Contact" value={CLIENT.contact} />
+                <InfoRow label="Fonction" value={CLIENT.role} />
+                <InfoRow label="Email" value={<a href={`mailto:${CLIENT.email}`} className="text-[--k-primary] hover:underline">{CLIENT.email}</a>} />
+                <InfoRow label="Téléphone" value={CLIENT.phone} />
+              </Card>
 
-                <Card title="Détails événement" icon={CalendarDays} accent="rose">
-                  <InfoRow label="Type" value={
-                    <span className="rounded-md bg-pink-50 px-2 py-0.5 text-[11px] font-semibold text-pink-500">{EVENT.type}</span>
-                  } />
-                  <InfoRow label="Période" value={EVENT.period} />
-                  <InfoRow label="Animation" value={new Date(EVENT.dateAnimation).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })} />
-                  <InfoRow label="Ville" value={EVENT.ville} />
-                  <InfoRow label="Adresse" value={EVENT.address} />
-                  <InfoRow label="Antenne" value={EVENT.antenne} />
-                  <InfoRow label="Provenance" value={EVENT.provenance} />
-                </Card>
-              </div>
+              <Card title="Détails événement" icon={CalendarDays}>
+                <InfoRow label="Type" value={
+                  <span className="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">{EVENT.type}</span>
+                } />
+                <InfoRow label="Période" value={EVENT.period} />
+                <InfoRow label="Animation" value={new Date(EVENT.dateAnimation).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })} />
+                <InfoRow label="Ville" value={EVENT.ville} />
+                <InfoRow label="Adresse" value={EVENT.address} />
+                <InfoRow label="Antenne" value={EVENT.antenne} />
+                <InfoRow label="Provenance" value={EVENT.provenance} />
+              </Card>
 
               {/* Notes internes */}
               {EVENT.notes && (
-                <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-4">
-                  <div className="text-[11px] font-semibold text-blue-600 mb-1.5 flex items-center gap-1.5">
+                <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-4">
+                  <div className="text-[11px] font-semibold text-slate-500 mb-1.5 flex items-center gap-1.5">
                     <FileText className="h-3.5 w-3.5" /> Notes internes
                   </div>
                   <div className="text-[12px] text-[--k-text] leading-relaxed">{EVENT.notes}</div>
@@ -522,69 +515,69 @@ export default function EventDetail() {
 
               {/* Créa / Supports graphiques */}
               <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
-                <div className="border-b border-[--k-border] px-5 py-3">
+                <div className="border-b border-[--k-border] px-5 py-3 flex items-center justify-between">
                   <h2 className="text-[15px] font-bold text-[--k-text]">Créa / Supports graphiques</h2>
+                  {editing !== "crea" ? (
+                    <button onClick={() => setEditing("crea")} className="flex items-center gap-1.5 rounded-lg border border-[--k-border] px-3 py-1.5 text-[12px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition">
+                      <Edit className="h-3.5 w-3.5 text-[--k-muted]" /> Modifier
+                    </button>
+                  ) : (
+                    <button onClick={() => setEditing(null)} className="flex items-center gap-1.5 rounded-lg bg-[--k-primary] px-3 py-1.5 text-[12px] font-medium text-white hover:brightness-110 transition shadow-sm">
+                      <CheckCircle2 className="h-3.5 w-3.5" /> Valider
+                    </button>
+                  )}
                 </div>
-                <div className="p-5 space-y-5">
-                  <div>
-                    <p className="text-[13px] font-semibold text-[--k-text] mb-2">La création graphique est réalisée <span className="text-[--k-danger]">*</span> :</p>
-                    <div className="flex items-center gap-6">
-                      <label className="flex items-center gap-2 text-[13px] text-[--k-text] cursor-pointer">
-                        <input type="radio" name="creaRealisee" checked={creaRealisee === "nous"} onChange={() => setCreaRealisee("nous")} className="accent-[--k-primary]" />
-                        Par nos soins
-                      </label>
-                      <label className="flex items-center gap-2 text-[13px] text-[--k-text] cursor-pointer">
-                        <input type="radio" name="creaRealisee" checked={creaRealisee === "client"} onChange={() => setCreaRealisee("client")} className="accent-[--k-primary]" />
-                        Par le client
-                      </label>
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-[13px] font-semibold text-[--k-text] mb-2">Y-a-t-il des supports à créer ? (magnet / photocall...)</p>
-                    <div className="flex items-center gap-6">
-                      {["non", "oui"].map(v => (
-                        <label key={v} className="flex items-center gap-2 text-[13px] text-[--k-text] cursor-pointer">
-                          <input type="radio" name="supportsACreer" checked={supportsACreer === v} onChange={() => setSupportsACreer(v)} className="accent-[--k-primary]" />
-                          {v === "oui" ? "Oui" : "Non"}
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-[13px] font-semibold text-[--k-text] mb-2">Y-a-t-il des supports à imprimer ? (magnet / photocall...)</p>
-                    <div className="flex items-center gap-6">
-                      {["non", "oui"].map(v => (
-                        <label key={v} className="flex items-center gap-2 text-[13px] text-[--k-text] cursor-pointer">
-                          <input type="radio" name="supportsAImprimer" checked={supportsAImprimer === v} onChange={() => setSupportsAImprimer(v)} className="accent-[--k-primary]" />
-                          {v === "oui" ? "Oui" : "Non"}
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-[12px] font-semibold text-[--k-muted] mb-1.5">Informations complémentaires</label>
-                    <textarea value={infosComplementairesCrea} onChange={e => setInfosComplementairesCrea(e.target.value)} placeholder="Informations complémentaires sur la création graphique..." rows={3} className="w-full rounded-lg border border-[--k-border] bg-[--k-surface-2]/30 px-4 py-2.5 text-[13px] outline-none focus:border-rose-300 focus:bg-white transition" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Animations récap */}
-              <div className="bg-white rounded-2xl border border-[--k-border] border-l-[3px] border-l-violet-400 shadow-sm">
-                <div className="flex items-center gap-2 border-b border-[--k-border] px-4 py-3">
-                  <Camera className="h-4 w-4 text-violet-400" />
-                  <span className="text-[13px] font-semibold text-[--k-text]">Animations commandées</span>
-                </div>
-                <div className="px-4 py-3">
-                  {ANIMATIONS.map((a, i) => (
-                    <div key={i} className={cn("py-2", i > 0 && "border-t border-[--k-border]")}>
-                      <div className="text-[12px] font-semibold text-[--k-text] mb-1">{a.type}</div>
-                      <div className="flex flex-wrap gap-1">
-                        {a.options.map(o => <span key={o} className="rounded-md bg-violet-50 px-2 py-0.5 text-[10px] font-medium text-violet-600">{o}</span>)}
-                        {a.perso.map(o => <span key={o} className="rounded-md bg-pink-50 px-2 py-0.5 text-[10px] font-medium text-pink-600">{o}</span>)}
-                        {a.partage.map(o => <span key={o} className="rounded-md bg-blue-50 px-2 py-0.5 text-[10px] font-medium text-blue-600">{o}</span>)}
+                <div className="p-5">
+                  {editing === "crea" ? (
+                    <div className="space-y-5">
+                      <div>
+                        <p className="text-[13px] font-semibold text-[--k-text] mb-2">La création graphique est réalisée :</p>
+                        <div className="flex items-center gap-6">
+                          <label className="flex items-center gap-2 text-[13px] text-[--k-text] cursor-pointer">
+                            <input type="radio" name="creaRealisee" checked={creaRealisee === "nous"} onChange={() => setCreaRealisee("nous")} className="accent-[--k-primary]" />
+                            Par nos soins
+                          </label>
+                          <label className="flex items-center gap-2 text-[13px] text-[--k-text] cursor-pointer">
+                            <input type="radio" name="creaRealisee" checked={creaRealisee === "client"} onChange={() => setCreaRealisee("client")} className="accent-[--k-primary]" />
+                            Par le client
+                          </label>
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-[13px] font-semibold text-[--k-text] mb-2">Y-a-t-il des supports à créer ?</p>
+                        <div className="flex items-center gap-6">
+                          {["non", "oui"].map(v => (
+                            <label key={v} className="flex items-center gap-2 text-[13px] text-[--k-text] cursor-pointer">
+                              <input type="radio" name="supportsACreer" checked={supportsACreer === v} onChange={() => setSupportsACreer(v)} className="accent-[--k-primary]" />
+                              {v === "oui" ? "Oui" : "Non"}
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-[13px] font-semibold text-[--k-text] mb-2">Y-a-t-il des supports à imprimer ?</p>
+                        <div className="flex items-center gap-6">
+                          {["non", "oui"].map(v => (
+                            <label key={v} className="flex items-center gap-2 text-[13px] text-[--k-text] cursor-pointer">
+                              <input type="radio" name="supportsAImprimer" checked={supportsAImprimer === v} onChange={() => setSupportsAImprimer(v)} className="accent-[--k-primary]" />
+                              {v === "oui" ? "Oui" : "Non"}
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-[12px] font-semibold text-[--k-muted] mb-1.5">Informations complémentaires</label>
+                        <textarea value={infosComplementairesCrea} onChange={e => setInfosComplementairesCrea(e.target.value)} placeholder="Informations complémentaires..." rows={3} className="w-full rounded-lg border border-[--k-border] bg-[--k-surface-2]/30 px-4 py-2.5 text-[13px] outline-none focus:border-slate-400 focus:bg-white transition" />
                       </div>
                     </div>
-                  ))}
+                  ) : (
+                    <div className="space-y-0">
+                      <InfoRow label="Créa réalisée par" value={creaRealisee === "nous" ? "Nos soins" : "Le client"} />
+                      <InfoRow label="Supports à créer" value={supportsACreer === "oui" ? "Oui" : "Non"} />
+                      <InfoRow label="Supports à imprimer" value={supportsAImprimer === "oui" ? "Oui" : "Non"} />
+                      {infosComplementairesCrea && <InfoRow label="Complément" value={infosComplementairesCrea} />}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -615,16 +608,16 @@ export default function EventDetail() {
               <PhaseStatus checks={["test"]} checklist={CHECKLIST} />
 
               {/* Code config + lien */}
-              <div className="rounded-2xl border border-rose-200 bg-gradient-to-r from-rose-50 to-pink-50 p-5">
+              <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-5">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div>
-                    <div className="text-[11px] font-semibold text-rose-400 uppercase tracking-wide mb-1">Code configuration</div>
+                    <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide mb-1">Code configuration</div>
                     <div className="flex items-center gap-3">
-                      <span className="font-mono text-[22px] font-black text-rose-600 tracking-[0.15em]">{EVENT.configCode}</span>
-                      <button className="flex h-7 w-7 items-center justify-center rounded-md border border-rose-200 text-rose-400 hover:text-rose-600 hover:bg-white transition"><Copy className="h-3.5 w-3.5" /></button>
+                      <span className="font-mono text-[22px] font-black text-[--k-text] tracking-[0.15em]">{EVENT.configCode}</span>
+                      <button className="flex h-7 w-7 items-center justify-center rounded-md border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-white transition"><Copy className="h-3.5 w-3.5" /></button>
                     </div>
                   </div>
-                  <a href={EVENT.configUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 rounded-lg bg-rose-500 px-4 py-2.5 text-[12px] font-semibold text-white hover:bg-rose-600 transition shadow-sm">
+                  <a href={EVENT.configUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 rounded-lg bg-[--k-primary] px-4 py-2.5 text-[12px] font-semibold text-white hover:brightness-110 transition shadow-sm">
                     <ExternalLink className="h-3.5 w-3.5" /> Ouvrir l'app de config
                   </a>
                 </div>
@@ -653,7 +646,7 @@ export default function EventDetail() {
                     <div className="text-[12px] font-semibold text-[--k-text] mb-1">{a.type}</div>
                     <div className="flex flex-wrap gap-1">
                       {[...a.options, ...a.perso, ...a.partage].map(o => (
-                        <span key={o} className="rounded-md bg-violet-50 px-2 py-0.5 text-[10px] font-medium text-violet-600">{o}</span>
+                        <span key={o} className="rounded-md bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-600">{o}</span>
                       ))}
                     </div>
                   </div>
@@ -666,7 +659,7 @@ export default function EventDetail() {
                   <h2 className="text-[15px] font-bold text-[--k-text]">Notes de configuration</h2>
                 </div>
                 <div className="p-5">
-                  <textarea value={configNotes} onChange={e => setConfigNotes(e.target.value)} placeholder="Notes sur la configuration, points d'attention techniques..." rows={3} className="w-full rounded-lg border border-[--k-border] bg-[--k-surface-2]/30 px-4 py-2.5 text-[13px] outline-none focus:border-rose-300 focus:bg-white transition" />
+                  <textarea value={configNotes} onChange={e => setConfigNotes(e.target.value)} placeholder="Notes sur la configuration, points d'attention techniques..." rows={3} className="w-full rounded-lg border border-[--k-border] bg-[--k-surface-2]/30 px-4 py-2.5 text-[13px] outline-none focus:border-slate-400 focus:bg-white transition" />
                 </div>
               </div>
 
@@ -682,118 +675,148 @@ export default function EventDetail() {
               <PhaseStatus checks={["bornes", "logistics", "shipping"]} checklist={CHECKLIST} />
 
               {/* Date reminder */}
-              <div className="rounded-xl border border-blue-200 bg-blue-50/60 flex items-center gap-3 px-5 py-3">
-                <CalendarDays className="h-4 w-4 text-blue-500 shrink-0" />
-                <p className="text-[13px] font-semibold text-blue-900">
+              <div className="rounded-xl border border-slate-200 bg-slate-50/60 flex items-center gap-3 px-5 py-3">
+                <CalendarDays className="h-4 w-4 text-slate-500 shrink-0" />
+                <p className="text-[13px] font-semibold text-[--k-text]">
                   Événement : {new Date(EVENT.dateStart).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })} — {EVENT.location}
                 </p>
               </div>
 
-              {/* Logistique aller / retour — 50/50 */}
+              {/* Logistique aller / retour */}
               <div className="grid gap-5 lg:grid-cols-2">
                 {/* Aller */}
                 <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
-                  <div className="border-b border-[--k-border] px-5 py-3">
+                  <div className="border-b border-[--k-border] px-5 py-3 flex items-center justify-between">
                     <h2 className="text-[15px] font-bold text-[--k-text]">Logistique aller</h2>
-                  </div>
-                  <div className="p-5 space-y-4">
-                    <Field label="Type d'installation / envoi" required>
-                      <select value={typeInstallation} onChange={e => setTypeInstallation(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-rose-300 transition">
-                        <option value="">Séléctionner</option>
-                        {TYPES_INSTALLATION.map(t => <option key={t} value={t}>{t}</option>)}
-                      </select>
-                    </Field>
-                    {(typeInstallation === "Pick-up" || typeInstallation === "Livraison & installation" || typeInstallation === "Livraison seulement") && (
-                      <>
-                        <Field label="Jour de retrait / livraison">
-                          <input type="date" value={jourAller} onChange={e => setJourAller(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-rose-300 transition" />
-                        </Field>
-                        <div className="flex items-center gap-3">
-                          {[{ v: "aDefinir", l: "À définir" }, { v: "precise", l: "Heure précise" }, { v: "tranche", l: "Tranche horaire" }].map(o => (
-                            <label key={o.v} className="flex items-center gap-1.5 text-[12px] text-[--k-text] cursor-pointer">
-                              <input type="radio" name="heureAllerMode" checked={heureAllerMode === o.v} onChange={() => setHeureAllerMode(o.v)} className="accent-[--k-primary]" />
-                              {o.l}
-                            </label>
-                          ))}
-                        </div>
-                        {heureAllerMode === "precise" && (
-                          <Field label="Heure">
-                            <input type="time" value={heureAller} onChange={e => setHeureAller(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-rose-300 transition" />
-                          </Field>
-                        )}
-                        {heureAllerMode === "tranche" && (
-                          <div className="grid gap-3 grid-cols-2">
-                            <Field label="Début"><input type="time" value={heureAllerDebut} onChange={e => setHeureAllerDebut(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-rose-300 transition" /></Field>
-                            <Field label="Fin"><input type="time" value={heureAllerFin} onChange={e => setHeureAllerFin(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-rose-300 transition" /></Field>
-                          </div>
-                        )}
-                      </>
-                    )}
-                    {typeInstallation === "Envoi transporteur" && (
-                      <button className="h-8 rounded-lg bg-[--k-primary] px-3 text-[12px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5">
-                        <Plus className="h-3.5 w-3.5" /> Ajouter un colis transporteur
+                    {editing !== "logistique" ? (
+                      <button onClick={() => setEditing("logistique")} className="flex items-center gap-1.5 rounded-lg border border-[--k-border] px-2.5 py-1 text-[11px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition">
+                        <Edit className="h-3 w-3 text-[--k-muted]" /> Modifier
+                      </button>
+                    ) : (
+                      <button onClick={() => setEditing(null)} className="flex items-center gap-1.5 rounded-lg bg-[--k-primary] px-2.5 py-1 text-[11px] font-medium text-white hover:brightness-110 transition shadow-sm">
+                        <CheckCircle2 className="h-3 w-3" /> Valider
                       </button>
                     )}
-                    <div>
-                      <label className="block text-[12px] font-semibold text-[--k-muted] mb-1.5">Commentaire interne</label>
-                      <textarea value={commentaireAllerInterne} onChange={e => setCommentaireAllerInterne(e.target.value)} placeholder="Commentaire interne..." rows={2} className="w-full rounded-lg border border-[--k-border] bg-[--k-surface-2]/30 px-4 py-2 text-[13px] outline-none focus:border-rose-300 focus:bg-white transition" />
-                    </div>
+                  </div>
+                  <div className="p-5">
+                    {editing === "logistique" ? (
+                      <div className="space-y-4">
+                        <Field label="Type d'installation / envoi" required>
+                          <select value={typeInstallation} onChange={e => setTypeInstallation(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition">
+                            <option value="">Séléctionner</option>
+                            {TYPES_INSTALLATION.map(t => <option key={t} value={t}>{t}</option>)}
+                          </select>
+                        </Field>
+                        {(typeInstallation === "Pick-up" || typeInstallation === "Livraison & installation" || typeInstallation === "Livraison seulement") && (
+                          <>
+                            <Field label="Jour de retrait / livraison">
+                              <input type="date" value={jourAller} onChange={e => setJourAller(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" />
+                            </Field>
+                            <div className="flex items-center gap-3">
+                              {[{ v: "aDefinir", l: "À définir" }, { v: "precise", l: "Heure précise" }, { v: "tranche", l: "Tranche horaire" }].map(o => (
+                                <label key={o.v} className="flex items-center gap-1.5 text-[12px] text-[--k-text] cursor-pointer">
+                                  <input type="radio" name="heureAllerMode" checked={heureAllerMode === o.v} onChange={() => setHeureAllerMode(o.v)} className="accent-[--k-primary]" />
+                                  {o.l}
+                                </label>
+                              ))}
+                            </div>
+                            {heureAllerMode === "precise" && (
+                              <Field label="Heure">
+                                <input type="time" value={heureAller} onChange={e => setHeureAller(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" />
+                              </Field>
+                            )}
+                            {heureAllerMode === "tranche" && (
+                              <div className="grid gap-3 grid-cols-2">
+                                <Field label="Début"><input type="time" value={heureAllerDebut} onChange={e => setHeureAllerDebut(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
+                                <Field label="Fin"><input type="time" value={heureAllerFin} onChange={e => setHeureAllerFin(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
+                              </div>
+                            )}
+                          </>
+                        )}
+                        <div>
+                          <label className="block text-[12px] font-semibold text-[--k-muted] mb-1.5">Commentaire interne</label>
+                          <textarea value={commentaireAllerInterne} onChange={e => setCommentaireAllerInterne(e.target.value)} placeholder="Commentaire interne..." rows={2} className="w-full rounded-lg border border-[--k-border] bg-[--k-surface-2]/30 px-4 py-2 text-[13px] outline-none focus:border-slate-400 focus:bg-white transition" />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-0">
+                        <InfoRow label="Type" value={typeInstallation || "—"} />
+                        <InfoRow label="Jour" value={jourAller ? new Date(jourAller).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }) : "—"} />
+                        <InfoRow label="Heure" value={heureAllerMode === "precise" ? heureAller : heureAllerMode === "tranche" ? `${heureAllerDebut} – ${heureAllerFin}` : "À définir"} />
+                        {commentaireAllerInterne && <InfoRow label="Note" value={commentaireAllerInterne} />}
+                      </div>
+                    )}
                   </div>
                 </div>
 
                 {/* Retour */}
                 <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
-                  <div className="border-b border-[--k-border] px-5 py-3">
+                  <div className="border-b border-[--k-border] px-5 py-3 flex items-center justify-between">
                     <h2 className="text-[15px] font-bold text-[--k-text]">Logistique retour</h2>
-                  </div>
-                  <div className="p-5 space-y-4">
-                    <Field label="Type de désinstallation / retour" required>
-                      <select value={typeRetour} onChange={e => setTypeRetour(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-rose-300 transition">
-                        <option value="">Séléctionner</option>
-                        {TYPES_RETOUR.map(t => <option key={t} value={t}>{t}</option>)}
-                      </select>
-                    </Field>
-                    {typeRetour && (
-                      <>
-                        <Field label="Jour retour">
-                          <input type="date" value={jourRetour} onChange={e => setJourRetour(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-rose-300 transition" />
-                        </Field>
-                        <div className="flex items-center gap-3">
-                          {[{ v: "aDefinir", l: "À définir" }, { v: "precise", l: "Heure précise" }, { v: "tranche", l: "Tranche horaire" }].map(o => (
-                            <label key={o.v} className="flex items-center gap-1.5 text-[12px] text-[--k-text] cursor-pointer">
-                              <input type="radio" name="heureRetourMode" checked={heureRetourMode === o.v} onChange={() => setHeureRetourMode(o.v)} className="accent-[--k-primary]" />
-                              {o.l}
-                            </label>
-                          ))}
-                        </div>
-                        {heureRetourMode === "precise" && (
-                          <Field label="Heure retour">
-                            <input type="time" value={heureRetour} onChange={e => setHeureRetour(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-rose-300 transition" />
-                          </Field>
-                        )}
-                        {heureRetourMode === "tranche" && (
-                          <div className="grid gap-3 grid-cols-2">
-                            <Field label="Début"><input type="time" value={heureRetourDebut} onChange={e => setHeureRetourDebut(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-rose-300 transition" /></Field>
-                            <Field label="Fin"><input type="time" value={heureRetourFin} onChange={e => setHeureRetourFin(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-rose-300 transition" /></Field>
-                          </div>
-                        )}
-                      </>
-                    )}
-                    {typeRetour === "Retour transporteur" && (
-                      <button className="h-8 rounded-lg bg-[--k-primary] px-3 text-[12px] font-medium text-white hover:brightness-110 transition shadow-sm flex items-center gap-1.5">
-                        <Plus className="h-3.5 w-3.5" /> Ajouter un colis transporteur
+                    {editing !== "logistique" ? (
+                      <button onClick={() => setEditing("logistique")} className="flex items-center gap-1.5 rounded-lg border border-[--k-border] px-2.5 py-1 text-[11px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition">
+                        <Edit className="h-3 w-3 text-[--k-muted]" /> Modifier
+                      </button>
+                    ) : (
+                      <button onClick={() => setEditing(null)} className="flex items-center gap-1.5 rounded-lg bg-[--k-primary] px-2.5 py-1 text-[11px] font-medium text-white hover:brightness-110 transition shadow-sm">
+                        <CheckCircle2 className="h-3 w-3" /> Valider
                       </button>
                     )}
-                    <div>
-                      <label className="block text-[12px] font-semibold text-[--k-muted] mb-1.5">Commentaire interne</label>
-                      <textarea value={commentaireRetourInterne} onChange={e => setCommentaireRetourInterne(e.target.value)} placeholder="Commentaire interne..." rows={2} className="w-full rounded-lg border border-[--k-border] bg-[--k-surface-2]/30 px-4 py-2 text-[13px] outline-none focus:border-rose-300 focus:bg-white transition" />
-                    </div>
+                  </div>
+                  <div className="p-5">
+                    {editing === "logistique" ? (
+                      <div className="space-y-4">
+                        <Field label="Type de désinstallation / retour" required>
+                          <select value={typeRetour} onChange={e => setTypeRetour(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition">
+                            <option value="">Séléctionner</option>
+                            {TYPES_RETOUR.map(t => <option key={t} value={t}>{t}</option>)}
+                          </select>
+                        </Field>
+                        {typeRetour && (
+                          <>
+                            <Field label="Jour retour">
+                              <input type="date" value={jourRetour} onChange={e => setJourRetour(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" />
+                            </Field>
+                            <div className="flex items-center gap-3">
+                              {[{ v: "aDefinir", l: "À définir" }, { v: "precise", l: "Heure précise" }, { v: "tranche", l: "Tranche horaire" }].map(o => (
+                                <label key={o.v} className="flex items-center gap-1.5 text-[12px] text-[--k-text] cursor-pointer">
+                                  <input type="radio" name="heureRetourMode" checked={heureRetourMode === o.v} onChange={() => setHeureRetourMode(o.v)} className="accent-[--k-primary]" />
+                                  {o.l}
+                                </label>
+                              ))}
+                            </div>
+                            {heureRetourMode === "precise" && (
+                              <Field label="Heure retour">
+                                <input type="time" value={heureRetour} onChange={e => setHeureRetour(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" />
+                              </Field>
+                            )}
+                            {heureRetourMode === "tranche" && (
+                              <div className="grid gap-3 grid-cols-2">
+                                <Field label="Début"><input type="time" value={heureRetourDebut} onChange={e => setHeureRetourDebut(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
+                                <Field label="Fin"><input type="time" value={heureRetourFin} onChange={e => setHeureRetourFin(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
+                              </div>
+                            )}
+                          </>
+                        )}
+                        <div>
+                          <label className="block text-[12px] font-semibold text-[--k-muted] mb-1.5">Commentaire interne</label>
+                          <textarea value={commentaireRetourInterne} onChange={e => setCommentaireRetourInterne(e.target.value)} placeholder="Commentaire interne..." rows={2} className="w-full rounded-lg border border-[--k-border] bg-[--k-surface-2]/30 px-4 py-2 text-[13px] outline-none focus:border-slate-400 focus:bg-white transition" />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-0">
+                        <InfoRow label="Type" value={typeRetour || "—"} />
+                        <InfoRow label="Jour" value={jourRetour ? new Date(jourRetour).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }) : "—"} />
+                        <InfoRow label="Heure" value={heureRetourMode === "precise" ? heureRetour : heureRetourMode === "tranche" ? `${heureRetourDebut} – ${heureRetourFin}` : "À définir"} />
+                        {commentaireRetourInterne && <InfoRow label="Note" value={commentaireRetourInterne} />}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
 
               {/* Bornes assignées */}
-              <Card title={`Bornes assignées (${BORNES_ASSIGNED.length})`} icon={Camera} accent="rose">
+              <Card title={`Bornes assignées (${BORNES_ASSIGNED.length})`} icon={Camera}>
                 <div className="overflow-x-auto -mx-4 px-4">
                   <table className="w-full text-[12px]">
                     <thead>
@@ -809,7 +832,7 @@ export default function EventDetail() {
                       {BORNES_ASSIGNED.map(b => {
                         const bs = BORNE_STATUS[b.status];
                         return (
-                          <tr key={b.id} className="border-b border-[--k-border] last:border-0 hover:bg-rose-50/30 transition">
+                          <tr key={b.id} className="border-b border-[--k-border] last:border-0 hover:bg-slate-50/50 transition">
                             <td className="px-3 py-2.5"><a href={`/bornes/${b.id}`} className="font-mono font-semibold text-[--k-primary] hover:underline">{b.id}</a></td>
                             <td className="px-3 py-2.5 text-[--k-text]">{b.model}</td>
                             <td className="px-3 py-2.5 text-[--k-muted]">{b.location}</td>
@@ -870,14 +893,14 @@ export default function EventDetail() {
           )}
         </div>
 
-        {/* ── Right sidebar ── */}
+        {/* ── Right sidebar — contextual ── */}
         <div className="space-y-5">
 
-          {/* Checklist */}
+          {/* Checklist — always visible */}
           <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
             <div className="border-b border-[--k-border] px-4 py-3 flex items-center justify-between">
               <span className="text-[13px] font-semibold text-[--k-text]">Avancement</span>
-              <span className="text-[11px] font-bold text-emerald-600 tabular-nums">{progress}%</span>
+              <span className="text-[11px] font-bold text-slate-500 tabular-nums">{progress}%</span>
             </div>
             <div className="p-4 space-y-1">
               {CHECKLIST.map(c => (
@@ -892,36 +915,110 @@ export default function EventDetail() {
             </div>
           </div>
 
-          {/* Config shortcut */}
-          <div className="rounded-2xl border border-rose-200 bg-gradient-to-br from-rose-50 to-pink-50 p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Settings className="h-4 w-4 text-rose-500" />
-              <span className="text-[13px] font-semibold text-rose-700">Configuration</span>
+          {/* Contextual: Config shortcut — on updates, config, crea */}
+          {(activeTab === "updates" || activeTab === "config" || activeTab === "crea") && (
+            <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Settings className="h-4 w-4 text-slate-500" />
+                <span className="text-[13px] font-semibold text-[--k-text]">Configuration</span>
+              </div>
+              <div className="flex items-center gap-2 mb-3">
+                <span className="font-mono text-[18px] font-black text-[--k-text] tracking-[0.15em]">{EVENT.configCode}</span>
+              </div>
+              <a
+                href={EVENT.configUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-[--k-primary] px-4 py-2 text-[12px] font-semibold text-white hover:brightness-110 transition shadow-sm"
+              >
+                <ExternalLink className="h-3.5 w-3.5" /> Ouvrir l'app de config
+              </a>
             </div>
-            <div className="flex items-center gap-2 mb-3">
-              <span className="font-mono text-[18px] font-black text-rose-600 tracking-[0.15em]">{EVENT.configCode}</span>
-            </div>
-            <a
-              href={EVENT.configUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-rose-500 px-4 py-2 text-[12px] font-semibold text-white hover:bg-rose-600 transition shadow-sm"
-            >
-              <ExternalLink className="h-3.5 w-3.5" /> Ouvrir l'app de config
-            </a>
-          </div>
+          )}
 
-          {/* Quick actions */}
+          {/* Contextual: Dispositif récap — on logistique */}
+          {activeTab === "logistique" && (
+            <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
+              <div className="border-b border-[--k-border] px-4 py-3">
+                <span className="text-[13px] font-semibold text-[--k-text]">Dispositif</span>
+              </div>
+              <div className="p-4 space-y-2">
+                {DISPOSITIFS.map((d, i) => (
+                  <div key={i} className="flex items-center justify-between text-[12px]">
+                    <span className="text-[--k-text] font-medium">{d.qty}x {d.borneType}</span>
+                    {d.notes && <span className="text-[10px] text-[--k-muted]">{d.notes}</span>}
+                  </div>
+                ))}
+                <div className="border-t border-[--k-border] pt-2 mt-2 text-[12px] font-semibold text-[--k-text]">
+                  Total : {BORNES_ASSIGNED.length} bornes
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Contextual: Client résumé — on info */}
+          {activeTab === "info" && (
+            <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
+              <div className="border-b border-[--k-border] px-4 py-3">
+                <span className="text-[13px] font-semibold text-[--k-text]">Contact rapide</span>
+              </div>
+              <div className="p-4 space-y-2">
+                <div className="text-[13px] font-medium text-[--k-text]">{CLIENT.contact}</div>
+                <div className="text-[11px] text-[--k-muted]">{CLIENT.role}</div>
+                <div className="flex flex-col gap-1 mt-2">
+                  <a href={`mailto:${CLIENT.email}`} className="flex items-center gap-2 text-[12px] text-[--k-primary] hover:underline">
+                    <Mail className="h-3.5 w-3.5" /> {CLIENT.email}
+                  </a>
+                  <a href={`tel:${CLIENT.phone}`} className="flex items-center gap-2 text-[12px] text-[--k-primary] hover:underline">
+                    <Phone className="h-3.5 w-3.5" /> {CLIENT.phone}
+                  </a>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Contextual: Créa actions — on crea */}
+          {activeTab === "crea" && (
+            <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
+              <div className="border-b border-[--k-border] px-4 py-3">
+                <span className="text-[13px] font-semibold text-[--k-text]">Briefing</span>
+              </div>
+              <div className="p-4 space-y-1.5">
+                <InfoRow label="Marque" value={BRIEFING.marque} />
+                <InfoRow label="Template" value={BRIEFING.template} />
+                <InfoRow label="Backdrop" value={BRIEFING.backdrop} />
+                <InfoRow label="Props" value={BRIEFING.props} />
+              </div>
+            </div>
+          )}
+
+          {/* Quick actions — always visible */}
           <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm overflow-hidden">
             <div className="border-b border-[--k-border] px-4 py-3">
               <span className="text-[13px] font-semibold text-[--k-text]">Actions rapides</span>
             </div>
             <div className="p-2 space-y-0.5">
-              <ActionBtn icon={Mail} label="Envoyer recap au client" />
-              <ActionBtn icon={FileText} label="Générer bon de livraison" />
-              <ActionBtn icon={Download} label="Exporter fiche PDF" />
-              <ActionBtn icon={Copy} label="Dupliquer l'événement" />
-              <ActionBtn icon={Printer} label="Imprimer la fiche" />
+              {activeTab === "logistique" ? (
+                <>
+                  <ActionBtn icon={FileText} label="Générer bon de livraison" />
+                  <ActionBtn icon={Printer} label="Imprimer les étiquettes" />
+                  <ActionBtn icon={Mail} label="Envoyer tracking au client" />
+                </>
+              ) : activeTab === "crea" ? (
+                <>
+                  <ActionBtn icon={Send} label="Envoyer maquettes au client" />
+                  <ActionBtn icon={Eye} label="Voir le rendu" />
+                  <ActionBtn icon={Download} label="Exporter fiche PDF" />
+                </>
+              ) : (
+                <>
+                  <ActionBtn icon={Mail} label="Envoyer recap au client" />
+                  <ActionBtn icon={FileText} label="Générer bon de livraison" />
+                  <ActionBtn icon={Download} label="Exporter fiche PDF" />
+                  <ActionBtn icon={Copy} label="Dupliquer l'événement" />
+                  <ActionBtn icon={Printer} label="Imprimer la fiche" />
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -932,29 +1029,11 @@ export default function EventDetail() {
 
 /* ── Sub-components ──────────────────────────────── */
 
-function Card({ title, icon: Icon, children, accent = "rose" }) {
-  const accentColors = {
-    rose: "border-l-rose-400",
-    blue: "border-l-blue-400",
-    violet: "border-l-violet-400",
-    emerald: "border-l-emerald-400",
-    amber: "border-l-amber-400",
-    pink: "border-l-pink-400",
-    slate: "border-l-slate-400",
-  };
-  const iconColors = {
-    rose: "text-rose-400",
-    blue: "text-blue-400",
-    violet: "text-violet-400",
-    emerald: "text-emerald-400",
-    amber: "text-amber-400",
-    pink: "text-pink-400",
-    slate: "text-slate-400",
-  };
+function Card({ title, icon: Icon, children }) {
   return (
-    <div className={cn("rounded-2xl border border-[--k-border] border-l-[3px] bg-white shadow-sm", accentColors[accent])}>
+    <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm">
       <div className="flex items-center gap-2 border-b border-[--k-border] px-4 py-3">
-        {Icon && <Icon className={cn("h-4 w-4", iconColors[accent])} />}
+        {Icon && <Icon className="h-4 w-4 text-slate-400" />}
         <span className="text-[13px] font-semibold text-[--k-text]">{title}</span>
       </div>
       <div className="px-4 py-3">{children}</div>

@@ -11,28 +11,28 @@ import {
 /* ── Mock data ────────────────────────────────────── */
 
 const TEAM_MEMBERS = {
-  BL: { name: "Bertrand L.", initials: "BL", color: "bg-indigo-500", role: "Commercial" },
-  LL: { name: "Lucie L.", initials: "LL", color: "bg-pink-500", role: "Commerciale" },
-  BG: { name: "Benjamin G.", initials: "BG", color: "bg-emerald-500", role: "Chef de projet" },
-  ER: { name: "Elen R.", initials: "ER", color: "bg-fuchsia-500", role: "Cheffe de projet" },
-  PT: { name: "Pauline T.", initials: "PT", color: "bg-amber-500", role: "Cheffe de projet" },
-  SM: { name: "Seb M.", initials: "SM", color: "bg-sky-500", role: "Chef de projet" },
+  BL: { name: "Bertrand L.", initials: "BL", color: "bg-indigo-500", role: "Commercial", photo: "https://i.pravatar.cc/150?u=bertrand" },
+  LL: { name: "Lucie L.", initials: "LL", color: "bg-pink-500", role: "Commerciale", photo: "https://i.pravatar.cc/150?u=lucie" },
+  BG: { name: "Benjamin G.", initials: "BG", color: "bg-emerald-500", role: "Chef de projet", photo: "https://i.pravatar.cc/150?u=benjamin" },
+  ER: { name: "Elen R.", initials: "ER", color: "bg-fuchsia-500", role: "Cheffe de projet", photo: "https://i.pravatar.cc/150?u=elen" },
+  PT: { name: "Pauline T.", initials: "PT", color: "bg-amber-500", role: "Cheffe de projet", photo: "https://i.pravatar.cc/150?u=pauline" },
+  SM: { name: "Seb M.", initials: "SM", color: "bg-sky-500", role: "Chef de projet", photo: "https://i.pravatar.cc/150?u=seb" },
 };
 
 const EVENTS = [
-  { id: "EVT-287", name: "Salon du Mariage Paris", client: "Salon Expo SAS", dateLabel: "8–10 fév", heureDebut: "10:00", heureFin: "19:00", bornes: 12, borneNums: ["C381", "C382", "C412", "C415", "C420", "C421", "P455", "P460", "P501", "P502", "P510", "P511"], ville: "Paris", code: "SM26", clientType: "Pro", status: "ready", provenances: ["antenne", "transporteur"], antenne: { name: "Yann Le Goff", initials: "YG", color: "bg-teal-500" }, commercial: "BL", chefsProjets: ["BG", "ER"] },
+  { id: "EVT-287", name: "Salon du Mariage Paris", client: "Salon Expo SAS", dateLabel: "8–10 fév", heureDebut: "10:00", heureFin: "19:00", bornes: 12, borneNums: ["C381", "C382", "C412", "C415", "C420", "C421", "P455", "P460", "P501", "P502", "P510", "P511"], ville: "Paris", code: "SM26", clientType: "Pro", status: "ready", provenances: ["antenne", "transporteur"], antenne: { name: "Yann Le Goff", initials: "YG", photo: "https://i.pravatar.cc/150?u=yann" }, commercial: "BL", chefsProjets: ["BG", "ER"] },
   { id: "EVT-291", name: "Soirée L'Oréal 50 ans", client: "L'Oréal Group", dateLabel: "10 fév", heureDebut: "19:30", heureFin: "23:30", bornes: 4, borneNums: ["P455", "P460"], ville: "Paris", code: "LO26", clientType: "Pro", status: "logistics", provenances: ["transporteur"], commercial: "BL", chefsProjets: ["ER"] },
-  { id: "EVT-294", name: "Mariage Dupont-Martin", client: "Famille Dupont", dateLabel: "14 fév", heureDebut: "15:00", heureFin: "02:00", bornes: 2, borneNums: [], ville: "Rennes", code: "MD26", clientType: "Part.", status: "design", provenances: ["antenne"], antenne: { name: "Yann Le Goff", initials: "YG", color: "bg-teal-500" }, commercial: "LL", chefsProjets: ["PT"] },
-  { id: "EVT-298", name: "Festival Nantes Digital", client: "Nantes Métropole", dateLabel: "15–17 fév", heureDebut: "09:00", heureFin: "18:00", bornes: 8, borneNums: ["C220", "C221", "C222", "C223"], ville: "Nantes", code: "FN26", clientType: "Pro", status: "confirmed", provenances: ["antenne"], antenne: { name: "Camille Moreau", initials: "CM", color: "bg-cyan-500" }, commercial: "BL", chefsProjets: ["BG"] },
-  { id: "EVT-302", name: "Team Building Airbus", client: "Airbus SE", dateLabel: "18 fév", heureDebut: "09:00", heureFin: "17:00", bornes: 3, borneNums: [], ville: "Toulouse", code: "AB26", clientType: "Pro", status: "design", provenances: ["transporteur"], commercial: "LL", chefsProjets: ["SM"] },
+  { id: "EVT-294", name: "Mariage Dupont-Martin", client: "Famille Dupont", dateLabel: "14 fév", heureDebut: "15:00", heureFin: "02:00", bornes: 2, borneNums: [], ville: "Rennes", code: "MD26", clientType: "Part.", status: "design", provenances: ["antenne"], antenne: { name: "Yann Le Goff", initials: "YG", photo: "https://i.pravatar.cc/150?u=yann" }, commercial: "LL", chefsProjets: ["PT"] },
+  { id: "EVT-298", name: "Festival Nantes Digital", client: "Nantes Métropole", dateLabel: "15–17 fév", heureDebut: "09:00", heureFin: "18:00", bornes: 8, borneNums: ["C220", "C221", "C222", "C223"], ville: "Nantes", code: "FN26", clientType: "Pro", status: "confirmed", provenances: ["antenne"], antenne: { name: "Camille Moreau", initials: "CM", photo: "https://i.pravatar.cc/150?u=camille-moreau" }, commercial: "BL", chefsProjets: ["BG"] },
+  { id: "EVT-302", name: "Team Building Airbus", client: "Airbus SE", dateLabel: "18 fév", heureDebut: "09:00", heureFin: "17:00", bornes: 3, borneNums: [], ville: "Toulouse", code: "AB26", clientType: "Pro", status: "design", provenances: ["antenne"], commercial: "LL", chefsProjets: ["SM"] },
   { id: "EVT-305", name: "Gala BMW Munich", client: "BMW AG", dateLabel: "20 fév", heureDebut: "20:00", heureFin: "01:00", bornes: 6, borneNums: ["P455", "P460", "S501", "S502", "S510", "S511"], ville: "Munich", code: "BM26", clientType: "Pro", status: "confirmed", provenances: ["transporteur"], commercial: "BL", chefsProjets: ["BG", "PT"] },
-  { id: "EVT-308", name: "Mariage Cohen-Lévy", client: "Famille Cohen", dateLabel: "22 fév", heureDebut: "16:00", heureFin: "03:00", bornes: 2, borneNums: ["S330", "S331"], ville: "Lyon", code: "MC26", clientType: "Part.", status: "confirmed", provenances: ["antenne"], antenne: { name: "Sophie Renard", initials: "SR", color: "bg-rose-500" }, commercial: "LL", chefsProjets: ["SM"] },
-  { id: "EVT-312", name: "Salon Auto Lyon", client: "Lyon Auto Events", dateLabel: "25–27 fév", heureDebut: "10:00", heureFin: "19:00", bornes: 10, borneNums: ["S330", "S331", "S332", "S333", "C381", "C382", "C412", "C415", "C420", "C421"], ville: "Lyon", code: "SA26", clientType: "Pro", status: "confirmed", provenances: ["antenne", "transporteur"], antenne: { name: "Sophie Renard", initials: "SR", color: "bg-rose-500" }, commercial: "BL", chefsProjets: ["ER", "SM"] },
-  { id: "EVT-315", name: "Anniversaire Nike", client: "Nike France", dateLabel: "28 fév", heureDebut: "18:00", heureFin: "23:00", bornes: 5, borneNums: ["P455", "P460", "P501"], ville: "Paris", code: "NK26", clientType: "Pro", status: "confirmed", provenances: ["antenne"], antenne: { name: "Yann Le Goff", initials: "YG", color: "bg-teal-500" }, commercial: "BL", chefsProjets: ["PT"] },
-  { id: "EVT-320", name: "Mariage Silva", client: "Famille Silva", dateLabel: "1 mars", heureDebut: "14:00", heureFin: "01:00", bornes: 1, borneNums: ["C120"], ville: "Bordeaux", code: "MS26", clientType: "Part.", status: "confirmed", provenances: ["antenne"], antenne: { name: "Lucas Petit", initials: "LP", color: "bg-orange-500" }, commercial: "LL", chefsProjets: ["PT"] },
+  { id: "EVT-308", name: "Mariage Cohen-Lévy", client: "Famille Cohen", dateLabel: "22 fév", heureDebut: "16:00", heureFin: "03:00", bornes: 2, borneNums: ["S330", "S331"], ville: "Lyon", code: "MC26", clientType: "Part.", status: "confirmed", provenances: ["antenne"], antenne: { name: "Sophie Renard", initials: "SR", photo: "https://i.pravatar.cc/150?u=sophie" }, commercial: "LL", chefsProjets: ["SM"] },
+  { id: "EVT-312", name: "Salon Auto Lyon", client: "Lyon Auto Events", dateLabel: "25–27 fév", heureDebut: "10:00", heureFin: "19:00", bornes: 10, borneNums: ["S330", "S331", "S332", "S333", "C381", "C382", "C412", "C415", "C420", "C421"], ville: "Lyon", code: "SA26", clientType: "Pro", status: "confirmed", provenances: ["antenne", "transporteur"], antenne: { name: "Sophie Renard", initials: "SR", photo: "https://i.pravatar.cc/150?u=sophie" }, commercial: "BL", chefsProjets: ["ER", "SM"] },
+  { id: "EVT-315", name: "Anniversaire Nike", client: "Nike France", dateLabel: "28 fév", heureDebut: "18:00", heureFin: "23:00", bornes: 5, borneNums: ["P455", "P460", "P501"], ville: "Paris", code: "NK26", clientType: "Pro", status: "confirmed", provenances: ["antenne"], antenne: { name: "Yann Le Goff", initials: "YG", photo: "https://i.pravatar.cc/150?u=yann" }, commercial: "BL", chefsProjets: ["PT"] },
+  { id: "EVT-320", name: "Mariage Silva", client: "Famille Silva", dateLabel: "1 mars", heureDebut: "14:00", heureFin: "01:00", bornes: 1, borneNums: ["C120"], ville: "Bordeaux", code: "MS26", clientType: "Part.", status: "confirmed", provenances: ["antenne"], antenne: { name: "Lucas Petit", initials: "LP", photo: "https://i.pravatar.cc/150?u=lucas-petit" }, commercial: "LL", chefsProjets: ["PT"] },
   { id: "EVT-322", name: "Séminaire Total", client: "TotalEnergies", dateLabel: "3–4 mars", heureDebut: "08:30", heureFin: "17:30", bornes: 3, borneNums: ["S510", "S511", "S512"], ville: "Paris", code: "ST26", clientType: "Pro", status: "confirmed", provenances: ["transporteur"], commercial: "BL", chefsProjets: ["BG"] },
-  { id: "EVT-256", name: "Soirée Chanel N°5", client: "Chanel SAS", dateLabel: "28 jan", heureDebut: "20:00", heureFin: "00:00", bornes: 3, borneNums: ["P455", "P460", "P501"], ville: "Paris", code: "CH26", clientType: "Pro", status: "done", provenances: ["antenne"], antenne: { name: "Yann Le Goff", initials: "YG", color: "bg-teal-500" }, commercial: "BL", chefsProjets: ["ER"] },
-  { id: "EVT-248", name: "Carnaval Nice", client: "Ville de Nice", dateLabel: "24–26 jan", heureDebut: "10:00", heureFin: "22:00", bornes: 15, borneNums: ["C100", "C101", "C102", "C103", "C104", "C105", "C106", "C107", "C108", "C109", "C110", "C111", "C112", "S200", "S201"], ville: "Nice", code: "CN26", clientType: "Pro", status: "done", provenances: ["antenne", "transporteur"], antenne: { name: "Marc Rossi", initials: "MR", color: "bg-violet-500" }, commercial: "BL", chefsProjets: ["BG", "PT"] },
+  { id: "EVT-256", name: "Soirée Chanel N°5", client: "Chanel SAS", dateLabel: "28 jan", heureDebut: "20:00", heureFin: "00:00", bornes: 3, borneNums: ["P455", "P460", "P501"], ville: "Paris", code: "CH26", clientType: "Pro", status: "done", provenances: ["antenne"], antenne: { name: "Yann Le Goff", initials: "YG", photo: "https://i.pravatar.cc/150?u=yann" }, commercial: "BL", chefsProjets: ["ER"] },
+  { id: "EVT-248", name: "Carnaval Nice", client: "Ville de Nice", dateLabel: "24–26 jan", heureDebut: "10:00", heureFin: "22:00", bornes: 15, borneNums: ["C100", "C101", "C102", "C103", "C104", "C105", "C106", "C107", "C108", "C109", "C110", "C111", "C112", "S200", "S201"], ville: "Nice", code: "CN26", clientType: "Pro", status: "done", provenances: ["antenne", "transporteur"], antenne: { name: "Marc Rossi", initials: "MR", photo: "https://i.pravatar.cc/150?u=marc" }, commercial: "BL", chefsProjets: ["BG", "PT"] },
 ];
 
 const STATUS_MAP = {
@@ -229,9 +229,7 @@ export default function EventsList() {
                   <div className="shrink-0 w-[34px] flex items-center justify-center">
                     {evt.commercial && TEAM_MEMBERS[evt.commercial] && (
                       <div className="relative group/com">
-                        <span className={cn("flex h-6 w-6 items-center justify-center rounded-full text-[8px] font-bold text-white ring-2 ring-white shadow-sm", TEAM_MEMBERS[evt.commercial].color)}>
-                          {TEAM_MEMBERS[evt.commercial].initials}
-                        </span>
+                        <img src={TEAM_MEMBERS[evt.commercial].photo} alt={TEAM_MEMBERS[evt.commercial].name} className="h-6 w-6 rounded-full ring-2 ring-white shadow-sm object-cover" />
                         <div className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 z-50 opacity-0 group-hover/com:opacity-100 transition-opacity">
                           <div className="whitespace-nowrap rounded-lg bg-slate-900 px-2.5 py-1.5 text-[10px] text-white shadow-lg">
                             <span className="font-medium">{TEAM_MEMBERS[evt.commercial].name}</span>
@@ -245,9 +243,7 @@ export default function EventsList() {
                   <div className="shrink-0 w-[52px] flex items-center -space-x-1.5">
                     {(evt.chefsProjets || []).map(cp => TEAM_MEMBERS[cp] && (
                       <div key={cp} className="relative group/cp">
-                        <span className={cn("flex h-6 w-6 items-center justify-center rounded-full text-[8px] font-bold text-white ring-2 ring-white shadow-sm", TEAM_MEMBERS[cp].color)}>
-                          {TEAM_MEMBERS[cp].initials}
-                        </span>
+                        <img src={TEAM_MEMBERS[cp].photo} alt={TEAM_MEMBERS[cp].name} className="h-6 w-6 rounded-full ring-2 ring-white shadow-sm object-cover" />
                         <div className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 z-50 opacity-0 group-hover/cp:opacity-100 transition-opacity">
                           <div className="whitespace-nowrap rounded-lg bg-slate-900 px-2.5 py-1.5 text-[10px] text-white shadow-lg">
                             <span className="font-medium">{TEAM_MEMBERS[cp].name}</span>
@@ -279,10 +275,17 @@ export default function EventsList() {
                   {/* Provenance */}
                   <div className="shrink-0 w-[150px] flex items-center gap-1.5 flex-wrap">
                     {(evt.provenances || []).includes("antenne") && (
-                      <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 border border-emerald-200/60 px-1.5 py-0.5" title={evt.antenne ? evt.antenne.name : "Antenne"}>
-                        <Building2 className="h-3 w-3 text-emerald-600" />
-                        <span className="text-[10px] font-medium text-emerald-700 truncate max-w-[70px]">{evt.antenne ? evt.antenne.name.split(" ")[0] : "Antenne"}</span>
-                      </span>
+                      evt.antenne ? (
+                        <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 border border-emerald-200/60 px-1.5 py-0.5" title={evt.antenne.name}>
+                          <img src={evt.antenne.photo} alt={evt.antenne.name} className="h-3.5 w-3.5 rounded-full object-cover" />
+                          <span className="text-[10px] font-medium text-emerald-700 truncate max-w-[70px]">{evt.antenne.name.split(" ")[0]}</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 rounded-md bg-slate-50 border border-dashed border-slate-300 px-1.5 py-0.5" title="Antenne à affecter">
+                          <Building2 className="h-3 w-3 text-slate-400" />
+                          <span className="text-[10px] font-medium text-slate-400 italic">À affecter</span>
+                        </span>
+                      )
                     )}
                     {(evt.provenances || []).includes("transporteur") && (
                       <span className="inline-flex items-center gap-1 rounded-md bg-amber-50 border border-amber-200/60 px-1.5 py-0.5">

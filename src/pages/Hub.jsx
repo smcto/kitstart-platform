@@ -48,9 +48,9 @@ const INITIAL_TODOS = [
 ];
 
 const BIRTHDAYS = [
-  { name: "Marie Dupont",  date: "Aujourd'hui", avatar: "MD", color: "from-orange-400 to-rose-500" },
-  { name: "Lucas Martin",  date: "Demain",      avatar: "LM", color: "from-indigo-400 to-blue-500" },
-  { name: "Camille Roux",  date: "8 fév.",      avatar: "CR", color: "from-teal-400 to-emerald-500" },
+  { name: "Marie Dupont",  date: "Aujourd'hui", avatar: "MD", color: "from-orange-400 to-rose-500", photo: "https://i.pravatar.cc/150?u=marie-dupont" },
+  { name: "Lucas Martin",  date: "Demain",      avatar: "LM", color: "from-indigo-400 to-blue-500", photo: "https://i.pravatar.cc/150?u=lucas-martin-bd" },
+  { name: "Camille Roux",  date: "8 fév.",      avatar: "CR", color: "from-teal-400 to-emerald-500", photo: "https://i.pravatar.cc/150?u=camille-roux" },
 ];
 
 const NEWS = [
@@ -245,9 +245,7 @@ export default function Hub() {
             <div className="space-y-2.5">
               {BIRTHDAYS.map(b => (
                 <div key={b.name} className="flex items-center gap-2.5">
-                  <span className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br text-[10px] font-bold text-white", b.color)}>
-                    {b.avatar}
-                  </span>
+                  <img src={b.photo} alt={b.name} className="h-8 w-8 shrink-0 rounded-full object-cover" />
                   <div className="min-w-0 flex-1">
                     <div className="text-[13px] font-medium text-[--k-text] truncate">{b.name}</div>
                     <div className="text-[11px] text-[--k-muted]">{b.date}</div>

@@ -45,14 +45,14 @@ const EVENT_TYPES_PARTICULIER = ["Mariage", "Anniversaire", "Bar-Mitzvah", "Év�
 const ANIMATION_TYPES = ["Selfizee", "Selfizee 360", "Selfizee Mirror", "Selfizee Mini", "Photobooth classique", "Borne tactile", "Mur digital", "Mosaïque photo", "Animation sur-mesure"];
 
 const MOCK_RESPONSABLES = [
-  { id: 1, prenom: "Thomas", nom: "Lefebvre", ville: "Paris", color: "bg-indigo-500" },
-  { id: 2, prenom: "Julie", nom: "Martin", ville: "Rennes", color: "bg-pink-500" },
-  { id: 3, prenom: "Maxime", nom: "Dubois", ville: "Lyon", color: "bg-emerald-500" },
-  { id: 4, prenom: "Camille", nom: "Moreau", ville: "Nantes", color: "bg-amber-500" },
-  { id: 5, prenom: "Alexandre", nom: "Petit", ville: "Bordeaux", color: "bg-cyan-500" },
-  { id: 6, prenom: "Léa", nom: "Roux", ville: "Marseille", color: "bg-violet-500" },
-  { id: 7, prenom: "Nicolas", nom: "Lambert", ville: "Strasbourg", color: "bg-rose-500" },
-  { id: 8, prenom: "Emma", nom: "Garcia", ville: "Toulouse", color: "bg-teal-500" },
+  { id: 1, prenom: "Thomas", nom: "Lefebvre", ville: "Paris", color: "bg-indigo-500", photo: "https://i.pravatar.cc/150?u=thomas" },
+  { id: 2, prenom: "Julie", nom: "Martin", ville: "Rennes", color: "bg-pink-500", photo: "https://i.pravatar.cc/150?u=julie" },
+  { id: 3, prenom: "Maxime", nom: "Dubois", ville: "Lyon", color: "bg-emerald-500", photo: "https://i.pravatar.cc/150?u=maxime" },
+  { id: 4, prenom: "Camille", nom: "Moreau", ville: "Nantes", color: "bg-amber-500", photo: "https://i.pravatar.cc/150?u=camille-moreau" },
+  { id: 5, prenom: "Alexandre", nom: "Petit", ville: "Bordeaux", color: "bg-cyan-500", photo: "https://i.pravatar.cc/150?u=alexandre" },
+  { id: 6, prenom: "Léa", nom: "Roux", ville: "Marseille", color: "bg-violet-500", photo: "https://i.pravatar.cc/150?u=lea-roux" },
+  { id: 7, prenom: "Nicolas", nom: "Lambert", ville: "Strasbourg", color: "bg-rose-500", photo: "https://i.pravatar.cc/150?u=nicolas" },
+  { id: 8, prenom: "Emma", nom: "Garcia", ville: "Toulouse", color: "bg-teal-500", photo: "https://i.pravatar.cc/150?u=emma" },
 ];
 
 const OBJECTIFS_EVENT = [
@@ -76,10 +76,10 @@ const MOCK_OPPORTUNITIES = [
 ];
 
 const MOCK_DEVIS = [
-  { id: "D-2026-0142", objet: "Location 2x Selfizee Pro 360 — Salon du Mariage Paris, stand B42, 3 jours avec impression photo + magnets personnalisés", borne: "Selfizee Pro 360", event: "Salon du Mariage Paris", eventType: "Salon", animationType: "Selfizee", dateEvent: "2026-03-15", date: "15/01/2026", ht: "2 450,00 €", ttc: "2 940,00 €", etat: "Accepté", commercial: { name: "Seb Mahé", initials: "SM", color: "bg-indigo-500" } },
-  { id: "D-2026-0156", objet: "Location 1x Selfizee Mirror XL — Gala annuel entreprise, animation photo + vidéo + GIF, galerie en ligne", borne: "Selfizee Mirror XL", event: "Gala Entreprise", eventType: "Gala", animationType: "Selfizee Mirror", dateEvent: "2026-04-22", date: "22/01/2026", ht: "3 800,00 €", ttc: "4 560,00 €", etat: "Accepté", commercial: { name: "Julie Martin", initials: "JM", color: "bg-pink-500" } },
-  { id: "D-2026-0163", objet: "Location 1x Selfizee 360 Spin — Festival Nantes, animation 360° avec fond vert + mosaïque live", borne: "Selfizee 360 Spin", event: "Festival Nantes", eventType: "Festival", animationType: "Selfizee 360", dateEvent: "2026-06-10", date: "28/01/2026", ht: "1 950,00 €", ttc: "2 340,00 €", etat: "En attente", commercial: { name: "Seb Mahé", initials: "SM", color: "bg-indigo-500" } },
-  { id: "D-2026-0178", objet: "Location 1x Selfizee Mini — Team building Rennes, demi-journée, animation photo simple", borne: "Selfizee Mini", event: "Team Building Rennes", eventType: "Team Building", animationType: "Selfizee Mini", dateEvent: "2026-05-05", date: "03/02/2026", ht: "1 200,00 €", ttc: "1 440,00 €", etat: "Brouillon", commercial: { name: "Thomas Lefebvre", initials: "TL", color: "bg-emerald-500" } },
+  { id: "D-2026-0142", objet: "Location 2x Selfizee Pro 360 — Salon du Mariage Paris, stand B42, 3 jours avec impression photo + magnets personnalisés", borne: "Selfizee Pro 360", event: "Salon du Mariage Paris", eventType: "Salon", animationType: "Selfizee", dateEvent: "2026-03-15", date: "15/01/2026", ht: "2 450,00 €", ttc: "2 940,00 €", etat: "Accepté", commercial: { name: "Seb Mahé", initials: "SM", color: "bg-indigo-500", photo: "https://i.pravatar.cc/150?u=seb" } },
+  { id: "D-2026-0156", objet: "Location 1x Selfizee Mirror XL — Gala annuel entreprise, animation photo + vidéo + GIF, galerie en ligne", borne: "Selfizee Mirror XL", event: "Gala Entreprise", eventType: "Gala", animationType: "Selfizee Mirror", dateEvent: "2026-04-22", date: "22/01/2026", ht: "3 800,00 €", ttc: "4 560,00 €", etat: "Accepté", commercial: { name: "Julie Martin", initials: "JM", color: "bg-pink-500", photo: "https://i.pravatar.cc/150?u=julie" } },
+  { id: "D-2026-0163", objet: "Location 1x Selfizee 360 Spin — Festival Nantes, animation 360° avec fond vert + mosaïque live", borne: "Selfizee 360 Spin", event: "Festival Nantes", eventType: "Festival", animationType: "Selfizee 360", dateEvent: "2026-06-10", date: "28/01/2026", ht: "1 950,00 €", ttc: "2 340,00 €", etat: "En attente", commercial: { name: "Seb Mahé", initials: "SM", color: "bg-indigo-500", photo: "https://i.pravatar.cc/150?u=seb" } },
+  { id: "D-2026-0178", objet: "Location 1x Selfizee Mini — Team building Rennes, demi-journée, animation photo simple", borne: "Selfizee Mini", event: "Team Building Rennes", eventType: "Team Building", animationType: "Selfizee Mini", dateEvent: "2026-05-05", date: "03/02/2026", ht: "1 200,00 €", ttc: "1 440,00 €", etat: "Brouillon", commercial: { name: "Thomas Lefebvre", initials: "TL", color: "bg-emerald-500", photo: "https://i.pravatar.cc/150?u=thomas" } },
 ];
 
 const SKIP_DEVIS_REASONS = [
@@ -988,9 +988,7 @@ export default function EventCreate() {
                             <td className="py-2.5 px-1">
                               {/* Avatar commercial */}
                               <div className="group/av relative">
-                                <div className={cn("flex h-6 w-6 items-center justify-center rounded-full text-[8px] font-bold text-white", d.commercial.color)}>
-                                  {d.commercial.initials}
-                                </div>
+                                <img src={d.commercial.photo} alt={d.commercial.name} className="h-6 w-6 rounded-full object-cover" />
                                 <div className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 z-50 opacity-0 group-hover/av:opacity-100 transition-opacity">
                                   <div className="whitespace-nowrap rounded-md bg-slate-900 px-2 py-1 text-[10px] text-white shadow-lg">{d.commercial.name}</div>
                                 </div>
@@ -1086,9 +1084,7 @@ export default function EventCreate() {
                           </div>
                           {/* Commercial */}
                           <div className="flex items-center gap-2.5 rounded-lg bg-[--k-surface-2]/50 px-3 py-2">
-                            <div className={cn("flex h-7 w-7 items-center justify-center rounded-full text-[9px] font-bold text-white", previewDevis.commercial.color)}>
-                              {previewDevis.commercial.initials}
-                            </div>
+                            <img src={previewDevis.commercial.photo} alt={previewDevis.commercial.name} className="h-7 w-7 rounded-full object-cover" />
                             <div>
                               <div className="text-[11px] font-medium text-[--k-text]">{previewDevis.commercial.name}</div>
                               <div className="text-[10px] text-[--k-muted]">Commercial</div>
@@ -1829,9 +1825,7 @@ export default function EventCreate() {
                         if (!p) return null;
                         return (
                           <span key={id} className="inline-flex items-center gap-1.5 rounded-full bg-[--k-primary-2] pl-1 pr-2.5 py-0.5">
-                            <span className={cn("h-5 w-5 rounded-full flex items-center justify-center text-[9px] font-bold text-white", p.color)}>
-                              {p.prenom[0]}{p.nom[0]}
-                            </span>
+                            <img src={p.photo} alt={`${p.prenom} ${p.nom}`} className="h-5 w-5 rounded-full object-cover" />
                             <span className="text-[12px] font-medium text-[--k-primary]">{p.prenom} {p.nom}</span>
                             <button onClick={() => setSelectedResponsables(prev => prev.filter(x => x !== id))} className="text-[--k-primary] hover:text-[--k-danger] ml-0.5">
                               <X className="h-3 w-3" />
@@ -1865,9 +1859,7 @@ export default function EventCreate() {
                               }}
                               className="w-full flex items-center gap-3 px-3 py-2.5 text-left hover:bg-[--k-surface-2] transition"
                             >
-                              <span className={cn("h-8 w-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0", r.color)}>
-                                {r.prenom[0]}{r.nom[0]}
-                              </span>
+                              <img src={r.photo} alt={`${r.prenom} ${r.nom}`} className="h-8 w-8 rounded-full object-cover shrink-0" />
                               <div className="min-w-0">
                                 <div className="text-[13px] font-medium text-[--k-text]">{r.prenom} {r.nom}</div>
                                 <div className="text-[11px] text-[--k-muted]">{r.ville}</div>
