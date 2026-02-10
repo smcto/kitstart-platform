@@ -41,7 +41,7 @@ const CLIENT = {
   id: 12034,
   company: "Salon Expo SAS",
   siret: "812 345 678 00012",
-  tva: "FR 12 812345678",
+  secteur: "Événementiel & Salons professionnels",
   address: "45 rue de la Convention, 75015 Paris",
   website: "www.salonexpo.fr",
   groupe: "Entreprise",
@@ -608,8 +608,8 @@ export default function EventDetail() {
                   {editing === "client" ? (
                     <div className="space-y-4">
                       <Field label="Société"><input type="text" defaultValue={CLIENT.company} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
+                      <Field label="Secteur d'activité"><input type="text" defaultValue={CLIENT.secteur} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
                       <Field label="SIRET"><input type="text" defaultValue={CLIENT.siret} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
-                      <Field label="N° TVA"><input type="text" defaultValue={CLIENT.tva} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
                       <Field label="Adresse"><input type="text" defaultValue={CLIENT.address} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
                       <Field label="Site web"><input type="text" defaultValue={CLIENT.website} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
                       <Field label="Groupe"><input type="text" defaultValue={CLIENT.groupe} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
@@ -617,8 +617,8 @@ export default function EventDetail() {
                   ) : (
                     <div className="space-y-0">
                       <InfoRow label="Société" value={<span className="font-semibold text-[--k-text]">{CLIENT.company}</span>} />
+                      <InfoRow label="Secteur" value={CLIENT.secteur} />
                       <InfoRow label="SIRET" value={<span className="font-mono text-[11px]">{CLIENT.siret}</span>} />
-                      <InfoRow label="N° TVA" value={<span className="font-mono text-[11px]">{CLIENT.tva}</span>} />
                       <InfoRow label="Adresse" value={CLIENT.address} />
                       <InfoRow label="Site web" value={<a href={`https://${CLIENT.website}`} target="_blank" rel="noopener noreferrer" className="text-[--k-primary] hover:underline flex items-center gap-1">{CLIENT.website} <ExternalLink className="h-3 w-3" /></a>} />
                       <InfoRow label="Groupe" value={<span className="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">{CLIENT.groupe}</span>} />
@@ -1069,36 +1069,31 @@ export default function EventDetail() {
           {/* ── LOGISTIQUE TAB ── */}
           {activeTab === "logistique" && (
             <>
-              <PhaseStatus checks={["bornes", "logistics", "shipping"]} checklist={CHECKLIST} />
-
-              {/* Date reminder */}
-              <div className="rounded-xl border border-slate-200 bg-slate-50/60 flex items-center gap-3 px-5 py-3">
-                <CalendarDays className="h-4 w-4 text-slate-500 shrink-0" />
-                <p className="text-[13px] font-semibold text-[--k-text]">
-                  Événement : {new Date(EVENT.dateStart).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })} — {EVENT.location}
-                </p>
-              </div>
-
-              {/* Provenance / Antenne */}
-              <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
+              {/* ── Acheminement — provenance + aller + retour unified ── */}
+              <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm overflow-hidden">
                 <div className="border-b border-[--k-border] px-5 py-3 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Building2 className="h-4 w-4 text-slate-400" />
-                    <h2 className="text-[15px] font-bold text-[--k-text]">Provenance</h2>
+                    <Truck className="h-4 w-4 text-slate-400" />
+                    <h2 className="text-[15px] font-bold text-[--k-text]">Acheminement</h2>
                   </div>
-                  {editing !== "provenance" ? (
-                    <button onClick={() => setEditing("provenance")} className="flex items-center gap-1.5 rounded-lg border border-[--k-border] px-2.5 py-1 text-[11px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition">
-                      <Edit className="h-3 w-3 text-[--k-muted]" /> Modifier
+                  {editing !== "logistique" ? (
+                    <button onClick={() => setEditing("logistique")} className="flex items-center gap-1.5 rounded-lg border border-[--k-border] px-3 py-1.5 text-[12px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition">
+                      <Edit className="h-3.5 w-3.5 text-[--k-muted]" /> Modifier
                     </button>
                   ) : (
-                    <button onClick={() => setEditing(null)} className="flex items-center gap-1.5 rounded-lg bg-[--k-primary] px-2.5 py-1 text-[11px] font-medium text-white hover:brightness-110 transition shadow-sm">
-                      <CheckCircle2 className="h-3 w-3" /> Valider
+                    <button onClick={() => setEditing(null)} className="flex items-center gap-1.5 rounded-lg bg-[--k-primary] px-3 py-1.5 text-[12px] font-medium text-white hover:brightness-110 transition shadow-sm">
+                      <CheckCircle2 className="h-3.5 w-3.5" /> Valider
                     </button>
                   )}
                 </div>
-                <div className="p-5">
-                  {editing === "provenance" ? (
-                    <div className="space-y-4">
+
+                {editing === "logistique" ? (
+                  <div className="divide-y divide-[--k-border]">
+                    {/* Provenance section — edit */}
+                    <div className="p-5 space-y-4">
+                      <div className="text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide flex items-center gap-1.5">
+                        <Building2 className="h-3 w-3" /> Provenance
+                      </div>
                       <Field label="Type de provenance" required>
                         <select value={provenance} onChange={e => setProvenance(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition">
                           {PROVENANCES.map(p => <option key={p} value={p}>{p}</option>)}
@@ -1113,192 +1108,174 @@ export default function EventDetail() {
                         </Field>
                       )}
                     </div>
-                  ) : (
-                    <div>
-                      <InfoRow label="Provenance" value={provenance} />
+
+                    {/* Aller section — edit */}
+                    <div className="p-5 space-y-4">
+                      <div className="text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide flex items-center gap-1.5">
+                        <ChevronRight className="h-3 w-3" /> Aller
+                      </div>
+                      <Field label="Type d'installation / envoi" required>
+                        <select value={typeInstallation} onChange={e => setTypeInstallation(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition">
+                          <option value="">Sélectionner</option>
+                          {TYPES_INSTALLATION.map(t => <option key={t} value={t}>{t}</option>)}
+                        </select>
+                      </Field>
+                      {(typeInstallation === "Pick-up" || typeInstallation === "Livraison & installation" || typeInstallation === "Livraison seulement") && (
+                        <>
+                          <Field label="Jour de retrait / livraison">
+                            <input type="date" value={jourAller} onChange={e => setJourAller(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" />
+                          </Field>
+                          <div className="flex items-center gap-3">
+                            {[{ v: "aDefinir", l: "À définir" }, { v: "precise", l: "Heure précise" }, { v: "tranche", l: "Tranche horaire" }].map(o => (
+                              <label key={o.v} className="flex items-center gap-1.5 text-[12px] text-[--k-text] cursor-pointer">
+                                <input type="radio" name="heureAllerMode" checked={heureAllerMode === o.v} onChange={() => setHeureAllerMode(o.v)} className="accent-[--k-primary]" />
+                                {o.l}
+                              </label>
+                            ))}
+                          </div>
+                          {heureAllerMode === "precise" && (
+                            <Field label="Heure">
+                              <input type="time" value={heureAller} onChange={e => setHeureAller(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" />
+                            </Field>
+                          )}
+                          {heureAllerMode === "tranche" && (
+                            <div className="grid gap-3 grid-cols-2">
+                              <Field label="Début"><input type="time" value={heureAllerDebut} onChange={e => setHeureAllerDebut(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
+                              <Field label="Fin"><input type="time" value={heureAllerFin} onChange={e => setHeureAllerFin(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
+                            </div>
+                          )}
+                        </>
+                      )}
+                      <div>
+                        <label className="block text-[12px] font-semibold text-[--k-muted] mb-1.5">Commentaire interne</label>
+                        <textarea value={commentaireAllerInterne} onChange={e => setCommentaireAllerInterne(e.target.value)} placeholder="Commentaire interne..." rows={2} className="w-full rounded-lg border border-[--k-border] bg-[--k-surface-2]/30 px-4 py-2 text-[13px] outline-none focus:border-slate-400 focus:bg-white transition" />
+                      </div>
+                    </div>
+
+                    {/* Retour section — edit */}
+                    <div className="p-5 space-y-4">
+                      <div className="text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide flex items-center gap-1.5">
+                        <ArrowLeft className="h-3 w-3" /> Retour
+                      </div>
+                      <Field label="Type de désinstallation / retour" required>
+                        <select value={typeRetour} onChange={e => setTypeRetour(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition">
+                          <option value="">Sélectionner</option>
+                          {TYPES_RETOUR.map(t => <option key={t} value={t}>{t}</option>)}
+                        </select>
+                      </Field>
+                      {typeRetour && (
+                        <>
+                          <Field label="Jour retour">
+                            <input type="date" value={jourRetour} onChange={e => setJourRetour(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" />
+                          </Field>
+                          <div className="flex items-center gap-3">
+                            {[{ v: "aDefinir", l: "À définir" }, { v: "precise", l: "Heure précise" }, { v: "tranche", l: "Tranche horaire" }].map(o => (
+                              <label key={o.v} className="flex items-center gap-1.5 text-[12px] text-[--k-text] cursor-pointer">
+                                <input type="radio" name="heureRetourMode" checked={heureRetourMode === o.v} onChange={() => setHeureRetourMode(o.v)} className="accent-[--k-primary]" />
+                                {o.l}
+                              </label>
+                            ))}
+                          </div>
+                          {heureRetourMode === "precise" && (
+                            <Field label="Heure retour">
+                              <input type="time" value={heureRetour} onChange={e => setHeureRetour(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" />
+                            </Field>
+                          )}
+                          {heureRetourMode === "tranche" && (
+                            <div className="grid gap-3 grid-cols-2">
+                              <Field label="Début"><input type="time" value={heureRetourDebut} onChange={e => setHeureRetourDebut(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
+                              <Field label="Fin"><input type="time" value={heureRetourFin} onChange={e => setHeureRetourFin(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
+                            </div>
+                          )}
+                        </>
+                      )}
+                      <div>
+                        <label className="block text-[12px] font-semibold text-[--k-muted] mb-1.5">Commentaire interne</label>
+                        <textarea value={commentaireRetourInterne} onChange={e => setCommentaireRetourInterne(e.target.value)} placeholder="Commentaire interne..." rows={2} className="w-full rounded-lg border border-[--k-border] bg-[--k-surface-2]/30 px-4 py-2 text-[13px] outline-none focus:border-slate-400 focus:bg-white transition" />
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="divide-y divide-[--k-border]">
+                    {/* Provenance section — read */}
+                    <div className="p-5">
+                      <div className="text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide mb-3 flex items-center gap-1.5">
+                        <Building2 className="h-3 w-3" /> Provenance
+                      </div>
+                      <div className="flex items-center gap-3 mb-1">
+                        <span className="rounded-md bg-slate-100 px-2.5 py-1 text-[12px] font-semibold text-slate-700">{provenance}</span>
+                        {provenance === "Antenne locale" && (() => {
+                          const ant = ANTENNES.find(a => a.id === selectedAntenne);
+                          return ant ? <span className="text-[12px] text-[--k-muted]">{ant.name}</span> : null;
+                        })()}
+                      </div>
                       {provenance === "Antenne locale" && (() => {
                         const ant = ANTENNES.find(a => a.id === selectedAntenne);
-                        if (!ant) return null;
+                        if (!ant?.contact) return ant ? (
+                          <div className="mt-3 flex items-center gap-2 rounded-lg border border-dashed border-slate-300 bg-slate-50/50 p-2.5">
+                            <User className="h-3.5 w-3.5 text-slate-400" />
+                            <span className="text-[11px] text-slate-400 italic">Aucun contact affecté à cette antenne</span>
+                          </div>
+                        ) : null;
                         return (
-                          <>
-                            <InfoRow label="Antenne" value={ant.name} />
-                            {ant.contact ? (
-                              <div className="mt-3 pt-3 border-t border-[--k-border]">
-                                <div className="text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide mb-2.5 flex items-center gap-1.5">
-                                  <User className="h-3 w-3" /> Contact antenne
-                                </div>
-                                <div className="flex items-start gap-3 rounded-xl border border-[--k-border] bg-[--k-surface-2]/20 p-3">
-                                  <img src={ant.contact.photo} alt={ant.contact.name} className="h-9 w-9 rounded-full object-cover shrink-0" />
-                                  <div className="flex-1 min-w-0">
-                                    <div className="text-[13px] font-semibold text-[--k-text]">{ant.contact.name}</div>
-                                    <div className="text-[11px] text-[--k-muted] mb-1.5">{ant.contact.role}</div>
-                                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-                                      <a href={`mailto:${ant.contact.email}`} className="flex items-center gap-1 text-[11px] text-[--k-primary] hover:underline">
-                                        <Mail className="h-3 w-3" /> {ant.contact.email}
-                                      </a>
-                                      <a href={`tel:${ant.contact.phone}`} className="flex items-center gap-1 text-[11px] text-[--k-primary] hover:underline">
-                                        <Phone className="h-3 w-3" /> {ant.contact.phone}
-                                      </a>
-                                    </div>
-                                  </div>
-                                </div>
+                          <div className="mt-3 flex items-start gap-3 rounded-lg border border-[--k-border] bg-[--k-surface-2]/20 p-3">
+                            <img src={ant.contact.photo} alt={ant.contact.name} className="h-8 w-8 rounded-full object-cover shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              <div className="text-[12px] font-semibold text-[--k-text]">{ant.contact.name}</div>
+                              <div className="text-[11px] text-[--k-muted]">{ant.contact.role}</div>
+                              <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-1">
+                                <a href={`mailto:${ant.contact.email}`} className="flex items-center gap-1 text-[11px] text-[--k-primary] hover:underline"><Mail className="h-3 w-3" /> {ant.contact.email}</a>
+                                <a href={`tel:${ant.contact.phone}`} className="flex items-center gap-1 text-[11px] text-[--k-primary] hover:underline"><Phone className="h-3 w-3" /> {ant.contact.phone}</a>
                               </div>
-                            ) : (
-                              <div className="mt-3 pt-3 border-t border-[--k-border]">
-                                <div className="flex items-center gap-2 rounded-xl border border-dashed border-slate-300 bg-slate-50/50 p-3">
-                                  <User className="h-4 w-4 text-slate-400" />
-                                  <span className="text-[12px] text-slate-400 italic">Aucun contact affecté à cette antenne</span>
-                                </div>
-                              </div>
-                            )}
-                          </>
+                            </div>
+                          </div>
                         );
                       })()}
                     </div>
-                  )}
-                </div>
-              </div>
 
-              {/* Logistique aller / retour */}
-              <div className="grid gap-5 lg:grid-cols-2">
-                {/* Aller */}
-                <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
-                  <div className="border-b border-[--k-border] px-5 py-3 flex items-center justify-between">
-                    <h2 className="text-[15px] font-bold text-[--k-text]">Logistique aller</h2>
-                    {editing !== "logistique" ? (
-                      <button onClick={() => setEditing("logistique")} className="flex items-center gap-1.5 rounded-lg border border-[--k-border] px-2.5 py-1 text-[11px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition">
-                        <Edit className="h-3 w-3 text-[--k-muted]" /> Modifier
-                      </button>
-                    ) : (
-                      <button onClick={() => setEditing(null)} className="flex items-center gap-1.5 rounded-lg bg-[--k-primary] px-2.5 py-1 text-[11px] font-medium text-white hover:brightness-110 transition shadow-sm">
-                        <CheckCircle2 className="h-3 w-3" /> Valider
-                      </button>
-                    )}
-                  </div>
-                  <div className="p-5">
-                    {editing === "logistique" ? (
-                      <div className="space-y-4">
-                        <Field label="Type d'installation / envoi" required>
-                          <select value={typeInstallation} onChange={e => setTypeInstallation(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition">
-                            <option value="">Séléctionner</option>
-                            {TYPES_INSTALLATION.map(t => <option key={t} value={t}>{t}</option>)}
-                          </select>
-                        </Field>
-                        {(typeInstallation === "Pick-up" || typeInstallation === "Livraison & installation" || typeInstallation === "Livraison seulement") && (
-                          <>
-                            <Field label="Jour de retrait / livraison">
-                              <input type="date" value={jourAller} onChange={e => setJourAller(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" />
-                            </Field>
-                            <div className="flex items-center gap-3">
-                              {[{ v: "aDefinir", l: "À définir" }, { v: "precise", l: "Heure précise" }, { v: "tranche", l: "Tranche horaire" }].map(o => (
-                                <label key={o.v} className="flex items-center gap-1.5 text-[12px] text-[--k-text] cursor-pointer">
-                                  <input type="radio" name="heureAllerMode" checked={heureAllerMode === o.v} onChange={() => setHeureAllerMode(o.v)} className="accent-[--k-primary]" />
-                                  {o.l}
-                                </label>
-                              ))}
-                            </div>
-                            {heureAllerMode === "precise" && (
-                              <Field label="Heure">
-                                <input type="time" value={heureAller} onChange={e => setHeureAller(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" />
-                              </Field>
-                            )}
-                            {heureAllerMode === "tranche" && (
-                              <div className="grid gap-3 grid-cols-2">
-                                <Field label="Début"><input type="time" value={heureAllerDebut} onChange={e => setHeureAllerDebut(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
-                                <Field label="Fin"><input type="time" value={heureAllerFin} onChange={e => setHeureAllerFin(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
-                              </div>
-                            )}
-                          </>
-                        )}
-                        <div>
-                          <label className="block text-[12px] font-semibold text-[--k-muted] mb-1.5">Commentaire interne</label>
-                          <textarea value={commentaireAllerInterne} onChange={e => setCommentaireAllerInterne(e.target.value)} placeholder="Commentaire interne..." rows={2} className="w-full rounded-lg border border-[--k-border] bg-[--k-surface-2]/30 px-4 py-2 text-[13px] outline-none focus:border-slate-400 focus:bg-white transition" />
+                    {/* Aller + Retour — read — side by side */}
+                    <div className="grid lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-[--k-border]">
+                      <div className="p-5">
+                        <div className="text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide mb-3 flex items-center gap-1.5">
+                          <ChevronRight className="h-3 w-3" /> Aller
                         </div>
-                      </div>
-                    ) : (
-                      <div className="space-y-0">
                         <InfoRow label="Type" value={typeInstallation || "—"} />
                         <InfoRow label="Jour" value={jourAller ? new Date(jourAller).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }) : "—"} />
                         <InfoRow label="Heure" value={heureAllerMode === "precise" ? heureAller : heureAllerMode === "tranche" ? `${heureAllerDebut} – ${heureAllerFin}` : "À définir"} />
                         {commentaireAllerInterne && <InfoRow label="Note" value={commentaireAllerInterne} />}
                       </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Retour */}
-                <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm">
-                  <div className="border-b border-[--k-border] px-5 py-3 flex items-center justify-between">
-                    <h2 className="text-[15px] font-bold text-[--k-text]">Logistique retour</h2>
-                    {editing !== "logistique" ? (
-                      <button onClick={() => setEditing("logistique")} className="flex items-center gap-1.5 rounded-lg border border-[--k-border] px-2.5 py-1 text-[11px] font-medium text-[--k-text] hover:bg-[--k-surface-2] transition">
-                        <Edit className="h-3 w-3 text-[--k-muted]" /> Modifier
-                      </button>
-                    ) : (
-                      <button onClick={() => setEditing(null)} className="flex items-center gap-1.5 rounded-lg bg-[--k-primary] px-2.5 py-1 text-[11px] font-medium text-white hover:brightness-110 transition shadow-sm">
-                        <CheckCircle2 className="h-3 w-3" /> Valider
-                      </button>
-                    )}
-                  </div>
-                  <div className="p-5">
-                    {editing === "logistique" ? (
-                      <div className="space-y-4">
-                        <Field label="Type de désinstallation / retour" required>
-                          <select value={typeRetour} onChange={e => setTypeRetour(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition">
-                            <option value="">Séléctionner</option>
-                            {TYPES_RETOUR.map(t => <option key={t} value={t}>{t}</option>)}
-                          </select>
-                        </Field>
-                        {typeRetour && (
-                          <>
-                            <Field label="Jour retour">
-                              <input type="date" value={jourRetour} onChange={e => setJourRetour(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" />
-                            </Field>
-                            <div className="flex items-center gap-3">
-                              {[{ v: "aDefinir", l: "À définir" }, { v: "precise", l: "Heure précise" }, { v: "tranche", l: "Tranche horaire" }].map(o => (
-                                <label key={o.v} className="flex items-center gap-1.5 text-[12px] text-[--k-text] cursor-pointer">
-                                  <input type="radio" name="heureRetourMode" checked={heureRetourMode === o.v} onChange={() => setHeureRetourMode(o.v)} className="accent-[--k-primary]" />
-                                  {o.l}
-                                </label>
-                              ))}
-                            </div>
-                            {heureRetourMode === "precise" && (
-                              <Field label="Heure retour">
-                                <input type="time" value={heureRetour} onChange={e => setHeureRetour(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" />
-                              </Field>
-                            )}
-                            {heureRetourMode === "tranche" && (
-                              <div className="grid gap-3 grid-cols-2">
-                                <Field label="Début"><input type="time" value={heureRetourDebut} onChange={e => setHeureRetourDebut(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
-                                <Field label="Fin"><input type="time" value={heureRetourFin} onChange={e => setHeureRetourFin(e.target.value)} className="w-full rounded-lg border border-[--k-border] bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-400 transition" /></Field>
-                              </div>
-                            )}
-                          </>
-                        )}
-                        <div>
-                          <label className="block text-[12px] font-semibold text-[--k-muted] mb-1.5">Commentaire interne</label>
-                          <textarea value={commentaireRetourInterne} onChange={e => setCommentaireRetourInterne(e.target.value)} placeholder="Commentaire interne..." rows={2} className="w-full rounded-lg border border-[--k-border] bg-[--k-surface-2]/30 px-4 py-2 text-[13px] outline-none focus:border-slate-400 focus:bg-white transition" />
+                      <div className="p-5">
+                        <div className="text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide mb-3 flex items-center gap-1.5">
+                          <ArrowLeft className="h-3 w-3" /> Retour
                         </div>
-                      </div>
-                    ) : (
-                      <div className="space-y-0">
                         <InfoRow label="Type" value={typeRetour || "—"} />
                         <InfoRow label="Jour" value={jourRetour ? new Date(jourRetour).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }) : "—"} />
                         <InfoRow label="Heure" value={heureRetourMode === "precise" ? heureRetour : heureRetourMode === "tranche" ? `${heureRetourDebut} – ${heureRetourFin}` : "À définir"} />
                         {commentaireRetourInterne && <InfoRow label="Note" value={commentaireRetourInterne} />}
                       </div>
-                    )}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
-              {/* Bornes assignées */}
-              <Card title={`Bornes assignées (${BORNES_ASSIGNED.length})`} icon={Camera}>
-                <div className="overflow-x-auto -mx-4 px-4">
+              {/* ── Bornes assignées ── */}
+              <div className="bg-white rounded-2xl border border-[--k-border] shadow-sm overflow-hidden">
+                <div className="border-b border-[--k-border] px-5 py-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Package className="h-4 w-4 text-slate-400" />
+                    <h2 className="text-[15px] font-bold text-[--k-text]">Bornes assignées</h2>
+                    <span className="rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold text-slate-500">{BORNES_ASSIGNED.length}</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-[11px] text-[--k-muted]">
+                    <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-emerald-500" />{BORNES_ASSIGNED.filter(b => b.status === "ready").length} prêtes</span>
+                    <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-amber-500" />{BORNES_ASSIGNED.filter(b => b.status === "transit").length} en transit</span>
+                  </div>
+                </div>
+                <div className="overflow-x-auto">
                   <table className="w-full text-[12px]">
                     <thead>
-                      <tr className="border-b-2 border-[--k-border]">
-                        <th className="px-3 py-2.5 text-left text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide">ID</th>
+                      <tr className="border-b border-[--k-border] bg-slate-50/50">
+                        <th className="px-5 py-2.5 text-left text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide">ID</th>
                         <th className="px-3 py-2.5 text-left text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide">Modèle</th>
                         <th className="px-3 py-2.5 text-left text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide">Provenance</th>
                         <th className="px-3 py-2.5 text-left text-[11px] font-semibold text-[--k-muted] uppercase tracking-wide">Expédition</th>
@@ -1309,8 +1286,8 @@ export default function EventDetail() {
                       {BORNES_ASSIGNED.map(b => {
                         const bs = BORNE_STATUS[b.status];
                         return (
-                          <tr key={b.id} className="border-b border-[--k-border] last:border-0 hover:bg-slate-50/50 transition">
-                            <td className="px-3 py-2.5"><a href={`/bornes/${b.id}`} className="font-mono font-semibold text-[--k-primary] hover:underline">{b.id}</a></td>
+                          <tr key={b.id} className="border-b border-[--k-border] last:border-0 hover:bg-[--k-surface-2]/40 transition">
+                            <td className="px-5 py-2.5"><a href={`/bornes/${b.id}`} className="font-mono font-semibold text-[--k-primary] hover:underline">{b.id}</a></td>
                             <td className="px-3 py-2.5 text-[--k-text]">{b.model}</td>
                             <td className="px-3 py-2.5 text-[--k-muted]">{b.location}</td>
                             <td className="px-3 py-2.5">
@@ -1325,11 +1302,7 @@ export default function EventDetail() {
                     </tbody>
                   </table>
                 </div>
-                <div className="mt-3 flex gap-4 text-[11px] text-[--k-muted]">
-                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-emerald-500" />{BORNES_ASSIGNED.filter(b => b.status === "ready").length} prêtes</span>
-                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-amber-500" />{BORNES_ASSIGNED.filter(b => b.status === "transit").length} en transit</span>
-                </div>
-              </Card>
+              </div>
 
               <div className="flex flex-wrap gap-2">
                 <ActionPill icon={FileText} label="Générer bon de livraison" />
