@@ -45,12 +45,6 @@ const STATUS_MAP = {
   done: { label: "Terminé", dot: "bg-slate-300", bg: "bg-slate-100 text-slate-500 border-slate-200" },
 };
 
-const PRIORITY_MAP = {
-  haute: { label: "Élevée", color: "bg-red-50 text-red-600 border-red-200" },
-  moyenne: { label: "Moyenne", color: "bg-amber-50 text-amber-600 border-amber-200" },
-  faible: { label: "Faible", color: "bg-slate-50 text-slate-500 border-slate-200" },
-};
-
 const PROGRESS_PHASES = [
   { key: "briefing", label: "Brief", color: "bg-cyan-500" },
   { key: "crea", label: "Créa", color: "bg-violet-500" },
@@ -401,8 +395,6 @@ export default function EventsList() {
                     <div className="divide-y divide-[--k-border]">
                       {group.events.map(evt => {
                         const st = STATUS_MAP[evt.status] || { label: evt.status, dot: "bg-slate-300" };
-                        const pr = PRIORITY_MAP[evt.priority];
-                        const pct = getProgressPct(evt.progress);
                         return (
                           <div key={evt.id} className="flex items-center gap-3 px-4 py-2.5 hover:bg-[--k-surface-2]/30 transition w-full text-left cursor-pointer" onClick={() => window.location.href = `/events/${evt.id}`}>
                             {/* Date + heures */}
@@ -410,29 +402,43 @@ export default function EventsList() {
                               <div className="text-[12px] font-semibold text-[--k-text]">{evt.dateLabel}</div>
                               <div className="text-[10px] text-[--k-muted]">{evt.heureDebut} – {evt.heureFin}</div>
                             </div>
-                            <span className={cn("h-2 w-2 rounded-full shrink-0", st.dot)} />
                             {/* Nom / Client */}
                             <div className="flex-1 min-w-0">
                               <div className="text-[12px] font-medium text-[--k-text] truncate">{evt.name}</div>
                               <div className="text-[11px] text-[--k-muted] truncate">{evt.client}</div>
                             </div>
-                            {/* Progress bar */}
-                            <div className="shrink-0 w-[100px]" title={`${pct}%`}>
-                              <div className="flex items-center gap-1.5 mb-0.5">
-                                <div className="flex-1 h-1.5 rounded-full bg-slate-100 overflow-hidden flex">
-                                  {PROGRESS_PHASES.map(p => (
-                                    <div
-                                      key={p.key}
-                                      className={cn("h-full transition-all", evt.progress?.[p.key] ? p.color : "bg-transparent")}
-                                      style={{ width: `${100 / PROGRESS_PHASES.length}%` }}
-                                    />
-                                  ))}
-                                </div>
-                                <span className="text-[10px] font-bold text-[--k-muted] tabular-nums w-7 text-right">{pct}%</span>
-                              </div>
+                            {/* 4 étapes: Brief / Créa / Config / Logi */}
+                            <div className="shrink-0 flex items-center gap-0.5">
+                              {[
+                                { key: "briefing", label: "Brief", color: "text-cyan-500", bg: "bg-cyan-50" },
+                                { key: "crea", label: "Créa", color: "text-violet-500", bg: "bg-violet-50" },
+                                { key: "config", label: "Config", color: "text-rose-500", bg: "bg-rose-50" },
+                                { key: "logistique", label: "Logi", color: "text-amber-500", bg: "bg-amber-50" },
+                              ].map(step => {
+                                const done = evt.progress?.[step.key];
+                                return (
+                                  <div key={step.key} title={step.label} className={cn("flex items-center gap-0.5 rounded-md px-1.5 py-0.5 text-[9px] font-bold transition-colors", done ? `${step.bg} ${step.color}` : "bg-slate-50 text-slate-300")}>
+                                    {done ? <CheckCircle2 className="h-2.5 w-2.5" /> : <Circle className="h-2.5 w-2.5" />}
+                                    <span className="hidden lg:inline">{step.label}</span>
+                                  </div>
+                                );
+                              })}
                             </div>
-                            {/* Priority */}
-                            <span className={cn("shrink-0 rounded-md border px-1.5 py-0.5 text-[10px] font-bold w-[55px] text-center", pr?.color)}>{pr?.label}</span>
+                            {/* Provenance */}
+                            <div className="shrink-0 w-[70px] flex items-center gap-1">
+                              {(evt.provenances || []).includes("antenne") && (
+                                <span className="flex items-center gap-0.5 rounded-md bg-indigo-50 px-1.5 py-0.5 text-[9px] font-bold text-indigo-500" title={evt.antenne ? `Antenne · ${evt.antenne.name}` : "Antenne"}>
+                                  <Building2 className="h-2.5 w-2.5" />
+                                  <span className="hidden xl:inline">Ant.</span>
+                                </span>
+                              )}
+                              {(evt.provenances || []).includes("transporteur") && (
+                                <span className="flex items-center gap-0.5 rounded-md bg-amber-50 px-1.5 py-0.5 text-[9px] font-bold text-amber-500" title="Transporteur">
+                                  <Truck className="h-2.5 w-2.5" />
+                                  <span className="hidden xl:inline">Exp.</span>
+                                </span>
+                              )}
+                            </div>
                             {/* Code */}
                             <span className="text-[11px] font-mono text-[--k-muted] shrink-0 w-10">{evt.code}</span>
                             {/* Ville */}
@@ -447,7 +453,7 @@ export default function EventsList() {
                                   <div className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 z-50 opacity-0 group-hover/com:opacity-100 transition-opacity">
                                     <div className="whitespace-nowrap rounded-lg bg-slate-900 px-2.5 py-1.5 text-[10px] text-white shadow-lg">
                                       <span className="font-medium">{TEAM_MEMBERS[evt.commercial].name}</span>
-                                      <span className="text-white/50 ml-1">• Commercial</span>
+                                      <span className="text-white/50 ml-1">· Commercial</span>
                                     </div>
                                   </div>
                                 </div>
@@ -458,7 +464,7 @@ export default function EventsList() {
                                   <div className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 z-50 opacity-0 group-hover/cp:opacity-100 transition-opacity">
                                     <div className="whitespace-nowrap rounded-lg bg-slate-900 px-2.5 py-1.5 text-[10px] text-white shadow-lg">
                                       <span className="font-medium">{TEAM_MEMBERS[cp].name}</span>
-                                      <span className="text-white/50 ml-1">• {TEAM_MEMBERS[cp].role}</span>
+                                      <span className="text-white/50 ml-1">· {TEAM_MEMBERS[cp].role}</span>
                                     </div>
                                   </div>
                                 </div>
@@ -526,41 +532,53 @@ export default function EventsList() {
                     {/* Cards */}
                     <div className="space-y-2.5 pt-2.5 pb-1 min-h-[100px]">
                       {colEvents.length === 0 ? (
-                        <div className="rounded-xl border-2 border-dashed border-[--k-border] p-4 text-center text-[11px] text-[--k-muted]">
+                        <div className="rounded-xl border-2 border-dashed border-slate-200 p-4 text-center text-[11px] text-[--k-muted]">
                           Aucun événement
                         </div>
                       ) : colEvents.map(evt => {
-                        const pr = PRIORITY_MAP[evt.priority];
-                        const pct = getProgressPct(evt.progress);
                         return (
                           <a
                             key={evt.id}
                             href={`/events/${evt.id}`}
-                            className="block rounded-xl border border-[--k-border] bg-white p-3 shadow-sm hover:shadow-md hover:border-slate-300 transition"
+                            className="block rounded-xl border border-slate-200/70 bg-white p-3 hover:shadow-md hover:border-slate-300 transition"
                           >
-                            <div className="flex items-start justify-between gap-2 mb-2">
+                            <div className="flex items-start justify-between gap-2 mb-1.5">
                               <div className="text-[12px] font-semibold text-[--k-text] leading-snug">{evt.name}</div>
                               <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold", evt.clientType === "Pro" ? "bg-blue-100 text-blue-700" : "bg-pink-100 text-pink-700")}>{evt.clientType}</span>
                             </div>
                             <div className="text-[11px] text-[--k-muted] mb-2">{evt.client}</div>
                             {/* Tags */}
-                            <div className="flex flex-wrap items-center gap-1.5 mb-2.5">
+                            <div className="flex flex-wrap items-center gap-1 mb-2">
                               <span className="rounded-md bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-600">{evt.dateLabel}</span>
-                              <span className={cn("rounded-md border px-1.5 py-0.5 text-[10px] font-bold", pr?.color)}>{pr?.label}</span>
                               <span className="rounded-md bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-500">{evt.bornes} bornes</span>
+                              {/* Provenance */}
+                              {(evt.provenances || []).includes("antenne") && (
+                                <span className="flex items-center gap-0.5 rounded-md bg-indigo-50 px-1.5 py-0.5 text-[9px] font-bold text-indigo-500">
+                                  <Building2 className="h-2.5 w-2.5" /> Ant.
+                                </span>
+                              )}
+                              {(evt.provenances || []).includes("transporteur") && (
+                                <span className="flex items-center gap-0.5 rounded-md bg-amber-50 px-1.5 py-0.5 text-[9px] font-bold text-amber-500">
+                                  <Truck className="h-2.5 w-2.5" /> Exp.
+                                </span>
+                              )}
                             </div>
-                            {/* Progress mini bar */}
-                            <div className="flex items-center gap-1.5 mb-2.5">
-                              <div className="flex-1 h-1 rounded-full bg-slate-100 overflow-hidden flex">
-                                {PROGRESS_PHASES.map(p => (
-                                  <div
-                                    key={p.key}
-                                    className={cn("h-full", evt.progress?.[p.key] ? p.color : "bg-transparent")}
-                                    style={{ width: `${100 / PROGRESS_PHASES.length}%` }}
-                                  />
-                                ))}
-                              </div>
-                              <span className="text-[9px] font-bold text-[--k-muted] tabular-nums">{pct}%</span>
+                            {/* 4 étapes */}
+                            <div className="flex items-center gap-0.5 mb-2.5">
+                              {[
+                                { key: "briefing", label: "Brief", color: "text-cyan-500", bg: "bg-cyan-50" },
+                                { key: "crea", label: "Créa", color: "text-violet-500", bg: "bg-violet-50" },
+                                { key: "config", label: "Config", color: "text-rose-500", bg: "bg-rose-50" },
+                                { key: "logistique", label: "Logi", color: "text-amber-500", bg: "bg-amber-50" },
+                              ].map(step => {
+                                const done = evt.progress?.[step.key];
+                                return (
+                                  <div key={step.key} className={cn("flex items-center gap-0.5 rounded-md px-1.5 py-0.5 text-[9px] font-bold", done ? `${step.bg} ${step.color}` : "bg-slate-50 text-slate-300")}>
+                                    {done ? <CheckCircle2 className="h-2.5 w-2.5" /> : <Circle className="h-2.5 w-2.5" />}
+                                    {step.label}
+                                  </div>
+                                );
+                              })}
                             </div>
                             {/* Bottom: ville + avatars */}
                             <div className="flex items-center justify-between">
