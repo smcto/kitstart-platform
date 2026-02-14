@@ -3,7 +3,7 @@ import { AppShell } from "../components/AppShell";
 import { PageHeader } from "../components/PageHeader";
 import { cn } from "../components/ui/cn";
 import {
-  Search, Filter, Plus, Download, MapPin, Monitor,
+  Search, Plus, Download, MapPin, Monitor,
   Truck, Building2, MoreHorizontal, Edit, Eye, Copy, Trash2, FileText,
   ChevronDown, ChevronRight, X,
   CheckCircle2, Circle, Clock, AlertTriangle
@@ -105,13 +105,13 @@ function getProgressPct(progress) {
 /* ── Page ──────────────────────────────────────────── */
 
 export default function EventsList() {
-  const [tab, setTab] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all"); // "all" | "active" | "done"
   const [search, setSearch] = useState("");
   const [actionMenu, setActionMenu] = useState(null);
   const [villeFilter, setVilleFilter] = useState("all");
   const [provenanceFilter, setProvenanceFilter] = useState("all");
   const [personneFilter, setPersonneFilter] = useState("all");
-  const [periodFilter, setPeriodFilter] = useState("all");
+  const [periodFilter, setPeriodFilter] = useState("month");
   const [customDateFrom, setCustomDateFrom] = useState("");
   const [customDateTo, setCustomDateTo] = useState("");
   const [stepFilter, setStepFilter] = useState([]); // array of incomplete step keys: "briefing", "crea", "config", "logistique"
@@ -145,8 +145,8 @@ export default function EventsList() {
       const q = search.toLowerCase();
       if (!e.name.toLowerCase().includes(q) && !e.client.toLowerCase().includes(q) && !e.id.toLowerCase().includes(q) && !e.code.toLowerCase().includes(q)) return false;
     }
-    if (tab === "active") { if (e.status === "done") return false; }
-    if (tab === "done") { if (e.status !== "done") return false; }
+    if (statusFilter === "active") { if (e.status === "done") return false; }
+    if (statusFilter === "done") { if (e.status !== "done") return false; }
     return true;
   }).filter(e => {
     // Period filter
@@ -170,8 +170,8 @@ export default function EventsList() {
   const toggleStepFilter = (key) => setStepFilter(prev => prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]);
   const toggleBorneTypeFilter = (bt) => setBorneTypeFilter(prev => prev.includes(bt) ? prev.filter(b => b !== bt) : [...prev, bt]);
 
-  const hasFilters = villeFilter !== "all" || provenanceFilter !== "all" || personneFilter !== "all" || periodFilter !== "all" || stepFilter.length > 0 || clientTypeFilter !== "all" || borneTypeFilter.length > 0;
-  const clearFilters = () => { setVilleFilter("all"); setProvenanceFilter("all"); setPersonneFilter("all"); setPeriodFilter("all"); setStepFilter([]); setClientTypeFilter("all"); setBorneTypeFilter([]); setCustomDateFrom(""); setCustomDateTo(""); };
+  const hasFilters = villeFilter !== "all" || provenanceFilter !== "all" || personneFilter !== "all" || periodFilter !== "month" || statusFilter !== "all" || stepFilter.length > 0 || clientTypeFilter !== "all" || borneTypeFilter.length > 0;
+  const clearFilters = () => { setVilleFilter("all"); setProvenanceFilter("all"); setPersonneFilter("all"); setPeriodFilter("month"); setStatusFilter("all"); setStepFilter([]); setClientTypeFilter("all"); setBorneTypeFilter([]); setCustomDateFrom(""); setCustomDateTo(""); };
 
   // Group by month for table view
   const grouped = {};
@@ -198,32 +198,15 @@ export default function EventsList() {
       />
 
       <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm">
-        {/* Toolbar */}
-        <div className="flex flex-wrap items-center gap-2 border-b border-[--k-border] px-4 py-2.5">
-          {/* Status tabs */}
-          <div className="flex gap-1 rounded-lg bg-[--k-surface-2] p-0.5">
-            {STATUS_TABS.map(t => (
-              <button
-                key={t.key}
-                className={cn(
-                  "rounded-md px-3 py-1.5 text-[12px] font-medium transition",
-                  tab === t.key ? "bg-white text-[--k-text] shadow-sm" : "text-[--k-muted] hover:text-[--k-text]"
-                )}
-                onClick={() => setTab(t.key)}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
-          <div className="flex-1" />
-          {/* Search */}
-          <div className="relative">
+        {/* Toolbar: search + export */}
+        <div className="flex items-center gap-2 border-b border-[--k-border] px-4 py-2.5">
+          <div className="relative flex-1">
             <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[--k-muted]" />
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="Rechercher..."
-              className="h-8 w-48 rounded-lg border border-[--k-border] bg-[--k-surface-2]/50 pl-8 pr-3 text-[12px] outline-none focus:border-[--k-primary] focus:ring-1 focus:ring-[--k-primary]/20 transition"
+              placeholder="Rechercher un événement..."
+              className="h-8 w-full max-w-xs rounded-lg border border-[--k-border] bg-[--k-surface-2]/50 pl-8 pr-3 text-[12px] outline-none focus:border-[--k-primary] focus:ring-1 focus:ring-[--k-primary]/20 transition"
             />
           </div>
           <button className="flex h-8 items-center gap-1.5 rounded-lg border border-[--k-border] px-2.5 text-[12px] font-medium text-[--k-muted] hover:bg-[--k-surface-2] transition">
@@ -231,16 +214,32 @@ export default function EventsList() {
           </button>
         </div>
 
-        {/* Filters row 1: period + classic filters */}
+        {/* Single filter row */}
         <div className="flex flex-wrap items-center gap-2 border-b border-[--k-border] px-4 py-2">
+          {/* Status: Tous / En cours / Terminés */}
+          <div className="flex items-center gap-0.5 rounded-lg bg-[--k-surface-2] p-0.5 border-r border-[--k-border] pr-3 mr-1">
+            {STATUS_TABS.map(t => (
+              <button
+                key={t.key}
+                onClick={() => setStatusFilter(t.key)}
+                className={cn(
+                  "rounded-md px-2.5 py-1 text-[11px] font-medium transition",
+                  statusFilter === t.key ? "bg-white text-[--k-text] shadow-sm" : "text-[--k-muted] hover:text-[--k-text]"
+                )}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+
           {/* Period pills */}
-          <div className="flex items-center gap-1 border-r border-[--k-border] pr-3 mr-1">
+          <div className="flex items-center gap-0.5 border-r border-[--k-border] pr-3 mr-1">
             {PERIOD_OPTIONS.filter(p => p.key !== "custom").map(p => (
               <button
                 key={p.key}
-                onClick={() => setPeriodFilter(periodFilter === p.key ? "all" : p.key)}
+                onClick={() => setPeriodFilter(p.key)}
                 className={cn(
-                  "rounded-md px-2.5 py-1 text-[11px] font-medium transition",
+                  "rounded-md px-2 py-1 text-[11px] font-medium transition",
                   periodFilter === p.key
                     ? "bg-[--k-primary] text-white shadow-sm"
                     : "text-[--k-muted] hover:bg-[--k-surface-2] hover:text-[--k-text]"
@@ -250,9 +249,9 @@ export default function EventsList() {
               </button>
             ))}
             <button
-              onClick={() => setPeriodFilter(periodFilter === "custom" ? "all" : "custom")}
+              onClick={() => setPeriodFilter("custom")}
               className={cn(
-                "rounded-md px-2.5 py-1 text-[11px] font-medium transition",
+                "rounded-md px-2 py-1 text-[11px] font-medium transition",
                 periodFilter === "custom"
                   ? "bg-[--k-primary] text-white shadow-sm"
                   : "text-[--k-muted] hover:bg-[--k-surface-2] hover:text-[--k-text]"
@@ -260,25 +259,23 @@ export default function EventsList() {
             >
               Personnalisé
             </button>
+            {periodFilter === "custom" && (
+              <>
+                <input type="date" value={customDateFrom} onChange={e => setCustomDateFrom(e.target.value)} className="ml-1 h-6 rounded-md border border-[--k-border] bg-white px-1.5 text-[10px] font-medium outline-none focus:border-[--k-primary] transition" />
+                <span className="text-[10px] text-[--k-muted]">→</span>
+                <input type="date" value={customDateTo} onChange={e => setCustomDateTo(e.target.value)} className="h-6 rounded-md border border-[--k-border] bg-white px-1.5 text-[10px] font-medium outline-none focus:border-[--k-primary] transition" />
+              </>
+            )}
           </div>
-
-          {/* Custom date range (visible when custom selected) */}
-          {periodFilter === "custom" && (
-            <div className="flex items-center gap-1.5">
-              <input type="date" value={customDateFrom} onChange={e => setCustomDateFrom(e.target.value)} className="h-7 rounded-md border border-[--k-border] bg-white px-2 text-[11px] font-medium outline-none focus:border-[--k-primary] transition" />
-              <span className="text-[10px] text-[--k-muted]">→</span>
-              <input type="date" value={customDateTo} onChange={e => setCustomDateTo(e.target.value)} className="h-7 rounded-md border border-[--k-border] bg-white px-2 text-[11px] font-medium outline-none focus:border-[--k-primary] transition" />
-            </div>
-          )}
 
           {/* Step incomplete filter */}
           <div className="flex items-center gap-0.5 border-r border-[--k-border] pr-3 mr-1">
-            <span className="text-[10px] text-[--k-muted] font-medium mr-1 shrink-0">Étape manquante :</span>
+            <span className="text-[10px] text-[--k-muted] font-medium mr-0.5 shrink-0">Étapes :</span>
             {[
-              { key: "briefing", label: "Brief", color: "bg-cyan-500", lightBg: "bg-cyan-50 text-cyan-600 ring-cyan-200" },
-              { key: "crea", label: "Créa", color: "bg-violet-500", lightBg: "bg-violet-50 text-violet-600 ring-violet-200" },
-              { key: "config", label: "Config", color: "bg-rose-500", lightBg: "bg-rose-50 text-rose-600 ring-rose-200" },
-              { key: "logistique", label: "Logi", color: "bg-amber-500", lightBg: "bg-amber-50 text-amber-600 ring-amber-200" },
+              { key: "briefing", label: "Brief", lightBg: "bg-cyan-50 text-cyan-600 ring-cyan-200" },
+              { key: "crea", label: "Créa", lightBg: "bg-violet-50 text-violet-600 ring-violet-200" },
+              { key: "config", label: "Config", lightBg: "bg-rose-50 text-rose-600 ring-rose-200" },
+              { key: "logistique", label: "Logi", lightBg: "bg-amber-50 text-amber-600 ring-amber-200" },
             ].map(step => (
               <button
                 key={step.key}
@@ -295,21 +292,56 @@ export default function EventsList() {
             ))}
           </div>
 
-          <div className="flex-1" />
+          {/* Pro / Part */}
+          <div className="flex items-center gap-0.5 rounded-lg border border-[--k-border] bg-white p-0.5">
+            {[
+              { key: "all", label: "Tous" },
+              { key: "Pro", label: "Pro" },
+              { key: "Part.", label: "Part." },
+            ].map(ct => (
+              <button
+                key={ct.key}
+                onClick={() => setClientTypeFilter(ct.key)}
+                className={cn(
+                  "rounded-md px-2 py-1 text-[10px] font-bold transition-all",
+                  clientTypeFilter === ct.key
+                    ? ct.key === "Pro" ? "bg-blue-50 text-blue-600" : ct.key === "Part." ? "bg-pink-50 text-pink-600" : "bg-slate-100 text-slate-600"
+                    : "text-slate-400 hover:text-slate-600"
+                )}
+              >
+                {ct.label}
+              </button>
+            ))}
+          </div>
 
-          {/* Classic filters */}
-          <Filter className="h-3.5 w-3.5 text-[--k-muted]" />
+          {/* Borne type */}
+          <div className="flex items-center gap-0.5">
+            {BORNE_TYPES.map(bt => (
+              <button
+                key={bt}
+                onClick={() => toggleBorneTypeFilter(bt)}
+                className={cn(
+                  "rounded-md px-2 py-1 text-[10px] font-bold transition-all",
+                  borneTypeFilter.includes(bt)
+                    ? "bg-slate-700 text-white ring-1 ring-slate-600"
+                    : "text-slate-400 hover:bg-slate-50 hover:text-slate-600"
+                )}
+              >
+                {bt}
+              </button>
+            ))}
+          </div>
 
           {/* Ville */}
           <div ref={villeRef} className="relative">
             <button
               onClick={() => setVilleDropdownOpen(v => !v)}
               className={cn(
-                "flex items-center gap-1.5 h-7 w-[130px] rounded-lg border bg-white px-2 text-[11px] font-medium transition",
+                "flex items-center gap-1.5 h-7 w-[120px] rounded-lg border bg-white px-2 text-[11px] font-medium transition",
                 villeFilter !== "all" ? "border-[--k-primary] text-[--k-primary]" : "border-[--k-border] text-[--k-text]"
               )}
             >
-              <span className="truncate">{villeFilter === "all" ? "Ville : Toutes" : villeFilter}</span>
+              <span className="truncate">{villeFilter === "all" ? "Ville" : villeFilter}</span>
               <ChevronDown className="h-3 w-3 shrink-0 ml-auto" />
             </button>
             {villeDropdownOpen && (
@@ -333,52 +365,12 @@ export default function EventsList() {
           <select
             value={provenanceFilter}
             onChange={e => setProvenanceFilter(e.target.value)}
-            className={cn("h-7 w-[155px] rounded-lg border bg-white px-2 text-[11px] font-medium text-[--k-text] outline-none transition", provenanceFilter !== "all" ? "border-[--k-primary] text-[--k-primary]" : "border-[--k-border]")}
+            className={cn("h-7 w-[130px] rounded-lg border bg-white px-2 text-[11px] font-medium text-[--k-text] outline-none transition", provenanceFilter !== "all" ? "border-[--k-primary] text-[--k-primary]" : "border-[--k-border]")}
           >
-            <option value="all">Provenance : Toutes</option>
-            <option value="antenne">Antenne locale</option>
+            <option value="all">Provenance</option>
+            <option value="antenne">Antenne</option>
             <option value="transporteur">Transporteur</option>
           </select>
-
-          {/* Client type: Pro / Part */}
-          <div className="flex items-center gap-0.5 rounded-lg border border-[--k-border] bg-white p-0.5">
-            {[
-              { key: "all", label: "Tous" },
-              { key: "Pro", label: "Pro" },
-              { key: "Part.", label: "Part." },
-            ].map(ct => (
-              <button
-                key={ct.key}
-                onClick={() => setClientTypeFilter(ct.key)}
-                className={cn(
-                  "rounded-md px-2 py-1 text-[10px] font-bold transition-all",
-                  clientTypeFilter === ct.key
-                    ? ct.key === "Pro" ? "bg-blue-50 text-blue-600" : ct.key === "Part." ? "bg-pink-50 text-pink-600" : "bg-slate-100 text-slate-600"
-                    : "text-slate-400 hover:text-slate-600"
-                )}
-              >
-                {ct.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Borne type filter */}
-          <div className="flex items-center gap-0.5">
-            {BORNE_TYPES.map(bt => (
-              <button
-                key={bt}
-                onClick={() => toggleBorneTypeFilter(bt)}
-                className={cn(
-                  "rounded-md px-2 py-1 text-[10px] font-bold transition-all",
-                  borneTypeFilter.includes(bt)
-                    ? "bg-slate-700 text-white ring-1 ring-slate-600"
-                    : "text-slate-400 hover:bg-slate-50 hover:text-slate-600"
-                )}
-              >
-                {bt}
-              </button>
-            ))}
-          </div>
 
           {hasFilters && (
             <button onClick={clearFilters} className="flex items-center gap-1 text-[11px] text-[--k-muted] hover:text-[--k-danger] transition">
@@ -554,10 +546,23 @@ export default function EventsList() {
                                 </div>
                               ))}
                             </div>
-                            {/* Bornes */}
-                            <div className="shrink-0 w-[50px] text-center">
-                              <div className="text-[11px] font-semibold text-[--k-text]">{evt.borneNums?.length || 0}/{evt.bornes}</div>
-                              <div className="text-[9px] text-[--k-muted]">bornes</div>
+                            {/* Bornes — type breakdown */}
+                            <div className="shrink-0 flex items-center gap-1">
+                              <span className="text-[11px] font-bold text-[--k-text] tabular-nums">{evt.bornes}</span>
+                              {(() => {
+                                const counts = {};
+                                (evt.borneNums || []).forEach(b => {
+                                  const t = b.startsWith("C") ? "C" : b.startsWith("S") ? "S" : b.startsWith("P") ? "P" : "?";
+                                  counts[t] = (counts[t] || 0) + 1;
+                                });
+                                const labels = { C: "Classik", S: "Spherik", P: "Prestige" };
+                                const colors = { C: "bg-slate-100 text-slate-500", S: "bg-sky-50 text-sky-600", P: "bg-amber-50 text-amber-600" };
+                                return Object.entries(counts).map(([t, n]) => (
+                                  <span key={t} className={cn("rounded px-1.5 py-0.5 text-[9px] font-bold", colors[t] || "bg-slate-50 text-slate-400")}>
+                                    {n}{labels[t] ? ` ${labels[t].slice(0, 3)}` : ""}
+                                  </span>
+                                ));
+                              })()}
                             </div>
                             <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-semibold shrink-0 w-[42px] text-center", evt.clientType === "Pro" ? "bg-blue-100 text-blue-700" : "bg-pink-100 text-pink-700")}>{evt.clientType}</span>
                             {/* Menu actions */}
