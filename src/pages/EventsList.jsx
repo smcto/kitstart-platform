@@ -5,7 +5,7 @@ import { cn } from "../components/ui/cn";
 import {
   Search, Filter, Plus, Download, MapPin, Monitor,
   Truck, Building2, MoreHorizontal, Edit, Eye, Copy, Trash2, FileText,
-  ChevronDown, ChevronLeft, ChevronRight, X, LayoutGrid, List, CalendarDays,
+  ChevronDown, ChevronRight, X,
   CheckCircle2, Circle, Clock, AlertTriangle
 } from "lucide-react";
 
@@ -68,21 +68,6 @@ const PERIOD_OPTIONS = [
   { key: "custom", label: "Personnalisé" },
 ];
 
-const VIEW_MODES = [
-  { key: "table", label: "Tableau", icon: List },
-  { key: "kanban", label: "Kanban", icon: LayoutGrid },
-  { key: "calendar", label: "Calendrier", icon: CalendarDays },
-];
-
-// Kanban column order
-const KANBAN_COLUMNS = [
-  { key: "confirmed", label: "Confirmé", color: "bg-blue-500" },
-  { key: "design", label: "Créa", color: "bg-violet-500" },
-  { key: "logistics", label: "Logistique", color: "bg-amber-500" },
-  { key: "ready", label: "Prêt", color: "bg-emerald-500" },
-  { key: "live", label: "En cours", color: "bg-rose-500" },
-  { key: "done", label: "Terminé", color: "bg-slate-400" },
-];
 
 const ALL_VILLES = [...new Set(EVENTS.map(e => e.ville))].sort();
 
@@ -98,6 +83,18 @@ function getMonthLabel(dateStr) {
   return `${MONTH_NAMES_FR[d.getMonth()]} ${d.getFullYear()}`;
 }
 
+const BORNE_TYPES = ["Classik", "Spherik", "Prestige", "Autre"];
+function getBorneTypes(borneNums) {
+  const types = new Set();
+  (borneNums || []).forEach(b => {
+    if (b.startsWith("C")) types.add("Classik");
+    else if (b.startsWith("S")) types.add("Spherik");
+    else if (b.startsWith("P")) types.add("Prestige");
+    else types.add("Autre");
+  });
+  return [...types];
+}
+
 function getProgressPct(progress) {
   if (!progress) return 0;
   const total = PROGRESS_PHASES.length;
@@ -109,7 +106,6 @@ function getProgressPct(progress) {
 
 export default function EventsList() {
   const [tab, setTab] = useState("all");
-  const [viewMode, setViewMode] = useState("table");
   const [search, setSearch] = useState("");
   const [actionMenu, setActionMenu] = useState(null);
   const [villeFilter, setVilleFilter] = useState("all");
@@ -122,7 +118,8 @@ export default function EventsList() {
   const [showTeamFilter, setShowTeamFilter] = useState(false);
   const [villeDropdownOpen, setVilleDropdownOpen] = useState(false);
   const [villeSearch, setVilleSearch] = useState("");
-  const [calMonth, setCalMonth] = useState(() => { const n = new Date(); return { year: n.getFullYear(), month: n.getMonth() }; });
+  const [clientTypeFilter, setClientTypeFilter] = useState("all"); // "all" | "Pro" | "Part."
+  const [borneTypeFilter, setBorneTypeFilter] = useState([]); // array of "Classik" | "Spherik" | "Prestige" | "Autre"
   const actionMenuRef = useRef(null);
   const villeRef = useRef(null);
 
@@ -165,13 +162,16 @@ export default function EventsList() {
     (villeFilter === "all" || e.ville === villeFilter) &&
     (provenanceFilter === "all" || (e.provenances || []).includes(provenanceFilter)) &&
     (personneFilter === "all" || e.commercial === personneFilter || (e.chefsProjets || []).includes(personneFilter)) &&
-    (stepFilter.length === 0 || stepFilter.some(sk => !e.progress?.[sk]))
+    (stepFilter.length === 0 || stepFilter.some(sk => !e.progress?.[sk])) &&
+    (clientTypeFilter === "all" || e.clientType === clientTypeFilter) &&
+    (borneTypeFilter.length === 0 || borneTypeFilter.some(bt => getBorneTypes(e.borneNums).includes(bt)))
   );
 
   const toggleStepFilter = (key) => setStepFilter(prev => prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]);
+  const toggleBorneTypeFilter = (bt) => setBorneTypeFilter(prev => prev.includes(bt) ? prev.filter(b => b !== bt) : [...prev, bt]);
 
-  const hasFilters = villeFilter !== "all" || provenanceFilter !== "all" || personneFilter !== "all" || periodFilter !== "all" || stepFilter.length > 0;
-  const clearFilters = () => { setVilleFilter("all"); setProvenanceFilter("all"); setPersonneFilter("all"); setPeriodFilter("all"); setStepFilter([]); setCustomDateFrom(""); setCustomDateTo(""); };
+  const hasFilters = villeFilter !== "all" || provenanceFilter !== "all" || personneFilter !== "all" || periodFilter !== "all" || stepFilter.length > 0 || clientTypeFilter !== "all" || borneTypeFilter.length > 0;
+  const clearFilters = () => { setVilleFilter("all"); setProvenanceFilter("all"); setPersonneFilter("all"); setPeriodFilter("all"); setStepFilter([]); setClientTypeFilter("all"); setBorneTypeFilter([]); setCustomDateFrom(""); setCustomDateTo(""); };
 
   // Group by month for table view
   const grouped = {};
@@ -200,26 +200,6 @@ export default function EventsList() {
       <div className="rounded-2xl border border-[--k-border] bg-white shadow-sm">
         {/* Toolbar */}
         <div className="flex flex-wrap items-center gap-2 border-b border-[--k-border] px-4 py-2.5">
-          {/* View mode tabs — Monday-style */}
-          <div className="flex items-center gap-0.5 border-r border-[--k-border] pr-3 mr-1">
-            {VIEW_MODES.map(v => {
-              const Icon = v.icon;
-              return (
-                <button
-                  key={v.key}
-                  onClick={() => setViewMode(v.key)}
-                  className={cn(
-                    "flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[12px] font-medium transition",
-                    viewMode === v.key ? "bg-[--k-primary-2] text-[--k-primary]" : "text-[--k-muted] hover:text-[--k-text] hover:bg-[--k-surface-2]"
-                  )}
-                >
-                  <Icon className="h-3.5 w-3.5" />
-                  {v.label}
-                </button>
-              );
-            })}
-          </div>
-
           {/* Status tabs */}
           <div className="flex gap-1 rounded-lg bg-[--k-surface-2] p-0.5">
             {STATUS_TABS.map(t => (
@@ -360,6 +340,46 @@ export default function EventsList() {
             <option value="transporteur">Transporteur</option>
           </select>
 
+          {/* Client type: Pro / Part */}
+          <div className="flex items-center gap-0.5 rounded-lg border border-[--k-border] bg-white p-0.5">
+            {[
+              { key: "all", label: "Tous" },
+              { key: "Pro", label: "Pro" },
+              { key: "Part.", label: "Part." },
+            ].map(ct => (
+              <button
+                key={ct.key}
+                onClick={() => setClientTypeFilter(ct.key)}
+                className={cn(
+                  "rounded-md px-2 py-1 text-[10px] font-bold transition-all",
+                  clientTypeFilter === ct.key
+                    ? ct.key === "Pro" ? "bg-blue-50 text-blue-600" : ct.key === "Part." ? "bg-pink-50 text-pink-600" : "bg-slate-100 text-slate-600"
+                    : "text-slate-400 hover:text-slate-600"
+                )}
+              >
+                {ct.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Borne type filter */}
+          <div className="flex items-center gap-0.5">
+            {BORNE_TYPES.map(bt => (
+              <button
+                key={bt}
+                onClick={() => toggleBorneTypeFilter(bt)}
+                className={cn(
+                  "rounded-md px-2 py-1 text-[10px] font-bold transition-all",
+                  borneTypeFilter.includes(bt)
+                    ? "bg-slate-700 text-white ring-1 ring-slate-600"
+                    : "text-slate-400 hover:bg-slate-50 hover:text-slate-600"
+                )}
+              >
+                {bt}
+              </button>
+            ))}
+          </div>
+
           {hasFilters && (
             <button onClick={clearFilters} className="flex items-center gap-1 text-[11px] text-[--k-muted] hover:text-[--k-danger] transition">
               <X className="h-3 w-3" /> Effacer
@@ -443,9 +463,8 @@ export default function EventsList() {
           )}
         </div>
 
-        {/* ── TABLE VIEW ── */}
-        {viewMode === "table" && (
-          <>
+        {/* ── TABLE ── */}
+        <>
             {filtered.length === 0 ? (
               <div className="px-4 py-8 text-center text-[13px] text-[--k-muted]">Aucun événement ne correspond aux filtres.</div>
             ) : (
@@ -579,197 +598,7 @@ export default function EventsList() {
               </div>
             )}
           </>
-        )}
 
-        {/* ── KANBAN VIEW ── */}
-        {viewMode === "kanban" && (
-          <div className="p-4 overflow-x-auto">
-            <div className="flex gap-4 min-w-max">
-              {KANBAN_COLUMNS.map(col => {
-                const colEvents = filtered.filter(e => e.status === col.key);
-                return (
-                  <div key={col.key} className="w-[260px] shrink-0">
-                    {/* Column header */}
-                    <div className={cn("rounded-t-xl px-3 py-2 flex items-center justify-between", col.color)}>
-                      <span className="text-[12px] font-bold text-white">{col.label}</span>
-                      <span className="rounded-full bg-white/30 px-1.5 py-0.5 text-[10px] font-bold text-white">{colEvents.length}</span>
-                    </div>
-                    {/* Cards */}
-                    <div className="space-y-2.5 pt-2.5 pb-1 min-h-[100px]">
-                      {colEvents.length === 0 ? (
-                        <div className="rounded-xl border-2 border-dashed border-slate-200 p-4 text-center text-[11px] text-[--k-muted]">
-                          Aucun événement
-                        </div>
-                      ) : colEvents.map(evt => {
-                        return (
-                          <a
-                            key={evt.id}
-                            href={`/events/${evt.id}`}
-                            className="block rounded-xl border border-slate-200/70 bg-white p-3 hover:shadow-md hover:border-slate-300 transition"
-                          >
-                            <div className="flex items-start justify-between gap-2 mb-1.5">
-                              <div className="text-[12px] font-semibold text-[--k-text] leading-snug">{evt.name}</div>
-                              <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold", evt.clientType === "Pro" ? "bg-blue-100 text-blue-700" : "bg-pink-100 text-pink-700")}>{evt.clientType}</span>
-                            </div>
-                            <div className="text-[11px] text-[--k-muted] mb-2">{evt.client}</div>
-                            {/* Tags */}
-                            <div className="flex flex-wrap items-center gap-1 mb-2">
-                              <span className="rounded-md bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-600">{evt.dateLabel}</span>
-                              <span className="rounded-md bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-500">{evt.bornes} bornes</span>
-                              {/* Provenance */}
-                              {(evt.provenances || []).includes("antenne") && (
-                                <span className="flex items-center gap-0.5 rounded-md bg-indigo-50 px-1.5 py-0.5 text-[9px] font-bold text-indigo-500">
-                                  <Building2 className="h-2.5 w-2.5" /> Ant.
-                                </span>
-                              )}
-                              {(evt.provenances || []).includes("transporteur") && (
-                                <span className="flex items-center gap-0.5 rounded-md bg-amber-50 px-1.5 py-0.5 text-[9px] font-bold text-amber-500">
-                                  <Truck className="h-2.5 w-2.5" /> Exp.
-                                </span>
-                              )}
-                            </div>
-                            {/* 4 étapes */}
-                            <div className="flex items-center gap-0.5 mb-2.5">
-                              {[
-                                { key: "briefing", label: "Brief", color: "text-cyan-500", bg: "bg-cyan-50" },
-                                { key: "crea", label: "Créa", color: "text-violet-500", bg: "bg-violet-50" },
-                                { key: "config", label: "Config", color: "text-rose-500", bg: "bg-rose-50" },
-                                { key: "logistique", label: "Logi", color: "text-amber-500", bg: "bg-amber-50" },
-                              ].map(step => {
-                                const done = evt.progress?.[step.key];
-                                return (
-                                  <div key={step.key} className={cn("flex items-center gap-0.5 rounded-md px-1.5 py-0.5 text-[9px] font-bold", done ? `${step.bg} ${step.color}` : "bg-slate-50 text-slate-300")}>
-                                    {done ? <CheckCircle2 className="h-2.5 w-2.5" /> : <Circle className="h-2.5 w-2.5" />}
-                                    {step.label}
-                                  </div>
-                                );
-                              })}
-                            </div>
-                            {/* Bottom: ville + avatars */}
-                            <div className="flex items-center justify-between">
-                              <span className="flex items-center gap-1 text-[10px] text-[--k-muted]">
-                                <MapPin className="h-3 w-3" />{evt.ville}
-                              </span>
-                              <div className="flex items-center -space-x-1.5">
-                                {evt.commercial && TEAM_MEMBERS[evt.commercial] && (
-                                  <img src={TEAM_MEMBERS[evt.commercial].photo} alt="" className="h-5 w-5 rounded-full ring-2 ring-white object-cover" />
-                                )}
-                                {(evt.chefsProjets || []).slice(0, 2).map(cp => TEAM_MEMBERS[cp] && (
-                                  <img key={cp} src={TEAM_MEMBERS[cp].photo} alt="" className="h-5 w-5 rounded-full ring-2 ring-white object-cover" />
-                                ))}
-                              </div>
-                            </div>
-                          </a>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* ── CALENDAR VIEW ── */}
-        {viewMode === "calendar" && (() => {
-          const { year, month } = calMonth;
-          const firstDay = new Date(year, month, 1);
-          const startDay = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1; // Monday=0
-          const daysInMonth = new Date(year, month + 1, 0).getDate();
-          const calDays = [];
-          for (let i = 0; i < startDay; i++) calDays.push(null);
-          for (let d = 1; d <= daysInMonth; d++) calDays.push(d);
-          while (calDays.length % 7 !== 0) calDays.push(null);
-
-          const monthEvents = filtered.filter(e => {
-            const d = new Date(e.date);
-            return d.getFullYear() === year && d.getMonth() === month;
-          });
-          const eventsByDay = {};
-          monthEvents.forEach(e => {
-            const d = new Date(e.date).getDate();
-            if (!eventsByDay[d]) eventsByDay[d] = [];
-            eventsByDay[d].push(e);
-          });
-
-          const today = new Date();
-          const isToday = (d) => d && today.getFullYear() === year && today.getMonth() === month && today.getDate() === d;
-
-          const prevMonth = () => setCalMonth(m => m.month === 0 ? { year: m.year - 1, month: 11 } : { ...m, month: m.month - 1 });
-          const nextMonth = () => setCalMonth(m => m.month === 11 ? { year: m.year + 1, month: 0 } : { ...m, month: m.month + 1 });
-
-          return (
-            <div className="p-4">
-              {/* Month nav */}
-              <div className="flex items-center justify-between mb-4">
-                <button onClick={prevMonth} className="flex h-8 w-8 items-center justify-center rounded-lg border border-[--k-border] text-[--k-muted] hover:bg-[--k-surface-2] transition">
-                  <ChevronLeft className="h-4 w-4" />
-                </button>
-                <span className="text-[15px] font-bold text-[--k-text]">{MONTH_NAMES_FR[month]} {year}</span>
-                <button onClick={nextMonth} className="flex h-8 w-8 items-center justify-center rounded-lg border border-[--k-border] text-[--k-muted] hover:bg-[--k-surface-2] transition">
-                  <ChevronRight className="h-4 w-4" />
-                </button>
-              </div>
-              {/* Week header */}
-              <div className="grid grid-cols-7 gap-px mb-px">
-                {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map(d => (
-                  <div key={d} className="text-center text-[11px] font-semibold text-[--k-muted] py-2">{d}</div>
-                ))}
-              </div>
-              {/* Calendar grid */}
-              <div className="grid grid-cols-7 gap-px bg-[--k-border] border border-[--k-border] rounded-xl overflow-hidden">
-                {calDays.map((day, i) => (
-                  <div
-                    key={i}
-                    className={cn(
-                      "bg-white min-h-[90px] p-1.5",
-                      !day && "bg-slate-50/50",
-                      isToday(day) && "bg-blue-50/40"
-                    )}
-                  >
-                    {day && (
-                      <>
-                        <div className={cn(
-                          "text-[11px] font-semibold mb-1",
-                          isToday(day) ? "text-[--k-primary]" : "text-[--k-muted]",
-                          (i % 7 >= 5) && "text-slate-400"
-                        )}>
-                          {day}
-                        </div>
-                        <div className="space-y-0.5">
-                          {(eventsByDay[day] || []).slice(0, 3).map(evt => {
-                            const st = STATUS_MAP[evt.status] || { dot: "bg-slate-300" };
-                            return (
-                              <a
-                                key={evt.id}
-                                href={`/events/${evt.id}`}
-                                className={cn(
-                                  "block rounded px-1.5 py-0.5 text-[10px] font-medium truncate transition hover:brightness-95",
-                                  evt.status === "done" ? "bg-slate-100 text-slate-500" :
-                                  evt.status === "ready" ? "bg-emerald-100 text-emerald-700" :
-                                  evt.status === "logistics" ? "bg-amber-100 text-amber-700" :
-                                  evt.status === "design" ? "bg-violet-100 text-violet-700" :
-                                  evt.status === "confirmed" ? "bg-blue-100 text-blue-700" :
-                                  evt.status === "live" ? "bg-rose-100 text-rose-700" :
-                                  "bg-slate-100 text-slate-600"
-                                )}
-                              >
-                                {evt.name}
-                              </a>
-                            );
-                          })}
-                          {(eventsByDay[day] || []).length > 3 && (
-                            <div className="text-[9px] text-[--k-muted] font-semibold px-1.5">+{eventsByDay[day].length - 3} de plus</div>
-                          )}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        })()}
 
         {/* Footer */}
         <div className="flex items-center justify-between border-t border-[--k-border] px-4 py-2.5 text-[12px] text-[--k-muted]">
