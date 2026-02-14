@@ -56,6 +56,7 @@ const CLIENT_CONTACTS = [
 
 const CLIENT_STATS = {
   clientDepuis: "Mars 2023",
+  origine: "Ajouté par un commercial",
   nbEvents: 14,
   nbEventsAnnee: 4,
   caTotalHT: 52400,
@@ -63,6 +64,16 @@ const CLIENT_STATS = {
   tauxConversion: 82,
   satisfaction: 4.8,
   tauxRecurrence: 71,
+  facturesEnRetard: 1,
+  montantRetard: 2400,
+};
+
+const ACOMPTE = {
+  montant: 2550,
+  pourcentage: 30,
+  statut: "regle", // "regle" | "en_attente" | "non_demande" | "exonere"
+  dateReglement: "2026-01-20",
+  motifExoneration: null, // ex: "Client fidèle avec historique de paiement exemplaire"
 };
 
 const ANTENNES = [
@@ -347,6 +358,10 @@ export default function EventDetail() {
                 <span className={cn("shrink-0 rounded-lg px-2.5 py-1 text-[10px] font-bold tracking-wide", st.color)}>{st.label}</span>
                 <span className={cn("shrink-0 rounded-lg px-2 py-0.5 text-[10px] font-semibold", EVENT.clientType === "Pro" ? "bg-blue-50/80 text-blue-500" : "bg-pink-50/80 text-pink-400")}>{EVENT.clientType}</span>
               </div>
+              <div className="mt-0.5 flex items-center gap-1.5 text-[12px] text-slate-400">
+                <Building2 className="h-3 w-3" />
+                <a href={`/clients/${CLIENT.id}`} className="hover:text-[--k-primary] transition-colors">{CLIENT.company}</a>
+              </div>
             </div>
             <div className="flex items-center gap-2 shrink-0">
               {/* Team avatars */}
@@ -405,7 +420,7 @@ export default function EventDetail() {
             </div>
           </div>
 
-          {/* Row 3: Tags */}
+          {/* Row 3: Tags + Acompte */}
           <div className="mt-3 flex flex-wrap items-center gap-1.5">
             {EVENT.objectifs.map(o => (
               <span key={o} className="rounded-lg bg-slate-50 px-2.5 py-0.5 text-[10px] font-medium text-slate-400">{o}</span>
@@ -413,6 +428,39 @@ export default function EventDetail() {
             {EVENT.tags.map(t => (
               <span key={t} className="rounded-lg bg-[--k-primary-2]/40 px-2.5 py-0.5 text-[10px] font-semibold text-[--k-primary]">{t}</span>
             ))}
+            <span className="mx-1" />
+            {/* Acompte status */}
+            {ACOMPTE.statut === "regle" && (
+              <span className="flex items-center gap-1 rounded-lg bg-emerald-50 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-600">
+                <CheckCircle2 className="h-3 w-3" />
+                Acompte réglé — {ACOMPTE.montant.toLocaleString("fr-FR")} € ({ACOMPTE.pourcentage}%)
+              </span>
+            )}
+            {ACOMPTE.statut === "en_attente" && (
+              <span className="flex items-center gap-1 rounded-lg bg-amber-50 border border-amber-200/60 px-2.5 py-0.5 text-[10px] font-semibold text-amber-600">
+                <Clock className="h-3 w-3" />
+                Acompte en attente — {ACOMPTE.montant.toLocaleString("fr-FR")} € ({ACOMPTE.pourcentage}%)
+              </span>
+            )}
+            {ACOMPTE.statut === "exonere" && (
+              <span className="group relative flex items-center gap-1 rounded-lg bg-slate-50 px-2.5 py-0.5 text-[10px] font-medium text-slate-400 cursor-help">
+                <Circle className="h-3 w-3" />
+                Acompte exonéré
+                {ACOMPTE.motifExoneration && (
+                  <span className="pointer-events-none absolute bottom-full left-0 mb-1.5 z-50 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="block whitespace-nowrap rounded-lg bg-slate-900 px-3 py-2 text-[10px] text-white shadow-lg max-w-[250px] whitespace-normal">
+                      {ACOMPTE.motifExoneration}
+                    </span>
+                  </span>
+                )}
+              </span>
+            )}
+            {ACOMPTE.statut === "non_demande" && (
+              <span className="flex items-center gap-1 rounded-lg bg-red-50 border border-red-200/60 px-2.5 py-0.5 text-[10px] font-semibold text-red-500">
+                <AlertTriangle className="h-3 w-3" />
+                Pas d'acompte demandé
+              </span>
+            )}
           </div>
         </div>
 
@@ -652,19 +700,19 @@ export default function EventDetail() {
                     <div className="space-y-4">
                       <Field label="Société"><input type="text" defaultValue={CLIENT.company} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all" /></Field>
                       <Field label="Secteur d'activité"><input type="text" defaultValue={CLIENT.secteur} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all" /></Field>
-                      <Field label="SIRET"><input type="text" defaultValue={CLIENT.siret} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all" /></Field>
                       <Field label="Adresse"><input type="text" defaultValue={CLIENT.address} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all" /></Field>
                       <Field label="Site web"><input type="text" defaultValue={CLIENT.website} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all" /></Field>
                       <Field label="Groupe"><input type="text" defaultValue={CLIENT.groupe} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all" /></Field>
+                      <Field label="SIRET"><input type="text" defaultValue={CLIENT.siret} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] outline-none focus:border-slate-300 transition-all" /></Field>
                     </div>
                   ) : (
                     <div className="space-y-0">
                       <InfoRow label="Société" value={<span className="font-semibold text-[--k-text]">{CLIENT.company}</span>} />
                       <InfoRow label="Secteur" value={CLIENT.secteur} />
-                      <InfoRow label="SIRET" value={<span className="font-mono text-[11px]">{CLIENT.siret}</span>} />
                       <InfoRow label="Adresse" value={CLIENT.address} />
                       <InfoRow label="Site web" value={<a href={`https://${CLIENT.website}`} target="_blank" rel="noopener noreferrer" className="text-[--k-primary] hover:underline flex items-center gap-1">{CLIENT.website} <ExternalLink className="h-3 w-3" /></a>} />
                       <InfoRow label="Groupe" value={<span className="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">{CLIENT.groupe}</span>} />
+                      <InfoRow label="SIRET" value={<span className="font-mono text-[11px] text-slate-400">{CLIENT.siret}</span>} />
                     </div>
                   )}
                   <div className="mt-4 pt-3 border-t border-slate-100">
@@ -1578,10 +1626,31 @@ export default function EventDetail() {
                   <div className="text-[20px] font-bold text-[--k-text] tabular-nums">{CLIENT_STATS.caTotalHT.toLocaleString("fr-FR")} €</div>
                   <div className="text-[10px] text-[--k-muted] font-medium">CA total HT</div>
                 </div>
+                {/* Factures en retard */}
+                {CLIENT_STATS.facturesEnRetard > 0 && (
+                  <div className="rounded-xl bg-red-50 border border-red-200/60 p-3 flex items-start gap-2.5">
+                    <AlertTriangle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
+                    <div>
+                      <div className="text-[12px] font-semibold text-red-600">{CLIENT_STATS.facturesEnRetard} facture{CLIENT_STATS.facturesEnRetard > 1 ? "s" : ""} en retard</div>
+                      <div className="text-[11px] text-red-500/80">{CLIENT_STATS.montantRetard.toLocaleString("fr-FR")} € impayé{CLIENT_STATS.montantRetard > 1 ? "s" : ""}</div>
+                    </div>
+                  </div>
+                )}
+                {CLIENT_STATS.facturesEnRetard === 0 && (
+                  <div className="rounded-xl bg-emerald-50/60 border border-emerald-200/60 p-2.5 flex items-center gap-2">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                    <span className="text-[11px] font-medium text-emerald-600">Aucune facture en retard</span>
+                  </div>
+                )}
+
                 <div className="space-y-2 pt-1">
                   <div className="flex items-center justify-between text-[12px]">
                     <span className="text-[--k-muted]">Client depuis</span>
                     <span className="font-medium text-[--k-text]">{CLIENT_STATS.clientDepuis}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-[12px]">
+                    <span className="text-[--k-muted]">Origine</span>
+                    <span className="font-medium text-[--k-text]">{CLIENT_STATS.origine}</span>
                   </div>
                   <div className="flex items-center justify-between text-[12px]">
                     <span className="text-[--k-muted]">Dernier event</span>
