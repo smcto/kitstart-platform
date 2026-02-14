@@ -118,6 +118,8 @@ export default function EventsList() {
   const [periodFilter, setPeriodFilter] = useState("all");
   const [customDateFrom, setCustomDateFrom] = useState("");
   const [customDateTo, setCustomDateTo] = useState("");
+  const [stepFilter, setStepFilter] = useState([]); // array of incomplete step keys: "briefing", "crea", "config", "logistique"
+  const [showTeamFilter, setShowTeamFilter] = useState(false);
   const [villeDropdownOpen, setVilleDropdownOpen] = useState(false);
   const [villeSearch, setVilleSearch] = useState("");
   const [calMonth, setCalMonth] = useState(() => { const n = new Date(); return { year: n.getFullYear(), month: n.getMonth() }; });
@@ -162,11 +164,14 @@ export default function EventsList() {
   }).filter(e =>
     (villeFilter === "all" || e.ville === villeFilter) &&
     (provenanceFilter === "all" || (e.provenances || []).includes(provenanceFilter)) &&
-    (personneFilter === "all" || e.commercial === personneFilter || (e.chefsProjets || []).includes(personneFilter))
+    (personneFilter === "all" || e.commercial === personneFilter || (e.chefsProjets || []).includes(personneFilter)) &&
+    (stepFilter.length === 0 || stepFilter.some(sk => !e.progress?.[sk]))
   );
 
-  const hasFilters = villeFilter !== "all" || provenanceFilter !== "all" || personneFilter !== "all" || periodFilter !== "all";
-  const clearFilters = () => { setVilleFilter("all"); setProvenanceFilter("all"); setPersonneFilter("all"); setPeriodFilter("all"); setCustomDateFrom(""); setCustomDateTo(""); };
+  const toggleStepFilter = (key) => setStepFilter(prev => prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]);
+
+  const hasFilters = villeFilter !== "all" || provenanceFilter !== "all" || personneFilter !== "all" || periodFilter !== "all" || stepFilter.length > 0;
+  const clearFilters = () => { setVilleFilter("all"); setProvenanceFilter("all"); setPersonneFilter("all"); setPeriodFilter("all"); setStepFilter([]); setCustomDateFrom(""); setCustomDateTo(""); };
 
   // Group by month for table view
   const grouped = {};
@@ -286,6 +291,30 @@ export default function EventsList() {
             </div>
           )}
 
+          {/* Step incomplete filter */}
+          <div className="flex items-center gap-0.5 border-r border-[--k-border] pr-3 mr-1">
+            <span className="text-[10px] text-[--k-muted] font-medium mr-1 shrink-0">Étape manquante :</span>
+            {[
+              { key: "briefing", label: "Brief", color: "bg-cyan-500", lightBg: "bg-cyan-50 text-cyan-600 ring-cyan-200" },
+              { key: "crea", label: "Créa", color: "bg-violet-500", lightBg: "bg-violet-50 text-violet-600 ring-violet-200" },
+              { key: "config", label: "Config", color: "bg-rose-500", lightBg: "bg-rose-50 text-rose-600 ring-rose-200" },
+              { key: "logistique", label: "Logi", color: "bg-amber-500", lightBg: "bg-amber-50 text-amber-600 ring-amber-200" },
+            ].map(step => (
+              <button
+                key={step.key}
+                onClick={() => toggleStepFilter(step.key)}
+                className={cn(
+                  "rounded-md px-2 py-1 text-[10px] font-bold transition-all",
+                  stepFilter.includes(step.key)
+                    ? `${step.lightBg} ring-1`
+                    : "text-slate-400 hover:bg-slate-50 hover:text-slate-600"
+                )}
+              >
+                {step.label}
+              </button>
+            ))}
+          </div>
+
           <div className="flex-1" />
 
           {/* Classic filters */}
@@ -338,44 +367,80 @@ export default function EventsList() {
           )}
         </div>
 
-        {/* Filters row 2: Person avatar pills */}
+        {/* Filters row 2: Person avatar pills — collapsible */}
         <div className="flex items-center gap-2 border-b border-[--k-border] px-4 py-2">
-          <span className="text-[11px] text-[--k-muted] font-medium shrink-0">Équipe :</span>
-          <div className="flex items-center gap-1.5 overflow-x-auto">
-            <button
-              onClick={() => setPersonneFilter("all")}
-              className={cn(
-                "shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium transition",
-                personneFilter === "all"
-                  ? "bg-[--k-primary-2] text-[--k-primary] ring-1 ring-[--k-primary]/30"
-                  : "text-[--k-muted] hover:bg-[--k-surface-2]"
-              )}
-            >
-              Tous
-            </button>
-            {Object.entries(TEAM_MEMBERS).map(([k, m]) => {
-              const count = EVENTS.filter(e => e.commercial === k || (e.chefsProjets || []).includes(k)).length;
-              return (
-                <button
-                  key={k}
-                  onClick={() => setPersonneFilter(personneFilter === k ? "all" : k)}
-                  className={cn(
-                    "shrink-0 flex items-center gap-1.5 rounded-full pl-1 pr-2.5 py-0.5 text-[11px] font-medium transition border",
-                    personneFilter === k
-                      ? "bg-[--k-primary-2] border-[--k-primary]/30 text-[--k-primary]"
-                      : "border-transparent hover:bg-[--k-surface-2] text-[--k-text]"
-                  )}
-                >
-                  <img src={m.photo} alt={m.name} className="h-5 w-5 rounded-full object-cover ring-1 ring-white" />
-                  <span>{m.name}</span>
-                  <span className={cn(
-                    "rounded-full px-1.5 py-0.5 text-[9px] font-bold",
-                    personneFilter === k ? "bg-[--k-primary]/10 text-[--k-primary]" : "bg-slate-100 text-slate-400"
-                  )}>{count}</span>
-                </button>
-              );
-            })}
-          </div>
+          <button
+            onClick={() => setShowTeamFilter(v => !v)}
+            className={cn(
+              "shrink-0 flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-medium transition-all",
+              personneFilter !== "all"
+                ? "bg-[--k-primary-2] text-[--k-primary]"
+                : "text-[--k-muted] hover:bg-[--k-surface-2] hover:text-[--k-text]"
+            )}
+          >
+            {/* Stacked mini-avatars when collapsed */}
+            {!showTeamFilter && (
+              <div className="flex items-center -space-x-1.5 mr-0.5">
+                {Object.entries(TEAM_MEMBERS).slice(0, 4).map(([k, m]) => (
+                  <img key={k} src={m.photo} alt={m.name} className="h-4 w-4 rounded-full object-cover ring-1 ring-white" />
+                ))}
+              </div>
+            )}
+            <span>Équipe{personneFilter !== "all" ? ` : ${TEAM_MEMBERS[personneFilter]?.name}` : ""}</span>
+            <ChevronDown className={cn("h-3 w-3 transition-transform", showTeamFilter && "rotate-180")} />
+          </button>
+
+          {/* Expanded team pills */}
+          {showTeamFilter && (
+            <div className="flex items-center gap-1.5 overflow-x-auto">
+              <button
+                onClick={() => setPersonneFilter("all")}
+                className={cn(
+                  "shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium transition",
+                  personneFilter === "all"
+                    ? "bg-[--k-primary-2] text-[--k-primary] ring-1 ring-[--k-primary]/30"
+                    : "text-[--k-muted] hover:bg-[--k-surface-2]"
+                )}
+              >
+                Tous
+              </button>
+              {Object.entries(TEAM_MEMBERS).map(([k, m]) => {
+                const count = EVENTS.filter(e => e.commercial === k || (e.chefsProjets || []).includes(k)).length;
+                return (
+                  <button
+                    key={k}
+                    onClick={() => setPersonneFilter(personneFilter === k ? "all" : k)}
+                    className={cn(
+                      "shrink-0 flex items-center gap-1.5 rounded-full pl-1 pr-2.5 py-0.5 text-[11px] font-medium transition border",
+                      personneFilter === k
+                        ? "bg-[--k-primary-2] border-[--k-primary]/30 text-[--k-primary]"
+                        : "border-transparent hover:bg-[--k-surface-2] text-[--k-text]"
+                    )}
+                  >
+                    <img src={m.photo} alt={m.name} className="h-5 w-5 rounded-full object-cover ring-1 ring-white" />
+                    <span>{m.name}</span>
+                    <span className={cn(
+                      "rounded-full px-1.5 py-0.5 text-[9px] font-bold",
+                      personneFilter === k ? "bg-[--k-primary]/10 text-[--k-primary]" : "bg-slate-100 text-slate-400"
+                    )}>{count}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Active person chip — visible when collapsed and filtered */}
+          {!showTeamFilter && personneFilter !== "all" && TEAM_MEMBERS[personneFilter] && (
+            <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1 rounded-full bg-[--k-primary-2] pl-1 pr-2 py-0.5 text-[11px] font-medium text-[--k-primary]">
+                <img src={TEAM_MEMBERS[personneFilter].photo} alt={TEAM_MEMBERS[personneFilter].name} className="h-4 w-4 rounded-full object-cover" />
+                {TEAM_MEMBERS[personneFilter].name}
+              </div>
+              <button onClick={() => setPersonneFilter("all")} className="text-[--k-muted] hover:text-[--k-danger] transition">
+                <X className="h-3 w-3" />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* ── TABLE VIEW ── */}
