@@ -474,7 +474,7 @@ export default function EventsList() {
                         return (
                           <div key={evt.id} className="flex items-center gap-3 px-4 py-2.5 hover:bg-[--k-surface-2]/30 transition w-full text-left cursor-pointer" onClick={() => window.location.href = `/events/${evt.id}`}>
                             {/* Date + heures */}
-                            <div className="shrink-0 w-[80px]">
+                            <div className="shrink-0 w-[85px]">
                               <div className="text-[12px] font-semibold text-[--k-text]">{evt.dateLabel}</div>
                               <div className="text-[10px] text-[--k-muted]">{evt.heureDebut} – {evt.heureFin}</div>
                             </div>
@@ -484,7 +484,7 @@ export default function EventsList() {
                               <div className="text-[11px] text-[--k-muted] truncate">{evt.client}</div>
                             </div>
                             {/* 4 étapes: Brief / Créa / Config / Logi */}
-                            <div className="shrink-0 flex items-center gap-0.5">
+                            <div className="shrink-0 w-[195px] flex items-center gap-0.5">
                               {[
                                 { key: "briefing", label: "Brief", color: "text-cyan-500", bg: "bg-cyan-50" },
                                 { key: "crea", label: "Créa", color: "text-violet-500", bg: "bg-violet-50" },
@@ -501,7 +501,7 @@ export default function EventsList() {
                               })}
                             </div>
                             {/* Provenance */}
-                            <div className="shrink-0 w-[70px] flex items-center gap-1">
+                            <div className="shrink-0 w-[60px] flex items-center gap-1">
                               {(evt.provenances || []).includes("antenne") && (
                                 <span className="flex items-center gap-0.5 rounded-md bg-indigo-50 px-1.5 py-0.5 text-[9px] font-bold text-indigo-500" title={evt.antenne ? `Antenne · ${evt.antenne.name}` : "Antenne"}>
                                   <Building2 className="h-2.5 w-2.5" />
@@ -516,13 +516,13 @@ export default function EventsList() {
                               )}
                             </div>
                             {/* Code */}
-                            <span className="text-[11px] font-mono text-[--k-muted] shrink-0 w-10">{evt.code}</span>
+                            <span className="text-[11px] font-mono text-[--k-muted] shrink-0 w-[50px] text-center">{evt.code}</span>
                             {/* Ville */}
-                            <span className="shrink-0 flex items-center gap-1 text-[11px] text-[--k-muted] w-[70px]">
-                              <MapPin className="h-3 w-3 shrink-0" />{evt.ville}
+                            <span className="shrink-0 flex items-center gap-1 text-[11px] text-[--k-muted] w-[80px] truncate">
+                              <MapPin className="h-3 w-3 shrink-0" /><span className="truncate">{evt.ville}</span>
                             </span>
                             {/* Team avatars inline */}
-                            <div className="shrink-0 w-[70px] flex items-center -space-x-1.5">
+                            <div className="shrink-0 w-[65px] flex items-center -space-x-1.5">
                               {evt.commercial && TEAM_MEMBERS[evt.commercial] && (
                                 <div className="relative group/com">
                                   <img src={TEAM_MEMBERS[evt.commercial].photo} alt={TEAM_MEMBERS[evt.commercial].name} className="h-6 w-6 rounded-full ring-2 ring-white shadow-sm object-cover" />
@@ -547,8 +547,8 @@ export default function EventsList() {
                               ))}
                             </div>
                             {/* Bornes — type breakdown */}
-                            <div className="shrink-0 flex items-center gap-1">
-                              <span className="text-[11px] font-bold text-[--k-text] tabular-nums">{evt.bornes}</span>
+                            <div className="shrink-0 w-[100px] flex items-center gap-1">
+                              <span className="text-[11px] font-bold text-[--k-text] tabular-nums w-[20px] text-right">{evt.bornes}</span>
                               {(() => {
                                 const counts = {};
                                 (evt.borneNums || []).forEach(b => {
@@ -558,15 +558,15 @@ export default function EventsList() {
                                 const labels = { C: "Classik", S: "Spherik", P: "Prestige" };
                                 const colors = { C: "bg-slate-100 text-slate-500", S: "bg-sky-50 text-sky-600", P: "bg-amber-50 text-amber-600" };
                                 return Object.entries(counts).map(([t, n]) => (
-                                  <span key={t} className={cn("rounded px-1.5 py-0.5 text-[9px] font-bold", colors[t] || "bg-slate-50 text-slate-400")}>
-                                    {n}{labels[t] ? ` ${labels[t].slice(0, 3)}` : ""}
+                                  <span key={t} className={cn("rounded px-1 py-0.5 text-[9px] font-bold", colors[t] || "bg-slate-50 text-slate-400")}>
+                                    {n} {labels[t] ? labels[t].slice(0, 3) : "?"}
                                   </span>
                                 ));
                               })()}
                             </div>
                             <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-semibold shrink-0 w-[42px] text-center", evt.clientType === "Pro" ? "bg-blue-100 text-blue-700" : "bg-pink-100 text-pink-700")}>{evt.clientType}</span>
                             {/* Menu actions */}
-                            <div className="shrink-0 relative" ref={actionMenu === evt.id ? actionMenuRef : undefined}>
+                            <div className="shrink-0 w-[28px] relative" ref={actionMenu === evt.id ? actionMenuRef : undefined}>
                               <button
                                 onClick={(e) => { e.stopPropagation(); setActionMenu(actionMenu === evt.id ? null : evt.id); }}
                                 className="flex h-7 w-7 items-center justify-center rounded-md text-[--k-muted] hover:bg-[--k-surface-2] hover:text-[--k-text] transition"
