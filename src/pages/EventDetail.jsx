@@ -464,42 +464,49 @@ export default function EventDetail() {
           </div>
         </div>
 
-        {/* Stepper */}
-        <div className="mt-4 border-t border-slate-100 px-5 py-3 flex items-center">
+        {/* Stepper — block style */}
+        <div className="mt-4 border-t border-slate-100 px-5 py-3.5 flex items-center gap-1.5">
           {PHASES.map((phase, i) => {
             const allDone = phase.checks.every(ck => CHECKLIST.find(c => c.key === ck)?.done);
             const someDone = phase.checks.some(ck => CHECKLIST.find(c => c.key === ck)?.done);
             return (
               <React.Fragment key={phase.key}>
                 {i > 0 && (
-                  <div className={cn("flex-1 h-px mx-1.5 transition-colors", allDone || someDone ? "bg-emerald-200" : "bg-slate-100")} />
+                  <ChevronRight className="h-3 w-3 text-slate-200 shrink-0 -mx-0.5" />
                 )}
-                <div className="flex items-center gap-1.5">
+                <div className={cn(
+                  "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11px] font-semibold transition-all border",
+                  allDone
+                    ? "bg-emerald-50 border-emerald-200/80 text-emerald-700"
+                    : someDone
+                    ? "bg-amber-50 border-amber-200/80 text-amber-700"
+                    : "bg-slate-50 border-slate-200/60 text-slate-400"
+                )}>
                   {allDone ? (
                     <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
                   ) : someDone ? (
-                    <div className="h-3.5 w-3.5 rounded-full border-[1.5px] border-amber-400 flex items-center justify-center shrink-0">
+                    <div className="h-3.5 w-3.5 rounded-full border-[2px] border-amber-400 flex items-center justify-center shrink-0">
                       <div className="h-1.5 w-1.5 rounded-full bg-amber-400" />
                     </div>
                   ) : (
-                    <Circle className="h-3.5 w-3.5 text-slate-200 shrink-0" />
+                    <Circle className="h-3.5 w-3.5 text-slate-300 shrink-0" />
                   )}
-                  <span className={cn(
-                    "text-[11px] font-medium whitespace-nowrap",
-                    allDone ? "text-emerald-600" : someDone ? "text-amber-500" : "text-slate-300"
-                  )}>
-                    {phase.label}
-                  </span>
+                  {phase.label}
                 </div>
               </React.Fragment>
             );
           })}
-          <span className="ml-auto pl-4 text-[11px] font-semibold text-slate-300 tabular-nums">{progress}%</span>
+          <div className="ml-auto pl-3 flex items-center gap-2">
+            <div className="h-1.5 w-16 rounded-full bg-slate-100 overflow-hidden">
+              <div className="h-full rounded-full bg-emerald-400 transition-all" style={{ width: `${progress}%` }} />
+            </div>
+            <span className="text-[11px] font-bold text-slate-400 tabular-nums">{progress}%</span>
+          </div>
         </div>
       </div>
 
       {/* ── Tabs bar ── */}
-      <div className="mb-5 flex items-center gap-0.5 border-b border-slate-100">
+      <div className="mb-5 flex items-center gap-1 border-b-2 border-slate-200">
         {TABS.map(tab => {
           const Icon = tab.icon;
           const active = activeTab === tab.key;
@@ -508,18 +515,19 @@ export default function EventDetail() {
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
               className={cn(
-                "relative flex items-center gap-1.5 px-4 py-2.5 text-[12px] font-medium rounded-t-lg transition-all",
-                active ? "text-[--k-primary] bg-[--k-primary-2]/20" : "text-slate-400 hover:text-[--k-text] hover:bg-slate-50",
+                "relative flex items-center gap-1.5 px-4 py-2.5 text-[12px] font-semibold rounded-t-lg transition-all -mb-[2px]",
+                active
+                  ? "bg-white border-2 border-slate-200 border-b-white text-[--k-primary] shadow-sm"
+                  : "text-slate-400 border-2 border-transparent hover:text-slate-600 hover:bg-slate-50/80",
               )}
             >
               <Icon className={cn("h-3.5 w-3.5", active ? "text-[--k-primary]" : "text-slate-300")} />
               {tab.label}
               {tab.count != null && (
-                <span className={cn("rounded-full px-1.5 py-0.5 text-[9px] font-bold", active ? "bg-[--k-primary-2] text-[--k-primary]" : "bg-slate-100 text-slate-400")}>
+                <span className={cn("ml-0.5 rounded-full px-1.5 py-0.5 text-[9px] font-bold", active ? "bg-[--k-primary] text-white" : "bg-slate-100 text-slate-400")}>
                   {tab.count}
                 </span>
               )}
-              {active && <span className="absolute bottom-0 left-2 right-2 h-[2px] rounded-full bg-[--k-primary]" />}
             </button>
           );
         })}
