@@ -1,13 +1,16 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { AppShell } from "../components/AppShell";
 import { PageHeader } from "../components/PageHeader";
 import { cn } from "../components/ui/cn";
 import {
-  Search, Plus, Download, MapPin, Monitor,
+  Search, Plus, Download, MapPin, Monitor, Map, List,
   Truck, Building2, MoreHorizontal, Edit, Eye, Copy, Trash2, FileText,
   ChevronDown, ChevronRight, X,
   CheckCircle2, Circle, Clock, AlertTriangle
 } from "lucide-react";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
 /* ── Mock data ────────────────────────────────────── */
 
@@ -21,19 +24,19 @@ const TEAM_MEMBERS = {
 };
 
 const EVENTS = [
-  { id: "EVT-287", name: "Salon du Mariage Paris", client: "Salon Expo SAS", date: "2026-02-08", dateLabel: "8–10 fév", heureDebut: "10:00", heureFin: "19:00", bornes: 12, borneNums: ["C381", "C382", "C412", "C415", "C420", "C421", "P455", "P460", "P501", "P502", "P510", "P511"], ville: "Paris", code: "SM26", clientType: "Pro", status: "ready", priority: "haute", progress: { briefing: true, crea: true, config: true, logistique: true, event: false, cloture: false }, provenances: ["antenne", "transporteur"], antenne: { name: "Yann Le Goff", initials: "YG", photo: "https://i.pravatar.cc/150?u=yann" }, commercial: "BL", chefsProjets: ["BG", "ER"] },
-  { id: "EVT-291", name: "Soirée L'Oréal 50 ans", client: "L'Oréal Group", date: "2026-02-10", dateLabel: "10 fév", heureDebut: "19:30", heureFin: "23:30", bornes: 4, borneNums: ["P455", "P460"], ville: "Paris", code: "LO26", clientType: "Pro", status: "logistics", priority: "haute", progress: { briefing: true, crea: true, config: false, logistique: false, event: false, cloture: false }, provenances: ["transporteur"], commercial: "BL", chefsProjets: ["ER"] },
-  { id: "EVT-294", name: "Mariage Dupont-Martin", client: "Famille Dupont", date: "2026-02-14", dateLabel: "14 fév", heureDebut: "15:00", heureFin: "02:00", bornes: 2, borneNums: [], ville: "Rennes", code: "MD26", clientType: "Part.", status: "design", priority: "moyenne", progress: { briefing: true, crea: false, config: false, logistique: false, event: false, cloture: false }, provenances: ["antenne"], antenne: { name: "Yann Le Goff", initials: "YG", photo: "https://i.pravatar.cc/150?u=yann" }, commercial: "LL", chefsProjets: ["PT"] },
-  { id: "EVT-298", name: "Festival Nantes Digital", client: "Nantes Métropole", date: "2026-02-15", dateLabel: "15–17 fév", heureDebut: "09:00", heureFin: "18:00", bornes: 8, borneNums: ["C220", "C221", "C222", "C223"], ville: "Nantes", code: "FN26", clientType: "Pro", status: "confirmed", priority: "moyenne", progress: { briefing: true, crea: false, config: false, logistique: false, event: false, cloture: false }, provenances: ["antenne"], antenne: { name: "Camille Moreau", initials: "CM", photo: "https://i.pravatar.cc/150?u=camille-moreau" }, commercial: "BL", chefsProjets: ["BG"] },
-  { id: "EVT-302", name: "Team Building Airbus", client: "Airbus SE", date: "2026-02-18", dateLabel: "18 fév", heureDebut: "09:00", heureFin: "17:00", bornes: 3, borneNums: [], ville: "Toulouse", code: "AB26", clientType: "Pro", status: "design", priority: "faible", progress: { briefing: true, crea: false, config: false, logistique: false, event: false, cloture: false }, provenances: ["antenne"], commercial: "LL", chefsProjets: ["SM"] },
-  { id: "EVT-305", name: "Gala BMW Munich", client: "BMW AG", date: "2026-02-20", dateLabel: "20 fév", heureDebut: "20:00", heureFin: "01:00", bornes: 6, borneNums: ["P455", "P460", "S501", "S502", "S510", "S511"], ville: "Munich", code: "BM26", clientType: "Pro", status: "confirmed", priority: "haute", progress: { briefing: true, crea: false, config: false, logistique: false, event: false, cloture: false }, provenances: ["transporteur"], commercial: "BL", chefsProjets: ["BG", "PT"] },
-  { id: "EVT-308", name: "Mariage Cohen-Lévy", client: "Famille Cohen", date: "2026-02-22", dateLabel: "22 fév", heureDebut: "16:00", heureFin: "03:00", bornes: 2, borneNums: ["S330", "S331"], ville: "Lyon", code: "MC26", clientType: "Part.", status: "confirmed", priority: "faible", progress: { briefing: true, crea: false, config: false, logistique: false, event: false, cloture: false }, provenances: ["antenne"], antenne: { name: "Sophie Renard", initials: "SR", photo: "https://i.pravatar.cc/150?u=sophie" }, commercial: "LL", chefsProjets: ["SM"] },
-  { id: "EVT-312", name: "Salon Auto Lyon", client: "Lyon Auto Events", date: "2026-02-25", dateLabel: "25–27 fév", heureDebut: "10:00", heureFin: "19:00", bornes: 10, borneNums: ["S330", "S331", "S332", "S333", "C381", "C382", "C412", "C415", "C420", "C421"], ville: "Lyon", code: "SA26", clientType: "Pro", status: "confirmed", priority: "haute", progress: { briefing: true, crea: false, config: false, logistique: false, event: false, cloture: false }, provenances: ["antenne", "transporteur"], antenne: { name: "Sophie Renard", initials: "SR", photo: "https://i.pravatar.cc/150?u=sophie" }, commercial: "BL", chefsProjets: ["ER", "SM"] },
-  { id: "EVT-315", name: "Anniversaire Nike", client: "Nike France", date: "2026-02-28", dateLabel: "28 fév", heureDebut: "18:00", heureFin: "23:00", bornes: 5, borneNums: ["P455", "P460", "P501"], ville: "Paris", code: "NK26", clientType: "Pro", status: "confirmed", priority: "moyenne", progress: { briefing: false, crea: false, config: false, logistique: false, event: false, cloture: false }, provenances: ["antenne"], antenne: { name: "Yann Le Goff", initials: "YG", photo: "https://i.pravatar.cc/150?u=yann" }, commercial: "BL", chefsProjets: ["PT"] },
-  { id: "EVT-320", name: "Mariage Silva", client: "Famille Silva", date: "2026-03-01", dateLabel: "1 mars", heureDebut: "14:00", heureFin: "01:00", bornes: 1, borneNums: ["C120"], ville: "Bordeaux", code: "MS26", clientType: "Part.", status: "confirmed", priority: "faible", progress: { briefing: false, crea: false, config: false, logistique: false, event: false, cloture: false }, provenances: ["antenne"], antenne: { name: "Lucas Petit", initials: "LP", photo: "https://i.pravatar.cc/150?u=lucas-petit" }, commercial: "LL", chefsProjets: ["PT"] },
-  { id: "EVT-322", name: "Séminaire Total", client: "TotalEnergies", date: "2026-03-03", dateLabel: "3–4 mars", heureDebut: "08:30", heureFin: "17:30", bornes: 3, borneNums: ["S510", "S511", "S512"], ville: "Paris", code: "ST26", clientType: "Pro", status: "confirmed", priority: "moyenne", progress: { briefing: false, crea: false, config: false, logistique: false, event: false, cloture: false }, provenances: ["transporteur"], commercial: "BL", chefsProjets: ["BG"] },
-  { id: "EVT-256", name: "Soirée Chanel N°5", client: "Chanel SAS", date: "2026-01-28", dateLabel: "28 jan", heureDebut: "20:00", heureFin: "00:00", bornes: 3, borneNums: ["P455", "P460", "P501"], ville: "Paris", code: "CH26", clientType: "Pro", status: "done", priority: "haute", progress: { briefing: true, crea: true, config: true, logistique: true, event: true, cloture: true }, provenances: ["antenne"], antenne: { name: "Yann Le Goff", initials: "YG", photo: "https://i.pravatar.cc/150?u=yann" }, commercial: "BL", chefsProjets: ["ER"] },
-  { id: "EVT-248", name: "Carnaval Nice", client: "Ville de Nice", date: "2026-01-24", dateLabel: "24–26 jan", heureDebut: "10:00", heureFin: "22:00", bornes: 15, borneNums: ["C100", "C101", "C102", "C103", "C104", "C105", "C106", "C107", "C108", "C109", "C110", "C111", "C112", "S200", "S201"], ville: "Nice", code: "CN26", clientType: "Pro", status: "done", priority: "haute", progress: { briefing: true, crea: true, config: true, logistique: true, event: true, cloture: true }, provenances: ["antenne", "transporteur"], antenne: { name: "Marc Rossi", initials: "MR", photo: "https://i.pravatar.cc/150?u=marc" }, commercial: "BL", chefsProjets: ["BG", "PT"] },
+  { id: "EVT-287", name: "Salon du Mariage Paris", client: "Salon Expo SAS", date: "2026-02-08", dateLabel: "8–10 fév", heureDebut: "10:00", heureFin: "19:00", bornes: 12, borneNums: ["C381", "C382", "C412", "C415", "C420", "C421", "P455", "P460", "P501", "P502", "P510", "P511"], ville: "Paris", lat: 48.832, lng: 2.288, code: "SM26", clientType: "Pro", status: "ready", priority: "haute", progress: { briefing: true, crea: true, config: true, logistique: true, event: false, cloture: false }, provenances: ["antenne", "transporteur"], antenne: { name: "Yann Le Goff", initials: "YG", photo: "https://i.pravatar.cc/150?u=yann" }, commercial: "BL", chefsProjets: ["BG", "ER"] },
+  { id: "EVT-291", name: "Soirée L'Oréal 50 ans", client: "L'Oréal Group", date: "2026-02-10", dateLabel: "10 fév", heureDebut: "19:30", heureFin: "23:30", bornes: 4, borneNums: ["P455", "P460"], ville: "Paris", lat: 48.870, lng: 2.332, code: "LO26", clientType: "Pro", status: "logistics", priority: "haute", progress: { briefing: true, crea: true, config: false, logistique: false, event: false, cloture: false }, provenances: ["transporteur"], commercial: "BL", chefsProjets: ["ER"] },
+  { id: "EVT-294", name: "Mariage Dupont-Martin", client: "Famille Dupont", date: "2026-02-14", dateLabel: "14 fév", heureDebut: "15:00", heureFin: "02:00", bornes: 2, borneNums: [], ville: "Rennes", lat: 48.117, lng: -1.678, code: "MD26", clientType: "Part.", status: "design", priority: "moyenne", progress: { briefing: true, crea: false, config: false, logistique: false, event: false, cloture: false }, provenances: ["antenne"], antenne: { name: "Yann Le Goff", initials: "YG", photo: "https://i.pravatar.cc/150?u=yann" }, commercial: "LL", chefsProjets: ["PT"] },
+  { id: "EVT-298", name: "Festival Nantes Digital", client: "Nantes Métropole", date: "2026-02-15", dateLabel: "15–17 fév", heureDebut: "09:00", heureFin: "18:00", bornes: 8, borneNums: ["C220", "C221", "C222", "C223"], ville: "Nantes", lat: 47.218, lng: -1.554, code: "FN26", clientType: "Pro", status: "confirmed", priority: "moyenne", progress: { briefing: true, crea: false, config: false, logistique: false, event: false, cloture: false }, provenances: ["antenne"], antenne: { name: "Camille Moreau", initials: "CM", photo: "https://i.pravatar.cc/150?u=camille-moreau" }, commercial: "BL", chefsProjets: ["BG"] },
+  { id: "EVT-302", name: "Team Building Airbus", client: "Airbus SE", date: "2026-02-18", dateLabel: "18 fév", heureDebut: "09:00", heureFin: "17:00", bornes: 3, borneNums: [], ville: "Toulouse", lat: 43.604, lng: 1.444, code: "AB26", clientType: "Pro", status: "design", priority: "faible", progress: { briefing: true, crea: false, config: false, logistique: false, event: false, cloture: false }, provenances: ["antenne"], commercial: "LL", chefsProjets: ["SM"] },
+  { id: "EVT-305", name: "Gala BMW Munich", client: "BMW AG", date: "2026-02-20", dateLabel: "20 fév", heureDebut: "20:00", heureFin: "01:00", bornes: 6, borneNums: ["P455", "P460", "S501", "S502", "S510", "S511"], ville: "Munich", lat: 48.137, lng: 11.576, code: "BM26", clientType: "Pro", status: "confirmed", priority: "haute", progress: { briefing: true, crea: false, config: false, logistique: false, event: false, cloture: false }, provenances: ["transporteur"], commercial: "BL", chefsProjets: ["BG", "PT"] },
+  { id: "EVT-308", name: "Mariage Cohen-Lévy", client: "Famille Cohen", date: "2026-02-22", dateLabel: "22 fév", heureDebut: "16:00", heureFin: "03:00", bornes: 2, borneNums: ["S330", "S331"], ville: "Lyon", lat: 45.764, lng: 4.836, code: "MC26", clientType: "Part.", status: "confirmed", priority: "faible", progress: { briefing: true, crea: false, config: false, logistique: false, event: false, cloture: false }, provenances: ["antenne"], antenne: { name: "Sophie Renard", initials: "SR", photo: "https://i.pravatar.cc/150?u=sophie" }, commercial: "LL", chefsProjets: ["SM"] },
+  { id: "EVT-312", name: "Salon Auto Lyon", client: "Lyon Auto Events", date: "2026-02-25", dateLabel: "25–27 fév", heureDebut: "10:00", heureFin: "19:00", bornes: 10, borneNums: ["S330", "S331", "S332", "S333", "C381", "C382", "C412", "C415", "C420", "C421"], ville: "Lyon", lat: 45.784, lng: 4.872, code: "SA26", clientType: "Pro", status: "confirmed", priority: "haute", progress: { briefing: true, crea: false, config: false, logistique: false, event: false, cloture: false }, provenances: ["antenne", "transporteur"], antenne: { name: "Sophie Renard", initials: "SR", photo: "https://i.pravatar.cc/150?u=sophie" }, commercial: "BL", chefsProjets: ["ER", "SM"] },
+  { id: "EVT-315", name: "Anniversaire Nike", client: "Nike France", date: "2026-02-28", dateLabel: "28 fév", heureDebut: "18:00", heureFin: "23:00", bornes: 5, borneNums: ["P455", "P460", "P501"], ville: "Paris", lat: 48.863, lng: 2.287, code: "NK26", clientType: "Pro", status: "confirmed", priority: "moyenne", progress: { briefing: false, crea: false, config: false, logistique: false, event: false, cloture: false }, provenances: ["antenne"], antenne: { name: "Yann Le Goff", initials: "YG", photo: "https://i.pravatar.cc/150?u=yann" }, commercial: "BL", chefsProjets: ["PT"] },
+  { id: "EVT-320", name: "Mariage Silva", client: "Famille Silva", date: "2026-03-01", dateLabel: "1 mars", heureDebut: "14:00", heureFin: "01:00", bornes: 1, borneNums: ["C120"], ville: "Bordeaux", lat: 44.838, lng: -0.577, code: "MS26", clientType: "Part.", status: "confirmed", priority: "faible", progress: { briefing: false, crea: false, config: false, logistique: false, event: false, cloture: false }, provenances: ["antenne"], antenne: { name: "Lucas Petit", initials: "LP", photo: "https://i.pravatar.cc/150?u=lucas-petit" }, commercial: "LL", chefsProjets: ["PT"] },
+  { id: "EVT-322", name: "Séminaire Total", client: "TotalEnergies", date: "2026-03-03", dateLabel: "3–4 mars", heureDebut: "08:30", heureFin: "17:30", bornes: 3, borneNums: ["S510", "S511", "S512"], ville: "Paris", lat: 48.877, lng: 2.326, code: "ST26", clientType: "Pro", status: "confirmed", priority: "moyenne", progress: { briefing: false, crea: false, config: false, logistique: false, event: false, cloture: false }, provenances: ["transporteur"], commercial: "BL", chefsProjets: ["BG"] },
+  { id: "EVT-256", name: "Soirée Chanel N°5", client: "Chanel SAS", date: "2026-01-28", dateLabel: "28 jan", heureDebut: "20:00", heureFin: "00:00", bornes: 3, borneNums: ["P455", "P460", "P501"], ville: "Paris", lat: 48.865, lng: 2.306, code: "CH26", clientType: "Pro", status: "done", priority: "haute", progress: { briefing: true, crea: true, config: true, logistique: true, event: true, cloture: true }, provenances: ["antenne"], antenne: { name: "Yann Le Goff", initials: "YG", photo: "https://i.pravatar.cc/150?u=yann" }, commercial: "BL", chefsProjets: ["ER"] },
+  { id: "EVT-248", name: "Carnaval Nice", client: "Ville de Nice", date: "2026-01-24", dateLabel: "24–26 jan", heureDebut: "10:00", heureFin: "22:00", bornes: 15, borneNums: ["C100", "C101", "C102", "C103", "C104", "C105", "C106", "C107", "C108", "C109", "C110", "C111", "C112", "S200", "S201"], ville: "Nice", lat: 43.710, lng: 7.262, code: "CN26", clientType: "Pro", status: "done", priority: "haute", progress: { briefing: true, crea: true, config: true, logistique: true, event: true, cloture: true }, provenances: ["antenne", "transporteur"], antenne: { name: "Marc Rossi", initials: "MR", photo: "https://i.pravatar.cc/150?u=marc" }, commercial: "BL", chefsProjets: ["BG", "PT"] },
 ];
 
 const STATUS_MAP = {
@@ -102,9 +105,41 @@ function getProgressPct(progress) {
   return Math.round((done / total) * 100);
 }
 
+/* ── Map helpers ──────────────────────────────────── */
+
+const STATUS_COLORS_HEX = {
+  confirmed: "#3b82f6", design: "#8b5cf6", logistics: "#f59e0b",
+  ready: "#10b981", live: "#f43f5e", done: "#94a3b8",
+};
+
+function makeMarkerIcon(status) {
+  const color = STATUS_COLORS_HEX[status] || "#64748b";
+  return L.divIcon({
+    className: "",
+    iconSize: [28, 36],
+    iconAnchor: [14, 36],
+    popupAnchor: [0, -32],
+    html: `<svg width="28" height="36" viewBox="0 0 28 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M14 0C6.27 0 0 6.27 0 14c0 10.5 14 22 14 22s14-11.5 14-22C28 6.27 21.73 0 14 0z" fill="${color}"/>
+      <circle cx="14" cy="13" r="5.5" fill="white"/>
+    </svg>`,
+  });
+}
+
+function FitBounds({ events }) {
+  const map = useMap();
+  useEffect(() => {
+    if (events.length === 0) return;
+    const bounds = L.latLngBounds(events.map(e => [e.lat, e.lng]));
+    map.fitBounds(bounds, { padding: [40, 40], maxZoom: 12 });
+  }, [events, map]);
+  return null;
+}
+
 /* ── Page ──────────────────────────────────────────── */
 
 export default function EventsList() {
+  const [viewMode, setViewMode] = useState("list"); // "list" | "map"
   const [statusFilter, setStatusFilter] = useState("all"); // "all" | "active" | "done"
   const [search, setSearch] = useState("");
   const [actionMenu, setActionMenu] = useState(null);
@@ -209,6 +244,28 @@ export default function EventsList() {
               className="h-8 w-full max-w-xs rounded-lg border border-[--k-border] bg-[--k-surface-2]/50 pl-8 pr-3 text-[12px] outline-none focus:border-[--k-primary] focus:ring-1 focus:ring-[--k-primary]/20 transition"
             />
           </div>
+          {/* View switcher: Liste / Carte */}
+          <div className="flex items-center gap-0.5 rounded-lg border border-[--k-border] bg-[--k-surface-2]/50 p-0.5">
+            <button
+              onClick={() => setViewMode("list")}
+              className={cn(
+                "flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[11px] font-medium transition",
+                viewMode === "list" ? "bg-white text-[--k-text] shadow-sm" : "text-[--k-muted] hover:text-[--k-text]"
+              )}
+            >
+              <List className="h-3.5 w-3.5" /> Liste
+            </button>
+            <button
+              onClick={() => setViewMode("map")}
+              className={cn(
+                "flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[11px] font-medium transition",
+                viewMode === "map" ? "bg-white text-[--k-text] shadow-sm" : "text-[--k-muted] hover:text-[--k-text]"
+              )}
+            >
+              <Map className="h-3.5 w-3.5" /> Carte
+            </button>
+          </div>
+
           <button className="flex h-8 items-center gap-1.5 rounded-lg border border-[--k-border] px-2.5 text-[12px] font-medium text-[--k-muted] hover:bg-[--k-surface-2] transition">
             <Download className="h-3.5 w-3.5" /> Export
           </button>
@@ -456,6 +513,7 @@ export default function EventsList() {
         </div>
 
         {/* ── TABLE ── */}
+        {viewMode === "list" && (
         <>
             {filtered.length === 0 ? (
               <div className="px-4 py-8 text-center text-[13px] text-[--k-muted]">Aucun événement ne correspond aux filtres.</div>
@@ -603,7 +661,68 @@ export default function EventsList() {
               </div>
             )}
           </>
+        )}
 
+        {/* ── MAP VIEW ── */}
+        {viewMode === "map" && (
+          <div className="relative" style={{ height: "calc(100vh - 320px)", minHeight: 400 }}>
+            {filtered.length === 0 ? (
+              <div className="absolute inset-0 flex items-center justify-center text-[13px] text-[--k-muted]">Aucun événement ne correspond aux filtres.</div>
+            ) : (
+              <MapContainer
+                center={[46.8, 2.4]}
+                zoom={6}
+                className="h-full w-full rounded-b-none z-0"
+                style={{ background: "#f1f5f9" }}
+              >
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                <FitBounds events={filtered.filter(e => e.lat && e.lng)} />
+                {filtered.filter(e => e.lat && e.lng).map(evt => {
+                  const st = STATUS_MAP[evt.status] || {};
+                  return (
+                    <Marker key={evt.id} position={[evt.lat, evt.lng]} icon={makeMarkerIcon(evt.status)}>
+                      <Popup>
+                        <div className="min-w-[200px]">
+                          <div className="flex items-center justify-between gap-2 mb-1">
+                            <span className="text-[13px] font-bold text-slate-800">{evt.name}</span>
+                            <span className={cn("shrink-0 rounded px-1.5 py-0.5 text-[9px] font-bold border", st.bg)}>{st.label}</span>
+                          </div>
+                          <div className="text-[11px] text-slate-500 mb-1.5">{evt.client}</div>
+                          <div className="flex items-center gap-3 text-[11px] text-slate-600 mb-1.5">
+                            <span className="font-semibold">{evt.dateLabel}</span>
+                            <span>{evt.heureDebut} – {evt.heureFin}</span>
+                          </div>
+                          <div className="flex items-center gap-1 mb-2">
+                            {[
+                              { key: "briefing", label: "Brief", color: "text-cyan-500", bg: "bg-cyan-50" },
+                              { key: "crea", label: "Créa", color: "text-violet-500", bg: "bg-violet-50" },
+                              { key: "config", label: "Config", color: "text-rose-500", bg: "bg-rose-50" },
+                              { key: "logistique", label: "Logi", color: "text-amber-500", bg: "bg-amber-50" },
+                            ].map(step => {
+                              const done = evt.progress?.[step.key];
+                              return (
+                                <span key={step.key} className={cn("flex items-center gap-0.5 rounded px-1.5 py-0.5 text-[9px] font-bold", done ? `${step.bg} ${step.color}` : "bg-slate-50 text-slate-300")}>
+                                  {done ? "✓" : "○"} {step.label}
+                                </span>
+                              );
+                            })}
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-[11px] text-slate-400">{evt.bornes} bornes · {evt.ville}</span>
+                            <a href={`/events/${evt.id}`} className="text-[11px] font-semibold text-blue-600 hover:underline">Voir →</a>
+                          </div>
+                        </div>
+                      </Popup>
+                    </Marker>
+                  );
+                })}
+              </MapContainer>
+            )}
+          </div>
+        )}
 
         {/* Footer */}
         <div className="flex items-center justify-between border-t border-[--k-border] px-4 py-2.5 text-[12px] text-[--k-muted]">
