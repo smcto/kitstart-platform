@@ -8,9 +8,6 @@ import {
   ChevronDown, ChevronRight, X,
   CheckCircle2, Circle, Clock, AlertTriangle
 } from "lucide-react";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
 
 /* ── Mock data ────────────────────────────────────── */
 
@@ -105,35 +102,168 @@ function getProgressPct(progress) {
   return Math.round((done / total) * 100);
 }
 
-/* ── Map helpers ──────────────────────────────────── */
+/* ── Map helpers (pure CSS/SVG, no external dep) ── */
 
 const STATUS_COLORS_HEX = {
   confirmed: "#3b82f6", design: "#8b5cf6", logistics: "#f59e0b",
   ready: "#10b981", live: "#f43f5e", done: "#94a3b8",
 };
 
-function makeMarkerIcon(status) {
-  const color = STATUS_COLORS_HEX[status] || "#64748b";
-  return L.divIcon({
-    className: "",
-    iconSize: [28, 36],
-    iconAnchor: [14, 36],
-    popupAnchor: [0, -32],
-    html: `<svg width="28" height="36" viewBox="0 0 28 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M14 0C6.27 0 0 6.27 0 14c0 10.5 14 22 14 22s14-11.5 14-22C28 6.27 21.73 0 14 0z" fill="${color}"/>
-      <circle cx="14" cy="13" r="5.5" fill="white"/>
-    </svg>`,
-  });
+// Convert lat/lng to Mercator pixel position within a bounding box
+function latLngToPixel(lat, lng, bounds, width, height) {
+  const toRad = d => (d * Math.PI) / 180;
+  const mercY = lat => Math.log(Math.tan(Math.PI / 4 + toRad(lat) / 2));
+  const x = ((lng - bounds.minLng) / (bounds.maxLng - bounds.minLng)) * width;
+  const yRatio = (mercY(lat) - mercY(bounds.minLat)) / (mercY(bounds.maxLat) - mercY(bounds.minLat));
+  const y = height - yRatio * height;
+  return { x, y };
 }
 
-function FitBounds({ events }) {
-  const map = useMap();
+function getBounds(events, padding = 0.8) {
+  if (events.length === 0) return { minLat: 42, maxLat: 51, minLng: -5, maxLng: 12 };
+  let minLat = Infinity, maxLat = -Infinity, minLng = Infinity, maxLng = -Infinity;
+  events.forEach(e => {
+    if (e.lat < minLat) minLat = e.lat;
+    if (e.lat > maxLat) maxLat = e.lat;
+    if (e.lng < minLng) minLng = e.lng;
+    if (e.lng > maxLng) maxLng = e.lng;
+  });
+  const latPad = Math.max((maxLat - minLat) * padding, 0.5);
+  const lngPad = Math.max((maxLng - minLng) * padding, 0.5);
+  return { minLat: minLat - latPad, maxLat: maxLat + latPad, minLng: minLng - lngPad, maxLng: maxLng + lngPad };
+}
+
+function EventMapView({ events, statusMap }) {
+  const containerRef = useRef(null);
+  const [dim, setDim] = useState({ w: 800, h: 500 });
+  const [hovered, setHovered] = useState(null);
+  const [selected, setSelected] = useState(null);
+
   useEffect(() => {
-    if (events.length === 0) return;
-    const bounds = L.latLngBounds(events.map(e => [e.lat, e.lng]));
-    map.fitBounds(bounds, { padding: [40, 40], maxZoom: 12 });
-  }, [events, map]);
-  return null;
+    if (!containerRef.current) return;
+    const ro = new ResizeObserver(entries => {
+      const { width, height } = entries[0].contentRect;
+      setDim({ w: width, h: height });
+    });
+    ro.observe(containerRef.current);
+    return () => ro.disconnect();
+  }, []);
+
+  const geoEvents = events.filter(e => e.lat && e.lng);
+  const bounds = useMemo(() => getBounds(geoEvents, 0.3), [geoEvents]);
+
+  // Build OSM static tile URL for background
+  const centerLat = (bounds.minLat + bounds.maxLat) / 2;
+  const centerLng = (bounds.minLng + bounds.maxLng) / 2;
+
+  return (
+    <div
+      ref={containerRef}
+      className="relative w-full overflow-hidden bg-slate-100"
+      style={{ height: "calc(100vh - 320px)", minHeight: 400 }}
+      onClick={() => setSelected(null)}
+    >
+      {/* Background map tiles */}
+      <div className="absolute inset-0">
+        <img
+          src={`https://maps.geoapify.com/v1/staticmap?style=osm-bright-smooth&width=${Math.round(dim.w)}&height=${Math.round(dim.h)}&center=lonlat:${centerLng.toFixed(4)},${centerLat.toFixed(4)}&zoom=${geoEvents.length <= 1 ? 10 : geoEvents.length <= 3 ? 6 : 5}&apiKey=0542ba7031964ec1a2ef131abba90b45`}
+          alt="Carte"
+          className="w-full h-full object-cover"
+          onError={(e) => { e.target.style.display = "none"; }}
+        />
+        {/* Fallback gradient if image fails */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-slate-100 to-emerald-50 -z-10" />
+      </div>
+
+      {/* Markers */}
+      {geoEvents.map(evt => {
+        const pos = latLngToPixel(evt.lat, evt.lng, bounds, dim.w, dim.h);
+        const color = STATUS_COLORS_HEX[evt.status] || "#64748b";
+        const isActive = hovered === evt.id || selected === evt.id;
+        return (
+          <div key={evt.id} className="absolute" style={{ left: pos.x - 14, top: pos.y - 36, zIndex: isActive ? 50 : 10 }}>
+            {/* Pin SVG */}
+            <div
+              className="cursor-pointer transition-transform"
+              style={{ transform: isActive ? "scale(1.3)" : "scale(1)", transformOrigin: "bottom center" }}
+              onMouseEnter={() => setHovered(evt.id)}
+              onMouseLeave={() => setHovered(null)}
+              onClick={(e) => { e.stopPropagation(); setSelected(selected === evt.id ? null : evt.id); }}
+            >
+              <svg width="28" height="36" viewBox="0 0 28 36" fill="none">
+                <path d="M14 0C6.27 0 0 6.27 0 14c0 10.5 14 22 14 22s14-11.5 14-22C28 6.27 21.73 0 14 0z" fill={color} />
+                <circle cx="14" cy="13" r="5.5" fill="white" />
+              </svg>
+            </div>
+
+            {/* Hover label */}
+            {hovered === evt.id && selected !== evt.id && (
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 pointer-events-none">
+                <div className="whitespace-nowrap rounded-lg bg-slate-900 px-2.5 py-1.5 text-[10px] text-white shadow-lg font-medium">
+                  {evt.name}
+                </div>
+              </div>
+            )}
+
+            {/* Selected popup */}
+            {selected === evt.id && (
+              <div
+                className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50"
+                onClick={e => e.stopPropagation()}
+              >
+                <div className="bg-white rounded-xl shadow-xl border border-slate-200 p-3 w-[260px]">
+                  <div className="flex items-start justify-between gap-2 mb-1">
+                    <span className="text-[12px] font-bold text-slate-800 leading-snug">{evt.name}</span>
+                    <span className={cn("shrink-0 rounded px-1.5 py-0.5 text-[9px] font-bold border", statusMap[evt.status]?.bg)}>{statusMap[evt.status]?.label}</span>
+                  </div>
+                  <div className="text-[11px] text-slate-500 mb-1.5">{evt.client}</div>
+                  <div className="flex items-center gap-3 text-[11px] text-slate-600 mb-1.5">
+                    <span className="font-semibold">{evt.dateLabel}</span>
+                    <span>{evt.heureDebut} – {evt.heureFin}</span>
+                  </div>
+                  <div className="flex items-center gap-0.5 mb-2">
+                    {[
+                      { key: "briefing", label: "Brief", color: "text-cyan-500", bg: "bg-cyan-50" },
+                      { key: "crea", label: "Créa", color: "text-violet-500", bg: "bg-violet-50" },
+                      { key: "config", label: "Config", color: "text-rose-500", bg: "bg-rose-50" },
+                      { key: "logistique", label: "Logi", color: "text-amber-500", bg: "bg-amber-50" },
+                    ].map(step => {
+                      const done = evt.progress?.[step.key];
+                      return (
+                        <span key={step.key} className={cn("flex items-center gap-0.5 rounded px-1.5 py-0.5 text-[9px] font-bold", done ? `${step.bg} ${step.color}` : "bg-slate-50 text-slate-300")}>
+                          {done ? <CheckCircle2 className="h-2.5 w-2.5" /> : <Circle className="h-2.5 w-2.5" />} {step.label}
+                        </span>
+                      );
+                    })}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] text-slate-400">{evt.bornes} bornes · {evt.ville}</span>
+                    <a href={`/events/${evt.id}`} className="text-[11px] font-semibold text-blue-600 hover:underline">Voir →</a>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+
+      {/* Event count badge */}
+      <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 rounded-lg bg-white/90 backdrop-blur-sm border border-slate-200 px-3 py-1.5 shadow-sm">
+        <MapPin className="h-3.5 w-3.5 text-[--k-primary]" />
+        <span className="text-[11px] font-semibold text-slate-700">{geoEvents.length} événement{geoEvents.length > 1 ? "s" : ""}</span>
+      </div>
+
+      {/* Legend */}
+      <div className="absolute bottom-3 left-3 z-20 flex flex-wrap items-center gap-1.5 rounded-lg bg-white/90 backdrop-blur-sm border border-slate-200 px-3 py-2 shadow-sm">
+        {Object.entries(statusMap).map(([key, val]) => (
+          <div key={key} className="flex items-center gap-1">
+            <div className="h-2.5 w-2.5 rounded-full" style={{ background: STATUS_COLORS_HEX[key] }} />
+            <span className="text-[9px] font-medium text-slate-500">{val.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 /* ── Page ──────────────────────────────────────────── */
@@ -665,63 +795,11 @@ export default function EventsList() {
 
         {/* ── MAP VIEW ── */}
         {viewMode === "map" && (
-          <div className="relative" style={{ height: "calc(100vh - 320px)", minHeight: 400 }}>
-            {filtered.length === 0 ? (
-              <div className="absolute inset-0 flex items-center justify-center text-[13px] text-[--k-muted]">Aucun événement ne correspond aux filtres.</div>
-            ) : (
-              <MapContainer
-                center={[46.8, 2.4]}
-                zoom={6}
-                className="h-full w-full rounded-b-none z-0"
-                style={{ background: "#f1f5f9" }}
-              >
-                <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                <FitBounds events={filtered.filter(e => e.lat && e.lng)} />
-                {filtered.filter(e => e.lat && e.lng).map(evt => {
-                  const st = STATUS_MAP[evt.status] || {};
-                  return (
-                    <Marker key={evt.id} position={[evt.lat, evt.lng]} icon={makeMarkerIcon(evt.status)}>
-                      <Popup>
-                        <div className="min-w-[200px]">
-                          <div className="flex items-center justify-between gap-2 mb-1">
-                            <span className="text-[13px] font-bold text-slate-800">{evt.name}</span>
-                            <span className={cn("shrink-0 rounded px-1.5 py-0.5 text-[9px] font-bold border", st.bg)}>{st.label}</span>
-                          </div>
-                          <div className="text-[11px] text-slate-500 mb-1.5">{evt.client}</div>
-                          <div className="flex items-center gap-3 text-[11px] text-slate-600 mb-1.5">
-                            <span className="font-semibold">{evt.dateLabel}</span>
-                            <span>{evt.heureDebut} – {evt.heureFin}</span>
-                          </div>
-                          <div className="flex items-center gap-1 mb-2">
-                            {[
-                              { key: "briefing", label: "Brief", color: "text-cyan-500", bg: "bg-cyan-50" },
-                              { key: "crea", label: "Créa", color: "text-violet-500", bg: "bg-violet-50" },
-                              { key: "config", label: "Config", color: "text-rose-500", bg: "bg-rose-50" },
-                              { key: "logistique", label: "Logi", color: "text-amber-500", bg: "bg-amber-50" },
-                            ].map(step => {
-                              const done = evt.progress?.[step.key];
-                              return (
-                                <span key={step.key} className={cn("flex items-center gap-0.5 rounded px-1.5 py-0.5 text-[9px] font-bold", done ? `${step.bg} ${step.color}` : "bg-slate-50 text-slate-300")}>
-                                  {done ? "✓" : "○"} {step.label}
-                                </span>
-                              );
-                            })}
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <span className="text-[11px] text-slate-400">{evt.bornes} bornes · {evt.ville}</span>
-                            <a href={`/events/${evt.id}`} className="text-[11px] font-semibold text-blue-600 hover:underline">Voir →</a>
-                          </div>
-                        </div>
-                      </Popup>
-                    </Marker>
-                  );
-                })}
-              </MapContainer>
-            )}
-          </div>
+          filtered.length === 0 ? (
+            <div className="px-4 py-16 text-center text-[13px] text-[--k-muted]">Aucun événement ne correspond aux filtres.</div>
+          ) : (
+            <EventMapView events={filtered} statusMap={STATUS_MAP} />
+          )
         )}
 
         {/* Footer */}
